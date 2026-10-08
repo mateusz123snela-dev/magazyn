@@ -23,6 +23,10 @@
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --radius: 12px;
+  --map-bg: #e5e7eb;
+  --map-grid: #d1d5db;
+  --map-board: #f3f4f6;
+  --map-border: #374151;
 }
 
 body.dark-mode {
@@ -35,6 +39,10 @@ body.dark-mode {
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
   --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.5);
+  --map-bg: #090d16;
+  --map-grid: #1e293b;
+  --map-board: #0f172a;
+  --map-border: #475569;
 }
 
 * { box-sizing: border-box; }
@@ -87,20 +95,29 @@ button:active { transform: scale(0.97) !important; }
   display: grid; place-items: center; font-size: 18px;
 }
 
-.nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; }
+.nav-tabs { display: flex; gap: 6px; flex-wrap: wrap; position: relative; }
 .nav-tab {
   background: transparent; color: #fca5a5; padding: 8px 14px; border-radius: 8px;
-  font-weight: 600; font-size: 13px; white-space: nowrap;
+  font-weight: 600; font-size: 13px; white-space: nowrap; position: relative;
 }
 .nav-tab:hover { color: #fff; background: rgba(255,255,255,0.12); }
 .nav-tab.active { background: #ffffff; color: #991b1b; }
+
+.tab-badge {
+  position: absolute; top: -4px; right: -4px; background: #ef4444; color: #fff;
+  font-size: 10px; font-weight: 800; padding: 2px 6px; border-radius: 99px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3); display: none;
+}
 
 .topbar .spacer { flex: 1; }
 .user-info { font-size: 13px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .online-counter {
   background: rgba(255, 255, 255, 0.15); color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.25);
-  padding: 5px 12px; border-radius: 99px; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px;
+  padding: 5px 12px; border-radius: 99px; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer;
+  transition: background 0.2s;
 }
+.online-counter:hover { background: rgba(255, 255, 255, 0.25); }
+
 .role-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; text-transform: uppercase; }
 .role-admin { background: #fef3c7; color: #b45309; }
 .role-user { background: #ffffff; color: #991b1b; }
@@ -151,7 +168,7 @@ h1 { font-size: 26px; font-weight: 800; margin: 0 0 6px; }
   border-radius: var(--radius);
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  background: #ffffff;
+  background: var(--map-bg);
   box-shadow: var(--shadow);
   user-select: none;
 }
@@ -331,7 +348,6 @@ h1 { font-size: 26px; font-weight: 800; margin: 0 0 6px; }
 .item-row input { padding: 9px 10px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); font-size: 13px; }
 .remove-item { background: #fee2e2; color: #b91c1c; border-radius: 8px; font-size: 18px; }
 
-/* MEDIA QUERIES - SPECJALNE POPRAWKI DLA TELEFONÓW */
 @media (max-width: 640px) {
   .topbar { padding: 12px 16px; flex-direction: column; align-items: stretch; gap: 12px; }
   .user-info { justify-content: space-between; width: 100%; }
@@ -367,7 +383,9 @@ h1 { font-size: 26px; font-weight: 800; margin: 0 0 6px; }
 <header class="topbar">
   <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
     <div class="logo"><div class="logo-icon">🛠️</div> Magazyn Tulejek</div>
-    <div class="online-counter"><span>Online:</span><strong id="onlineCount">1</strong></div>
+    <div class="online-counter" onclick="openOnlineUsersModal()" title="Kliknij, aby zobaczyć kto jest online">
+      <span>🟢 Online:</span><strong id="onlineCount">1</strong>
+    </div>
   </div>
   
   <nav class="nav-tabs" id="navTabs">
@@ -377,7 +395,7 @@ h1 { font-size: 26px; font-weight: 800; margin: 0 0 6px; }
 
   <div class="spacer"></div>
   <div class="user-info">
-    <button class="btn-theme" id="themeToggleBtn" onclick="toggleDarkMode()">🌙 Tryb ciemny</button>
+    <button class="btn-theme" id="themeToggleBtn" onclick="toggleDarkMode()">☀️ Tryb jasny</button>
     <span id="userNameDisplay" style="font-weight:700;color:#fff;"></span>
     <span class="role-badge" id="roleBadge"></span>
     <button class="btn-logout" onclick="logout()">Wyloguj</button>
@@ -423,19 +441,20 @@ h1 { font-size: 26px; font-weight: 800; margin: 0 0 6px; }
     
     <div class="map-container">
       <div class="map-wrapper" id="mapWrapper" onclick="handleMapClick(event)">
-        <svg id="mapSvg" class="map-image" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg" style="background:#e5e7eb;">
+        <!-- Obrazek SVG mapy dostosowany kolorystycznie do trybu ciemnego/jasnego -->
+        <svg id="mapSvg" class="map-image" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#d1d5db" stroke-width="1"/>
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--map-grid)" stroke-width="1"/>
             </pattern>
             <pattern id="hatch" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
               <line x1="0" y1="0" x2="0" y2="10" stroke="#16a34a" stroke-width="2" />
             </pattern>
           </defs>
 
-          <rect width="1200" height="600" fill="#f3f4f6"/>
+          <rect width="1200" height="600" fill="var(--map-board)"/>
           <rect width="1200" height="600" fill="url(#grid)"/>
-          <rect x="20" y="20" width="1160" height="560" fill="none" stroke="#374151" stroke-width="8"/>
+          <rect x="20" y="20" width="1160" height="560" fill="none" stroke="var(--map-border)" stroke-width="8"/>
 
           <g transform="translate(200, 60)">
             <rect x="0" y="0" width="320" height="50" fill="#78350f" stroke="#451a03" stroke-width="2"/>
@@ -589,6 +608,19 @@ h1 { font-size: 26px; font-weight: 800; margin: 0 0 6px; }
  </div>
 </div>
 
+<!-- Modal Aktywnych Użytkowników Online -->
+<div class="modal-backdrop" id="onlineUsersModal">
+ <div class="modal" style="width:min(400px, 100%)">
+  <div class="modal-head"><h2>🟢 Kto jest online</h2><button class="close" onclick="closeModal('onlineUsersModal')">×</button></div>
+  <div class="modal-body">
+    <ul id="onlineUsersList" style="list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px;"></ul>
+  </div>
+  <div class="modal-foot">
+    <button class="secondary" onclick="closeModal('onlineUsersModal')">Zamknij</button>
+  </div>
+ </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -614,20 +646,29 @@ const presenceDb = firebase.database().ref('obecni');
 
 let pallets = [];
 let logs = [];
+let onlineUsersData = {};
 let editingId = null;
 let selectedMapCoords = null;
 let currentRole = localStorage.getItem('magazyn_role') || null;
 let currentUserName = localStorage.getItem('magazyn_user_name') || null;
-let isDarkMode = localStorage.getItem('magazyn_dark_mode') === 'true';
+
+// Domyślnie ustawiamy tryb ciemny, chyba że użytkownik wcześniej zapisał w pamięci przeglądarki inny wybór
+let savedTheme = localStorage.getItem('magazyn_dark_mode');
+let isDarkMode = savedTheme !== null ? savedTheme === 'true' : true;
+
 let userPresenceRef = null;
 
 let activePinId = null;
 let isDraggingPin = false;
 let dragJustEnded = false;
+let lastSeenLogCount = Number(localStorage.getItem('magazyn_last_seen_logs') || 0);
 
 if (isDarkMode) {
   document.body.classList.add('dark-mode');
   document.getElementById('themeToggleBtn').textContent = '☀️ Tryb jasny';
+} else {
+  document.body.classList.remove('dark-mode');
+  document.getElementById('themeToggleBtn').textContent = '🌙 Tryb ciemny';
 }
 
 if (currentRole && currentUserName) {
@@ -692,8 +733,25 @@ function setupPresence() {
 
 presenceDb.on('value', (snapshot) => {
   const data = snapshot.val();
-  document.getElementById('onlineCount').textContent = data ? Object.keys(data).length : 0;
+  onlineUsersData = data || {};
+  document.getElementById('onlineCount').textContent = Object.keys(onlineUsersData).length;
 });
+
+function openOnlineUsersModal() {
+  const listEl = document.getElementById('onlineUsersList');
+  const users = Object.values(onlineUsersData);
+  if (!users.length) {
+    listEl.innerHTML = '<li style="color:var(--muted); text-align:center;">Brak aktywnych użytkowników</li>';
+  } else {
+    listEl.innerHTML = users.map(u => `
+      <li style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg); border:1px solid var(--line); border-radius:8px;">
+        <strong>${esc(u.name)}</strong>
+        <span class="role-badge ${u.role === 'admin' ? 'role-admin' : 'role-user'}">${u.role === 'admin' ? 'Admin' : 'Użytkownik'}</span>
+      </li>
+    `).join('');
+  }
+  document.getElementById('onlineUsersModal').classList.add('show');
+}
 
 function applyRoleUI() {
   const badge = document.getElementById('roleBadge');
@@ -712,8 +770,9 @@ function applyRoleUI() {
 
     const adminBtnLogs = document.createElement('button');
     adminBtnLogs.className = 'nav-tab admin-nav-item';
-    adminBtnLogs.innerHTML = '📋 Dziennik zdarzeń';
-    adminBtnLogs.onclick = function() { switchTab('tabLogs', this); renderLogs(); };
+    adminBtnLogs.id = 'navLogsBtn';
+    adminBtnLogs.innerHTML = '📋 Dziennik zdarzeń <span class="tab-badge" id="logsBadge">0</span>';
+    adminBtnLogs.onclick = function() { switchTab('tabLogs', this); renderLogs(); clearLogBadge(); };
     
     const adminBtnSummary = document.createElement('button');
     adminBtnSummary.className = 'nav-tab admin-nav-item';
@@ -761,8 +820,28 @@ db.on('value', (snapshot) => {
 logsDb.on('value', (snapshot) => {
   const data = snapshot.val();
   logs = data ? Object.values(data).sort((a,b) => new Date(b.time) - new Date(a.time)) : [];
-  renderLogs();
+  
+  if (currentRole === 'admin') {
+    const unread = logs.length - lastSeenLogCount;
+    const badge = document.getElementById('logsBadge');
+    if (badge) {
+      if (unread > 0 && !document.getElementById('tabLogs').classList.contains('active')) {
+        badge.textContent = unread;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    renderLogs();
+  }
 });
+
+function clearLogBadge() {
+  lastSeenLogCount = logs.length;
+  localStorage.setItem('magazyn_last_seen_logs', lastSeenLogCount);
+  const badge = document.getElementById('logsBadge');
+  if (badge) badge.style.display = 'none';
+}
 
 function addLog(action, text, details = '') {
   const logObj = { id: logsDb.push().key, action, text: `[${currentUserName}] ${text}`, details, time: new Date().toISOString() };
@@ -798,7 +877,10 @@ function renderLogs() {
 
 function clearLogs() {
   if (confirm('Czy na pewno chcesz wyczyścić cały dziennik zdarzeń?')) {
-    logsDb.remove();
+    logsDb.remove(() => {
+      lastSeenLogCount = 0;
+      localStorage.setItem('magazyn_last_seen_logs', 0);
+    });
   }
 }
 
