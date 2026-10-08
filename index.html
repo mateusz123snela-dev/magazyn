@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Magazyn Palet (Online)</title>
+<title>Magazyn Tulejek (Online)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -245,7 +246,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
 
 /* Sekcje Tabularne */
 .panel-section { background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-sm); }
-.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px; }
 
 /* Dziennik Zdarzeń */
 .logs-list { list-style: none; padding: 0; margin: 0; }
@@ -258,6 +259,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
 .tag-add { background: #dcfce7; color: #15803d; }
 .tag-edit { background: #e0f2fe; color: #0369a1; }
 .tag-delete { background: #fee2e2; color: #b91c1c; }
+.tag-login { background: #fef3c7; color: #b45309; }
 .log-time { font-size: 12px; color: var(--muted); white-space: nowrap; }
 
 /* Modale */
@@ -307,6 +309,10 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
 
 .size-pill { display: inline-flex; align-items: center; gap: 4px; background: #eff6ff; color: var(--primary); padding: 4px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; margin: 2px; }
 
+.filter-btn-group { display: flex; gap: 6px; }
+.filter-btn { background: #f1f5f9; color: #475569; padding: 6px 12px; border-radius: 8px; font-size: 12px; font-weight: 700; }
+.filter-btn.active { background: var(--primary); color: #fff; }
+
 @media(max-width: 800px) {
   .stats { grid-template-columns: 1fr 1fr; }
   .hero { align-items: flex-start; flex-direction: column; }
@@ -322,8 +328,8 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
 <!-- Ekran logowania -->
 <div class="auth-screen" id="authScreen">
   <div class="auth-box">
-    <div class="icon-wrap">📦</div>
-    <h2>Witaj w Magazynie</h2>
+    <div class="icon-wrap">🛠️</div>
+    <h2>Witaj w Magazynie Tulejek</h2>
     <p>Podaj swoje imię oraz kod dostępu</p>
     <input type="text" id="userNameInput" placeholder="Twoje Imię / Nazwisko">
     <input type="password" id="accessCodeInput" placeholder="Kod dostępu (••••)" onkeydown="if(event.key==='Enter') loginWithCode()">
@@ -334,7 +340,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
 
 <div class="app">
 <header class="topbar">
-  <div class="logo"><div class="logo-icon">▦</div> Magazyn Palet</div>
+  <div class="logo"><div class="logo-icon">🛠️</div> Magazyn Tulejek</div>
   
   <nav class="nav-tabs" id="navTabs">
     <button class="nav-tab active" onclick="switchTab('tabPallets', this)">📦 Magazyn</button>
@@ -358,7 +364,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
   <div class="tab-content active" id="tabPallets">
     <section class="hero">
       <div>
-        <h1>Magazyn (Wspólny)</h1>
+        <h1>Magazyn Tulejek (Wspólny)</h1>
         <p class="subtitle">Zarządzaj paletami i synchronizuj dane na żywo w zespole.</p>
       </div>
       <button class="primary" onclick="openPalletForm()">＋ Dodaj paletę</button>
@@ -391,15 +397,21 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
     <section class="grid" id="palletGrid"></section>
   </div>
 
-  <!-- ZAKŁADKA 2: DZIENNIK ZDARZEŃ (TYLKO DLA ADMINA) -->
+  <!-- ZAKŁADKA 2: DZIENNIK ZDARZEŃ I LOGI LOGOWAŃ (TYLKO DLA ADMINA) -->
   <div class="tab-content" id="tabLogs">
     <section class="panel-section">
       <div class="panel-header">
         <div>
-          <h2 style="margin:0">📋 Dziennik zdarzeń (Tylko Admin)</h2>
-          <p class="subtitle" style="margin-top:4px">Pełna historia operacji wykonywanych na magazynie.</p>
+          <h2 style="margin:0">📋 Dziennik zdarzeń i Logi Logowań</h2>
+          <p class="subtitle" style="margin-top:4px">Pełna historia operacji oraz rejestr logowań użytkowników.</p>
         </div>
-        <button class="secondary" id="btnClearLogs" onclick="clearLogs()" style="display:none;">Wyczyść historię</button>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <div class="filter-btn-group">
+            <button class="filter-btn active" id="btnFilterAll" onclick="setLogFilter('all')">Wszystkie</button>
+            <button class="filter-btn" id="btnFilterLogin" onclick="setLogFilter('login')">🔑 Logowania</button>
+          </div>
+          <button class="secondary" id="btnClearLogs" onclick="clearLogs()" style="display:none;">Wyczyść historię</button>
+        </div>
       </div>
       <ul class="logs-list" id="logsList">
         <li class="log-item" style="color:var(--muted)">Wczytywanie historii...</li>
@@ -528,6 +540,7 @@ const presenceDb = firebase.database().ref('obecni');
 
 let pallets = [];
 let logs = [];
+let currentLogFilter = 'all';
 let editingId = null;
 let currentRole = localStorage.getItem('magazyn_role') || null;
 let currentUserName = localStorage.getItem('magazyn_user_name') || null;
@@ -568,6 +581,10 @@ function loginWithCode() {
   document.getElementById('authScreen').style.display = 'none';
   document.getElementById('accessCodeInput').value = '';
   document.getElementById('userNameInput').value = '';
+  
+  // Zapis do logów zdarzenia zalogowania
+  addLog('login', `zalogował(a) się do systemu`);
+
   applyRoleUI();
   setupPresence();
 }
@@ -679,17 +696,33 @@ function addLog(action, text, details = '') {
   logsDb.child(logObj.id).set(logObj);
 }
 
+function setLogFilter(filterType) {
+  currentLogFilter = filterType;
+  document.getElementById('btnFilterAll').classList.toggle('active', filterType === 'all');
+  document.getElementById('btnFilterLogin').classList.toggle('active', filterType === 'login');
+  renderLogs();
+}
+
 function renderLogs() {
   const container = document.getElementById('logsList');
   if (!logs.length) {
     container.innerHTML = `<li class="log-item" style="color:var(--muted)">Brak zarejestrowanych zdarzeń.</li>`;
     return;
   }
-  container.innerHTML = logs.map(l => {
+
+  const filteredLogs = logs.filter(l => currentLogFilter === 'all' || l.action === 'login');
+
+  if (!filteredLogs.length) {
+    container.innerHTML = `<li class="log-item" style="color:var(--muted)">Brak wpisów dla wybranego filtra.</li>`;
+    return;
+  }
+
+  container.innerHTML = filteredLogs.map(l => {
     let tagClass = 'tag-add';
     let tagLabel = 'DODANO';
     if (l.action === 'edit') { tagClass = 'tag-edit'; tagLabel = 'EDYCJA'; }
     if (l.action === 'delete') { tagClass = 'tag-delete'; tagLabel = 'USUNIĘTO'; }
+    if (l.action === 'login') { tagClass = 'tag-login'; tagLabel = 'LOGOWANIE'; }
 
     const dateStr = new Date(l.time).toLocaleString('pl-PL', {
       day: '2-digit', month: '2-digit', year: 'numeric',
