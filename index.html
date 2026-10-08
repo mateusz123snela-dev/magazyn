@@ -399,7 +399,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
       <div class="panel-header">
         <div>
           <h2 style="margin:0">🛠️ Zestawienie tulejek (Alfabetycznie)</h2>
-          <p class="subtitle" style="margin-top:4px">Zsumowane ilości wszystkich tulejek znajdujących się w magazynie.</p>
+          <p class="subtitle" style="margin-top:4px">Zsumowane ilości wszystkich produktów i tulejek w magazynie.</p>
         </div>
         <button class="secondary" onclick="exportSummaryCSV()">⬇ Pobierz raport CSV</button>
       </div>
@@ -407,7 +407,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
         <table class="table">
           <thead>
             <tr>
-              <th>Typ / Nazwa tulejki</th>
+              <th>Nazwa wpisu / tulejki</th>
               <th>Łączna ilość (szt.)</th>
               <th>Występuje na paletach</th>
             </tr>
@@ -424,7 +424,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
       <div class="panel-header">
         <div>
           <h2 style="margin:0">📏 Podział na rozmiary (38, 48, 50...)</h2>
-          <p class="subtitle" style="margin-top:4px">Wyliczenie stężeń produktowych rozbitych na poszczególne rozmiary.</p>
+          <p class="subtitle" style="margin-top:4px">Wyliczenie ilości produktów rozbitych na poszczególne rozmiary.</p>
         </div>
         <button class="secondary" onclick="exportSizesCSV()">⬇ Pobierz raport CSV</button>
       </div>
@@ -688,17 +688,13 @@ function clearLogs() {
   }
 }
 
-/* LOGIKA ZESTAWIENIA TULEJEK (ZAKŁADKA 3) */
+/* LOGIKA ZESTAWIENIA TULEJEK / OGÓLNEGO (ZAKŁADKA 3) */
 function getAggregatedSleeves() {
   const productMap = {};
   pallets.forEach(p => {
     (p.items || []).forEach(item => {
       const rawName = (item.name || '').trim();
-      const rawSku = (item.sku || '').trim();
-      
-      // Filtrowanie wyłącznie tulejek
-      const isSleeve = rawName.toLowerCase().includes('tulej') || rawSku.toLowerCase().includes('tulej');
-      if (!rawName || !isSleeve) return;
+      if (!rawName) return;
 
       const key = rawName.toLowerCase();
       const qty = Number(item.qty) || 0;
@@ -719,7 +715,7 @@ function renderSummaryTab() {
   const sleeves = getAggregatedSleeves();
 
   if (!sleeves.length) {
-    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">Brak tulejek zarejestrowanych na paletach.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">Brak produktów w magazynie.</td></tr>`;
   } else {
     tbody.innerHTML = sleeves.map(p => `
       <tr>
@@ -735,7 +731,7 @@ function exportSummaryCSV() {
   const sleeves = getAggregatedSleeves();
   if (!sleeves.length) return alert('Brak danych do eksportu.');
 
-  let csvContent = "\uFEFFNazwa Tulejki;Laczna Ilosc;Palety\n";
+  let csvContent = "\uFEFFNazwa Wpisu;Laczna Ilosc;Palety\n";
   sleeves.forEach(p => {
     csvContent += `"${p.name.replace(/"/g, '""')}";${p.totalQty};"${Array.from(p.pallets).join(', ')}"\n`;
   });
@@ -866,7 +862,7 @@ function nextCode(){let n=1;while(pallets.some(p=>p.code===`P-${String(n).padSta
 
 function addItemRow(data={name:'',qty:'',sku:''}){
  const row=document.createElement('div');row.className='item-row';
- row.innerHTML=`<input class="iname" placeholder="Nazwa i rozmiar (np. Spodnie 48)" value="${esc(data.name)}"><input class="iqty" type="number" min="0" placeholder="Ilość" value="${esc(data.qty)}"><input class="isku" placeholder="SKU / kod" value="${esc(data.sku)}"><button class="remove-item" onclick="this.parentElement.remove()">×</button>`;
+ row.innerHTML=`<input class="iname" placeholder="Nazwa produktu i rozmiar" value="${esc(data.name)}"><input class="iqty" type="number" min="0" placeholder="Ilość" value="${esc(data.qty)}"><input class="isku" placeholder="SKU / kod" value="${esc(data.sku)}"><button class="remove-item" onclick="this.parentElement.remove()">×</button>`;
  document.getElementById('itemRows').appendChild(row);
 }
 
