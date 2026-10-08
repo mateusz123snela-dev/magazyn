@@ -280,6 +280,20 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
 .remove-item { background: #fee2e2; color: #b91c1c; border-radius: 8px; font-size: 18px; }
 .add-item { background: #eff6ff; color: var(--primary); padding: 8px 14px; border-radius: 8px; font-weight: 700; }
 
+.unit-info-box {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .details { padding: 24px; }
 .detail-title { display: flex; justify-content: space-between; gap: 15px; align-items: flex-start; }
 .detail-title h2 { margin: 0; font-size: 24px; font-weight: 800; }
@@ -403,6 +417,13 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
         </div>
         <button class="secondary" onclick="exportSummaryCSV()">⬇ Pobierz raport CSV</button>
       </div>
+
+      <!-- Informacja o przeliczniku -->
+      <div class="unit-info-box">
+        <span>💡 <strong>Przelicznik jednostek:</strong></span>
+        <span>1 kosz = <strong>400 szt.</strong> &nbsp;|&nbsp; 1 paleta = <strong>4000 szt.</strong></span>
+      </div>
+
       <div style="border:1px solid var(--line); border-radius: var(--radius); overflow:hidden;">
         <table class="table">
           <thead>
@@ -458,7 +479,16 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
     <div class="field full"><label>Lokalizacja w magazynie</label><input id="pLocation" placeholder="np. Regał A / Sektor 12 / Rampa"></div>
    </div>
    <div style="margin-top:24px">
-    <div class="items-head"><h3>Zawartość palety</h3><button class="add-item" onclick="addItemRow()">＋ Dodaj produkt</button></div>
+    <div class="items-head">
+      <h3>Zawartość palety</h3>
+      <button class="add-item" onclick="addItemRow()">＋ Dodaj produkt</button>
+    </div>
+
+    <!-- Informacja o przelicznikach -->
+    <div class="unit-info-box">
+      <span>💡 <strong>Przelicznik:</strong> 1 kosz = 400 szt. | 1 paleta = 4000 szt.</span>
+    </div>
+
     <div id="itemRows"></div>
    </div>
   </div>
