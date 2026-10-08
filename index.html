@@ -208,8 +208,8 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
 .danger { background: var(--danger-light); color: var(--danger); border: 1px solid #fecaca; padding: 8px 12px; border-radius: 8px; font-weight: 600; transition: all 0.2s ease; }
 .danger:hover { background: #fee2e2; transform: translateY(-1px); }
 
-/* Statystyki */
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+/* Statystyki (Dostosowane do 3 kafelków) */
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 28px; }
 .stat {
   background: var(--panel);
   border: 1px solid var(--line);
@@ -364,7 +364,9 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.6px;
 .field input:focus { border-color: var(--primary); }
 .field.full { grid-column: 1/-1; }
 .items-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-.item-row { display: grid; grid-template-columns: 1.5fr .65fr .9fr 38px; gap: 8px; margin-bottom: 8px; animation: fadeIn 0.25s ease-out; }
+
+/* Układ bez pola SKU */
+.item-row { display: grid; grid-template-columns: 2fr 1fr 38px; gap: 8px; margin-bottom: 8px; animation: fadeIn 0.25s ease-out; }
 .item-row input { padding: 9px 12px; border: 1.5px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--text); }
 .remove-item { background: #fee2e2; color: #b91c1c; border-radius: 8px; font-size: 18px; }
 .add-item { background: #eff6ff; color: var(--primary); padding: 8px 14px; border-radius: 8px; font-weight: 700; }
@@ -433,12 +435,12 @@ body.dark-mode .size-pill { background: #1e3a8a; color: #93c5fd; }
 }
 
 @media(max-width: 800px) {
-  .stats { grid-template-columns: 1fr 1fr; }
+  .stats { grid-template-columns: 1fr; }
   .hero { align-items: flex-start; flex-direction: column; }
   .topbar { padding: 0 16px; flex-wrap: wrap; height: auto; padding-bottom: 12px; }
   .container { padding: 20px 16px; }
   .form-grid, .detail-info { grid-template-columns: 1fr; }
-  .item-row { grid-template-columns: 1fr 80px 100px 38px; }
+  .item-row { grid-template-columns: 1fr 100px 38px; }
 }
 </style>
 </head>
@@ -490,6 +492,7 @@ body.dark-mode .size-pill { background: #1e3a8a; color: #93c5fd; }
       <button class="primary" onclick="openPalletForm()">＋ Dodaj paletę</button>
     </section>
 
+    <!-- Sekcja 3 Kafelków (bez kafelka czasu) -->
     <section class="stats">
       <div class="stat">
         <div class="stat-icon">📦</div>
@@ -502,10 +505,6 @@ body.dark-mode .size-pill { background: #1e3a8a; color: #93c5fd; }
       <div class="stat">
         <div class="stat-icon">🔢</div>
         <div><div class="stat-label">Łączna ilość sztuk</div><div class="stat-value" id="statQty">0</div></div>
-      </div>
-      <div class="stat">
-        <div class="stat-icon">🕒</div>
-        <div><div class="stat-label">Ostatnia zmiana</div><div class="stat-value" id="statDate" style="font-size:16px">—</div></div>
       </div>
     </section>
 
@@ -552,7 +551,6 @@ body.dark-mode .size-pill { background: #1e3a8a; color: #93c5fd; }
         <button class="secondary" onclick="exportSummaryCSV()">⬇ Pobierz raport CSV</button>
       </div>
 
-      <!-- Informacja o przeliczniku -->
       <div class="unit-info-box">
         <span>💡 <strong>Przelicznik jednostek:</strong></span>
         <span>1 kosz = <strong>400 szt.</strong> &nbsp;|&nbsp; 1 paleta = <strong>4000 szt.</strong></span>
@@ -618,7 +616,6 @@ body.dark-mode .size-pill { background: #1e3a8a; color: #93c5fd; }
       <button class="add-item" onclick="addItemRow()">＋ Dodaj produkt</button>
     </div>
 
-    <!-- Informacja o przelicznikach -->
     <div class="unit-info-box">
       <span>💡 <strong>Przelicznik:</strong> 1 kosz = 400 szt. | 1 paleta = 4000 szt.</span>
     </div>
@@ -813,7 +810,7 @@ logsDb.on('value', (snapshot) => {
 
 function formatItemsList(items) {
   if (!items || !items.length) return 'Brak zawartości (pusta paleta)';
-  return items.map(i => `${i.name} (${i.qty || 0} szt.)${i.sku ? ' [kod: '+i.sku+']' : ''}`).join(', ');
+  return items.map(i => `${i.name} (${i.qty || 0} szt.)`).join(', ');
 }
 
 function addLog(action, text, details = '') {
@@ -955,9 +952,8 @@ function exportSummaryCSV() {
 }
 
 /* LOGIKA PODZIAŁU NA ROZMIARY (ZAKŁADKA 4) */
-function parseSizeAndName(fullName, sku) {
-  const combined = `${fullName} ${sku || ''}`;
-  const sizeMatch = combined.match(/(?:rozmiar|rozm\.?|r\.?|\b)\s*(38|48|50|32|34|36|40|42|44|46|52|54|XS|S|M|L|XL|XXL)\b/i);
+function parseSizeAndName(fullName) {
+  const sizeMatch = fullName.match(/(?:rozmiar|rozm\.?|r\.?|\b)\s*(38|48|50|32|34|36|40|42|44|46|52|54|XS|S|M|L|XL|XXL)\b/i);
   
   let size = 'Standard / Inne';
   if (sizeMatch) size = sizeMatch[1].toUpperCase();
@@ -975,7 +971,7 @@ function getAggregatedProductsWithSizes() {
       const rawName = (item.name || '').trim();
       if (!rawName) return;
       
-      const { baseName, size } = parseSizeAndName(rawName, item.sku);
+      const { baseName, size } = parseSizeAndName(rawName);
       const key = baseName.toLowerCase();
       const qty = Number(item.qty) || 0;
 
@@ -1076,7 +1072,7 @@ function totalQty(p){return (p.items||[]).reduce((a,i)=>a+(Number(i.qty)||0),0)}
 
 function render(){
  const q=document.getElementById('search').value.toLowerCase().trim();
- const list=pallets.filter(p=>!q || [p.code,p.name,p.location,...(p.items||[]).map(i=>i.name+' '+i.sku)].join(' ').toLowerCase().includes(q));
+ const list=pallets.filter(p=>!q || [p.code,p.name,p.location,...(p.items||[]).map(i=>i.name)].join(' ').toLowerCase().includes(q));
  
  document.getElementById('palletGrid').innerHTML=list.length?list.map((p, idx)=>`
   <article class="pallet" style="animation-delay: ${idx * 0.04}s" onclick="openDetails('${p.id}')">
@@ -1091,7 +1087,6 @@ function render(){
  document.getElementById('statPallets').textContent=pallets.length;
  document.getElementById('statItems').textContent=pallets.reduce((a,p)=>a+(p.items||[]).length,0);
  document.getElementById('statQty').textContent=pallets.reduce((a,p)=>a+totalQty(p),0);
- document.getElementById('statDate').textContent=new Date().toLocaleTimeString('pl-PL', {hour:'2-digit', minute:'2-digit'});
 }
 
 function openPalletForm(id=null){
@@ -1102,22 +1097,22 @@ function openPalletForm(id=null){
  document.getElementById('pName').value=p?.name||'';
  document.getElementById('pLocation').value=p?.location||'';
  document.getElementById('itemRows').innerHTML='';
- (p?.items?.length?p.items:[{name:'',qty:'',sku:''}]).forEach(addItemRow);
+ (p?.items?.length?p.items:[{name:'',qty:''}]).forEach(addItemRow);
  document.getElementById('formModal').classList.add('show');
 }
 
 function nextCode(){let n=1;while(pallets.some(p=>p.code===`P-${String(n).padStart(3,'0')}`))n++;return `P-${String(n).padStart(3,'0')}`}
 
-function addItemRow(data={name:'',qty:'',sku:''}){
+function addItemRow(data={name:'',qty:''}){
  const row=document.createElement('div');row.className='item-row';
- row.innerHTML=`<input class="iname" placeholder="Nazwa produktu i rozmiar" value="${esc(data.name)}"><input class="iqty" type="number" min="0" placeholder="Ilość" value="${esc(data.qty)}"><input class="isku" placeholder="SKU / kod" value="${esc(data.sku)}"><button class="remove-item" onclick="this.parentElement.remove()">×</button>`;
+ row.innerHTML=`<input class="iname" placeholder="Nazwa produktu i rozmiar" value="${esc(data.name)}"><input class="iqty" type="number" min="0" placeholder="Ilość" value="${esc(data.qty)}"><button class="remove-item" onclick="this.parentElement.remove()">×</button>`;
  document.getElementById('itemRows').appendChild(row);
 }
 
 function savePallet(){
  const code=document.getElementById('pCode').value.trim();
  if(!code){alert('Podaj numer palety.');return}
- const items=[...document.querySelectorAll('.item-row')].map(r=>({name:r.querySelector('.iname').value.trim(),qty:Number(r.querySelector('.iqty').value)||0,sku:r.querySelector('.isku').value.trim()})).filter(i=>i.name);
+ const items=[...document.querySelectorAll('.item-row')].map(r=>({name:r.querySelector('.iname').value.trim(),qty:Number(r.querySelector('.iqty').value)||0})).filter(i=>i.name);
  const id = editingId || db.push().key;
  const obj={id,code,name:document.getElementById('pName').value.trim(),location:document.getElementById('pLocation').value.trim(),items,updatedAt:new Date().toISOString()};
  
@@ -1157,7 +1152,7 @@ function openDetails(id){
  document.getElementById('detailContent').innerHTML=`
   <div class="detail-title"><div><h2>${esc(p.code)}</h2><p>${esc(p.name||'Bez nazwy')}</p></div><div class="detail-actions"><button class="secondary" onclick="closeModal('detailModal');openPalletForm('${p.id}')">Edytuj</button><button class="close" onclick="closeModal('detailModal')">×</button></div></div>
   <div class="detail-info"><div class="info"><span>Lokalizacja</span><strong>${esc(p.location||'—')}</strong></div><div class="info"><span>Liczba pozycji</span><strong>${(p.items||[]).length}</strong></div><div class="info"><span>Łączna ilość</span><strong>${totalQty(p)} szt.</strong></div></div>
-  ${(p.items||[]).length?`<table class="table"><thead><tr><th>Produkt</th><th>Ilość</th><th>Szybka zmiana</th><th>SKU / kod</th></tr></thead><tbody>${p.items.map((i, idx)=>`<tr><td><strong>${esc(i.name)}</strong></td><td><strong>${esc(i.qty)}</strong> szt.</td><td><div class="quick-adjust-group"><button class="btn-adjust minus" onclick="adjustItemQty('${p.id}', ${idx}, -400, '1 kosz')">-1 kosz</button><button class="btn-adjust minus" onclick="adjustItemQty('${p.id}', ${idx}, -100, '100 szt')">-100</button><button class="btn-adjust" onclick="adjustItemQty('${p.id}', ${idx}, 100, '100 szt')">+100</button><button class="btn-adjust" onclick="adjustItemQty('${p.id}', ${idx}, 400, '1 kosz')">+1 kosz</button></div></td><td>${esc(i.sku||'—')}</td></tr>`).join('')}</tbody></table>`:'<div class="notice">Ta paleta nie ma jeszcze dodanych produktów.</div>'}
+  ${(p.items||[]).length?`<table class="table"><thead><tr><th>Produkt</th><th>Ilość</th><th>Szybka zmiana</th></tr></thead><tbody>${p.items.map((i, idx)=>`<tr><td><strong>${esc(i.name)}</strong></td><td><strong>${esc(i.qty)}</strong> szt.</td><td><div class="quick-adjust-group"><button class="btn-adjust minus" onclick="adjustItemQty('${p.id}', ${idx}, -400, '1 kosz')">-1 kosz</button><button class="btn-adjust minus" onclick="adjustItemQty('${p.id}', ${idx}, -100, '100 szt')">-100</button><button class="btn-adjust" onclick="adjustItemQty('${p.id}', ${idx}, 100, '100 szt')">+100</button><button class="btn-adjust" onclick="adjustItemQty('${p.id}', ${idx}, 400, '1 kosz')">+1 kosz</button></div></td></tr>`).join('')}</tbody></table>`:'<div class="notice">Ta paleta nie ma jeszcze dodanych produktów.</div>'}
  `;
  document.getElementById('detailModal').classList.add('show');
 }
