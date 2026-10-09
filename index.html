@@ -374,18 +374,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .btn-adjust.btn-plus { border-color: #4ade80; color: #16a34a; }
 .btn-adjust.btn-plus:hover { background: #16a34a; color: #fff; }
 
-/* Animacje podświetlenia zmiany ilości */
-@keyframes flashGreen {
-  0% { background-color: rgba(34, 197, 94, 0.4); transform: scale(1.02); }
-  100% { background-color: transparent; transform: scale(1); }
-}
-@keyframes flashRed {
-  0% { background-color: rgba(239, 68, 68, 0.4); transform: scale(1.02); }
-  100% { background-color: transparent; transform: scale(1); }
-}
-.highlight-green { animation: flashGreen 0.8s ease-out; }
-.highlight-red { animation: flashRed 0.8s ease-out; }
-
 /* Ulepszony wygląd Dziennika i Tabel dla Admina */
 .panel-section { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-sm); }
 .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 10px; }
@@ -434,7 +422,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 }
 .modal-backdrop.show { display: flex; }
 
-/* Specjalny z-index dla okna szybkiego dodawania, aby zawsze było nad podglądem palety */
 #quickAddModal { z-index: 600; }
 
 .modal { background: var(--panel); color: var(--text); width: min(850px, 100%); max-height: 92vh; overflow: auto; border-radius: 24px; border: 1px solid var(--line); box-shadow: var(--shadow-lg); }
@@ -479,11 +466,11 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   <div class="auth-box">
     <div class="icon-wrap">🛠️</div>
     <h2>Magazyn Tulejek</h2>
-    <p>Podaj swoje imię oraz kod dostępu</p>
-    <input type="text" id="userNameInput" placeholder="Twoje Imię / Nazwisko">
-    <input type="password" id="accessCodeInput" placeholder="Kod dostępu (••••)" onkeydown="if(event.key==='Enter') loginWithCode()">
-    <button class="primary" onclick="loginWithCode()">Zaloguj się</button>
-    <div class="auth-error" id="authError">Podaj imię oraz prawidłowy kod!</div>
+    <p>Podaj login oraz hasło dostępu</p>
+    <input type="text" id="loginUserInput" placeholder="Login użytkownika">
+    <input type="password" id="loginPasswordInput" placeholder="Hasło (••••)" onkeydown="if(event.key==='Enter') loginWithDb()">
+    <button class="primary" onclick="loginWithDb()">Zaloguj się</button>
+    <div class="auth-error" id="authError">Nieprawidłowy login lub hasło!</div>
   </div>
 </div>
 
@@ -651,7 +638,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     </section>
 
     <section class="panel-section">
-      <!-- Przyciski wyboru rozmiarów (38, 48, 50) -->
       <div class="size-filters">
         <button class="size-filter-btn active" id="filter-all" onclick="filterBySize('all')">Wszystkie</button>
         <button class="size-filter-btn" id="filter-38" onclick="filterBySize('38')">Rozmiar 38</button>
@@ -669,6 +655,33 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
             </tr>
           </thead>
           <tbody id="sizesTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- ZAKŁADKA 6: UŻYTKOWNICY (ADMIN) -->
+  <div class="tab-content" id="tabUsers">
+    <section class="hero">
+      <div>
+        <h1>Zarządzanie użytkownikami</h1>
+        <p class="subtitle">Dodawaj nowe konta z dostępem do systemu oraz nadawaj uprawnienia.</p>
+      </div>
+      <button class="primary" onclick="openUserModal()">＋ Dodaj użytkownika</button>
+    </section>
+
+    <section class="panel-section">
+      <div class="styled-table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Imię / Nazwa konta</th>
+              <th>Login</th>
+              <th>Rola</th>
+              <th style="text-align:right">Akcje</th>
+            </tr>
+          </thead>
+          <tbody id="usersTableBody"></tbody>
         </table>
       </div>
     </section>
@@ -696,6 +709,38 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
    </div>
   </div>
   <div class="modal-foot"><button class="secondary" onclick="closeModal('formModal')">Anuluj</button><button class="primary" onclick="savePallet()">Zapisz paletę</button></div>
+ </div>
+</div>
+
+<!-- Modal Dodawania Użytkownika -->
+<div class="modal-backdrop" id="userModal">
+ <div class="modal" style="width:min(420px, 100%)">
+  <div class="modal-head"><h2>Dodaj użytkownika</h2><button class="close" onclick="closeModal('userModal')">×</button></div>
+  <div class="modal-body">
+   <div class="field" style="margin-bottom:14px;">
+     <label>Imię / Nazwisko *</label>
+     <input id="newUserName" placeholder="np. Jan Kowalski">
+   </div>
+   <div class="field" style="margin-bottom:14px;">
+     <label>Login *</label>
+     <input id="newUserLogin" placeholder="np. jan">
+   </div>
+   <div class="field" style="margin-bottom:14px;">
+     <label>Hasło *</label>
+     <input id="newUserPass" type="password" placeholder="••••">
+   </div>
+   <div class="field">
+     <label>Rola w systemie *</label>
+     <select id="newUserRole">
+       <option value="user">Użytkownik</option>
+       <option value="admin">Administrator</option>
+     </select>
+   </div>
+  </div>
+  <div class="modal-foot">
+    <button class="secondary" onclick="closeModal('userModal')">Anuluj</button>
+    <button class="primary" onclick="saveNewUser()">Utwórz konto</button>
+  </div>
  </div>
 </div>
 
@@ -762,9 +807,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
-const CODE_USER = "1234";    
-const CODE_ADMIN = "admin99"; 
-
 const firebaseConfig = {
   apiKey: "AIzaSyC6sqBV7s4McetBpvNFcWFuLVRCF-ic83I",
   authDomain: "magazyn-bbe7c.firebaseapp.com",
@@ -780,9 +822,11 @@ firebase.initializeApp(firebaseConfig);
 const db = firebase.database().ref('palety');
 const logsDb = firebase.database().ref('dziennik');
 const presenceDb = firebase.database().ref('obecni');
+const usersDb = firebase.database().ref('uzytkownicy');
 
 let pallets = [];
 let logs = [];
+let usersList = [];
 let onlineUsersData = {};
 let editingId = null;
 let selectedMapCoords = null;
@@ -807,6 +851,19 @@ if (isDarkMode) {
   document.body.classList.remove('dark-mode');
   document.getElementById('themeToggleBtn').textContent = '🌙 Tryb ciemny';
 }
+
+// Inicjalizacja domyślnego admina, jeśli baza użytkowników jest pusta
+usersDb.once('value', (snapshot) => {
+  if (!snapshot.exists()) {
+    usersDb.child('admin').set({ name: 'Administrator', login: 'admin', pass: 'admin99', role: 'admin' });
+  }
+});
+
+usersDb.on('value', (snapshot) => {
+  const data = snapshot.val();
+  usersList = data ? Object.values(data) : [];
+  if (currentRole === 'admin') renderUsersTab();
+});
 
 if (currentRole && currentUserName) {
   document.getElementById('authScreen').style.display = 'none';
@@ -845,38 +902,47 @@ function showToast(title, message, type = 'success') {
   }, 3500);
 }
 
-function loginWithCode() {
-  const nameInput = document.getElementById('userNameInput').value.trim();
-  const codeInput = document.getElementById('accessCodeInput').value.trim();
+function loginWithDb() {
+  const loginInput = document.getElementById('loginUserInput').value.trim().toLowerCase();
+  const passInput = document.getElementById('loginPasswordInput').value.trim();
   const errorEl = document.getElementById('authError');
   
-  if (!nameInput) {
-    errorEl.textContent = 'Proszę podać swoje imię!';
+  if (!loginInput || !passInput) {
+    errorEl.textContent = 'Proszę podać login oraz hasło!';
     errorEl.style.display = 'block';
     return;
   }
 
-  if (codeInput === CODE_ADMIN) {
-    currentRole = 'admin';
-  } else if (codeInput === CODE_USER) {
-    currentRole = 'user';
-  } else {
-    errorEl.textContent = 'Nieprawidłowy kod dostępu!';
-    errorEl.style.display = 'block';
-    return;
-  }
-  
-  currentUserName = nameInput;
-  localStorage.setItem('magazyn_role', currentRole);
-  localStorage.setItem('magazyn_user_name', currentUserName);
-  
-  errorEl.style.display = 'none';
-  document.getElementById('authScreen').style.display = 'none';
-  addLog('login', `zalogował(a) się do systemu`);
-  showToast('Zalogowano', `Witaj w systemie, ${currentUserName}!`, 'success');
+  usersDb.once('value', (snapshot) => {
+    const users = snapshot.val() || {};
+    let foundUser = null;
 
-  applyRoleUI();
-  setupPresence();
+    for (let key in users) {
+      if (users[key].login.toLowerCase() === loginInput && users[key].pass === passInput) {
+        foundUser = users[key];
+        break;
+      }
+    }
+
+    if (!foundUser) {
+      errorEl.textContent = 'Nieprawidłowy login lub hasło!';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    currentRole = foundUser.role;
+    currentUserName = foundUser.name;
+    localStorage.setItem('magazyn_role', currentRole);
+    localStorage.setItem('magazyn_user_name', currentUserName);
+
+    errorEl.style.display = 'none';
+    document.getElementById('authScreen').style.display = 'none';
+    addLog('login', `zalogował(a) się do systemu`);
+    showToast('Zalogowano', `Witaj w systemie, ${currentUserName}!`, 'success');
+
+    applyRoleUI();
+    setupPresence();
+  });
 }
 
 function logout() {
@@ -946,9 +1012,15 @@ function applyRoleUI() {
     adminBtnSizes.innerHTML = '📏 Podział na rozmiary';
     adminBtnSizes.onclick = function() { switchTab('tabSizes', this); renderSizesTab(); };
 
+    const adminBtnUsers = document.createElement('button');
+    adminBtnUsers.className = 'nav-tab admin-nav-item';
+    adminBtnUsers.innerHTML = '👥 Użytkownicy';
+    adminBtnUsers.onclick = function() { switchTab('tabUsers', this); renderUsersTab(); };
+
     navTabs.appendChild(adminBtnLogs);
     navTabs.appendChild(adminBtnSummary);
     navTabs.appendChild(adminBtnSizes);
+    navTabs.appendChild(adminBtnUsers);
   } else {
     badge.textContent = 'Użytkownik'; badge.className = 'role-badge role-user';
     btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
@@ -1010,7 +1082,71 @@ function addLog(action, text, details = '') {
   logsDb.child(logObj.id).set(logObj);
 }
 
-/* RENDERING FUNKCJI DLA ADMINA */
+/* ZARZĄDZANIE UŻYTKOWNIKAMI */
+function openUserModal() {
+  document.getElementById('newUserName').value = '';
+  document.getElementById('newUserLogin').value = '';
+  document.getElementById('newUserPass').value = '';
+  document.getElementById('newUserRole').value = 'user';
+  document.getElementById('userModal').classList.add('show');
+}
+
+function saveNewUser() {
+  const name = document.getElementById('newUserName').value.trim();
+  const login = document.getElementById('newUserLogin').value.trim().toLowerCase();
+  const pass = document.getElementById('newUserPass').value.trim();
+  const role = document.getElementById('newUserRole').value;
+
+  if (!name || !login || !pass) {
+    alert('Wszystkie pola są wymagane!');
+    return;
+  }
+
+  usersDb.child(login).set({ name, login, pass, role }, (err) => {
+    if (!err) {
+      closeModal('userModal');
+      addLog('edit', `dodał(a) nowe konto użytkownika: ${login} (${role})`);
+      showToast('Utworzono konto', `Konto ${login} zostało pomyślnie dodane.`, 'success');
+    }
+  });
+}
+
+function deleteUser(loginKey) {
+  if (loginKey === 'admin') {
+    alert('Nie można usunąć głównego konta administratora!');
+    return;
+  }
+  if (confirm(`Czy na pewno chcesz usunąć konto użytkownika "${loginKey}"?`)) {
+    usersDb.child(loginKey).remove((err) => {
+      if (!err) {
+        addLog('delete', `usunął(ęła) konto użytkownika: ${loginKey}`);
+        showToast('Usunięto konto', `Konto ${loginKey} zostało usunięte.`, 'danger');
+      }
+    });
+  }
+}
+
+function renderUsersTab() {
+  const tbody = document.getElementById('usersTableBody');
+  if (!tbody) return;
+
+  if (!usersList.length) {
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--muted); padding:24px;">Brak użytkowników</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = usersList.map(u => `
+    <tr>
+      <td><strong style="font-size:14px; color:var(--text);">${esc(u.name)}</strong></td>
+      <td><code>${esc(u.login)}</code></td>
+      <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : 'role-user'}">${u.role === 'admin' ? 'Admin' : 'Użytkownik'}</span></td>
+      <td style="text-align:right">
+        ${u.login !== 'admin' ? `<button class="danger" style="padding:6px 12px; font-size:12px;" onclick="deleteUser('${u.login}')">Usuń</button>` : '<span style="color:var(--muted); font-size:12px;">Główne konto</span>'}
+      </td>
+    </tr>
+  `).join('');
+}
+
 function renderLogs() {
   const container = document.getElementById('logsList');
   if (!container) return;
@@ -1460,7 +1596,6 @@ function deletePallet(id){
  }
 }
 
-/* PODGLĄD PALETY Z PRZYCISKIEM SZYBKIEGO DODAWANIA */
 function openDetails(id){
  editingId = id;
  const p = pallets.find(x => x.id === id);
