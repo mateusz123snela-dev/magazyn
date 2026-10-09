@@ -59,11 +59,55 @@ button, input, select { font: inherit; }
 button { cursor: pointer; border: 0; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
 button:active { transform: scale(0.97) !important; }
 
+/* Powiadomienia typu Toast */
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 360px;
+  width: 100%;
+  pointer-events: none;
+}
+.toast {
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  padding: 14px 18px;
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+  animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.toast.toast-success { border-left: 4px solid #16a34a; }
+.toast.toast-danger { border-left: 4px solid #ef4444; }
+.toast.toast-info { border-left: 4px solid #3b82f6; }
+.toast-icon { font-size: 18px; flex-shrink: 0; }
+.toast-content { flex: 1; }
+.toast-title { font-weight: 800; font-size: 14px; margin-bottom: 2px; }
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(50px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeOutLeft {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(50px); }
+}
+
 /* Logowanie */
 .auth-screen {
   position: fixed; inset: 0;
   background: linear-gradient(135deg, #1e1b4b 0%, #0b0f19 100%);
-  display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100;
+  display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100000;
   animation: fadeIn 0.4s ease-out;
 }
 .auth-box {
@@ -168,6 +212,32 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .pallet-meta { margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: 13px; font-weight: 600; }
 .pallet-actions { display: flex; gap: 10px; margin-top: 16px; }
 .pallet-actions button { flex: 1; padding: 9px; font-size: 13px; border-radius: 10px; }
+
+/* Przyciski wyboru rozmiarów */
+.size-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+.size-filter-btn {
+  background: var(--bg);
+  border: 1.5px solid var(--line);
+  color: var(--text);
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 13px;
+}
+.size-filter-btn:hover {
+  border-color: var(--primary);
+}
+.size-filter-btn.active {
+  background: var(--primary);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
 
 /* MAPA MAGAZYNU & PINESKI */
 .map-container {
@@ -294,16 +364,27 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   background: var(--bg);
   border: 1px solid var(--line);
   color: var(--text);
-  padding: 7px 10px;
+  padding: 6px 10px;
   border-radius: 8px;
   font-size: 11px;
   font-weight: 700;
 }
-.btn-adjust:hover {
-  background: var(--primary);
-  color: #fff;
-  border-color: var(--primary);
+.btn-adjust.btn-minus { border-color: #f87171; color: #ef4444; }
+.btn-adjust.btn-minus:hover { background: #ef4444; color: #fff; }
+.btn-adjust.btn-plus { border-color: #4ade80; color: #16a34a; }
+.btn-adjust.btn-plus:hover { background: #16a34a; color: #fff; }
+
+/* Animacje podświetlenia zmiany ilości */
+@keyframes flashGreen {
+  0% { background-color: rgba(34, 197, 94, 0.4); transform: scale(1.02); }
+  100% { background-color: transparent; transform: scale(1); }
 }
+@keyframes flashRed {
+  0% { background-color: rgba(239, 68, 68, 0.4); transform: scale(1.02); }
+  100% { background-color: transparent; transform: scale(1); }
+}
+.highlight-green { animation: flashGreen 0.8s ease-out; }
+.highlight-red { animation: flashRed 0.8s ease-out; }
 
 /* Ulepszony wygląd Dziennika i Tabel dla Admina */
 .panel-section { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-sm); }
@@ -348,10 +429,14 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 /* Modale */
 .modal-backdrop { 
   position: fixed; inset: 0; background: rgba(11, 15, 25, 0.7); backdrop-filter: blur(6px);
-  display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+  display: none; align-items: center; justify-content: center; padding: 16px; z-index: 500;
   animation: fadeIn 0.2s ease-out;
 }
 .modal-backdrop.show { display: flex; }
+
+/* Specjalny z-index dla okna szybkiego dodawania, aby zawsze było nad podglądem palety */
+#quickAddModal { z-index: 600; }
+
 .modal { background: var(--panel); color: var(--text); width: min(850px, 100%); max-height: 92vh; overflow: auto; border-radius: 24px; border: 1px solid var(--line); box-shadow: var(--shadow-lg); }
 .modal-head { padding: 20px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; }
 .modal-body { padding: 24px; }
@@ -385,6 +470,9 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 </style>
 </head>
 <body>
+
+<!-- Kontener na powiadomienia Toast -->
+<div class="toast-container" id="toastContainer"></div>
 
 <!-- Ekran logowania -->
 <div class="auth-screen" id="authScreen">
@@ -563,6 +651,14 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     </section>
 
     <section class="panel-section">
+      <!-- Przyciski wyboru rozmiarów (38, 48, 50) -->
+      <div class="size-filters">
+        <button class="size-filter-btn active" id="filter-all" onclick="filterBySize('all')">Wszystkie</button>
+        <button class="size-filter-btn" id="filter-38" onclick="filterBySize('38')">Rozmiar 38</button>
+        <button class="size-filter-btn" id="filter-48" onclick="filterBySize('48')">Rozmiar 48</button>
+        <button class="size-filter-btn" id="filter-50" onclick="filterBySize('50')">Rozmiar 50</button>
+      </div>
+
       <div class="styled-table-container">
         <table class="table">
           <thead>
@@ -600,6 +696,28 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
    </div>
   </div>
   <div class="modal-foot"><button class="secondary" onclick="closeModal('formModal')">Anuluj</button><button class="primary" onclick="savePallet()">Zapisz paletę</button></div>
+ </div>
+</div>
+
+<!-- Modal Szybkiego Dodawania Produktu do Palety -->
+<div class="modal-backdrop" id="quickAddModal">
+ <div class="modal" style="width:min(400px, 100%)">
+  <div class="modal-head"><h2>Szybkie dodawanie</h2><button class="close" onclick="closeModal('quickAddModal')">×</button></div>
+  <div class="modal-body">
+   <div class="field" style="margin-bottom:14px;">
+     <label>Nazwa / rozmiar tulejki *</label>
+     <input id="quickItemName" placeholder="np. 50 DALPO SOMA">
+   </div>
+   <div class="field" style="margin-bottom:4px;">
+     <label>Ilość sztuk *</label>
+     <input id="quickItemQty" type="number" min="1" placeholder="np. 400" onkeydown="if(event.key==='Enter') saveQuickItem()">
+   </div>
+   <div style="font-size:11px; color:var(--muted); font-weight:600; margin-top:4px;">💡 1 kosz = 400 sztuk, 1 paleta = 4000</div>
+  </div>
+  <div class="modal-foot">
+    <button class="secondary" onclick="closeModal('quickAddModal')">Anuluj</button>
+    <button class="primary" onclick="saveQuickItem()">Dodaj do palety</button>
+  </div>
  </div>
 </div>
 
@@ -670,6 +788,7 @@ let editingId = null;
 let selectedMapCoords = null;
 let currentRole = localStorage.getItem('magazyn_role') || null;
 let currentUserName = localStorage.getItem('magazyn_user_name') || null;
+let selectedSizeFilter = 'all';
 
 let savedTheme = localStorage.getItem('magazyn_dark_mode');
 let isDarkMode = savedTheme !== null ? savedTheme === 'true' : true;
@@ -702,6 +821,30 @@ function toggleDarkMode() {
   document.getElementById('themeToggleBtn').textContent = isDarkMode ? '☀️ Tryb jasny' : '🌙 Tryb ciemny';
 }
 
+function showToast(title, message, type = 'success') {
+  const container = document.getElementById('toastContainer');
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  
+  let icon = '✅';
+  if (type === 'danger') icon = '⚠️';
+  if (type === 'info') icon = 'ℹ️';
+
+  toast.innerHTML = `
+    <div class="toast-icon">${icon}</div>
+    <div class="toast-content">
+      <div class="toast-title">${esc(title)}</div>
+      <div style="color:var(--muted);">${esc(message)}</div>
+    </div>
+  `;
+  container.appendChild(toast);
+
+  setTimeout(() => {
+    toast.style.animation = 'fadeOutLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+    setTimeout(() => toast.remove(), 300);
+  }, 3500);
+}
+
 function loginWithCode() {
   const nameInput = document.getElementById('userNameInput').value.trim();
   const codeInput = document.getElementById('accessCodeInput').value.trim();
@@ -730,6 +873,7 @@ function loginWithCode() {
   errorEl.style.display = 'none';
   document.getElementById('authScreen').style.display = 'none';
   addLog('login', `zalogował(a) się do systemu`);
+  showToast('Zalogowano', `Witaj w systemie, ${currentUserName}!`, 'success');
 
   applyRoleUI();
   setupPresence();
@@ -898,6 +1042,7 @@ function clearLogs() {
     logsDb.remove(() => {
       lastSeenLogCount = 0;
       localStorage.setItem('magazyn_last_seen_logs', 0);
+      showToast('Wyczyszczono', 'Dziennik zdarzeń został pomyślnie wyczyszczony.', 'info');
     });
   }
 }
@@ -934,6 +1079,13 @@ function renderSummaryTab() {
   `).join('');
 }
 
+function filterBySize(size) {
+  selectedSizeFilter = size;
+  document.querySelectorAll('.size-filter-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`filter-${size}`).classList.add('active');
+  renderSizesTab();
+}
+
 function renderSizesTab() {
   const tbody = document.getElementById('sizesTableBody');
   if (!tbody) return;
@@ -944,16 +1096,21 @@ function renderSizesTab() {
       const name = item.name.trim();
       if (!name) return;
       if (!sizes[name]) {
-        sizes[name] = { qty: 0, palletCount: 0, pallets: new Set() };
+        sizes[name] = { qty: 0, pallets: new Set() };
       }
       sizes[name].qty += Number(item.qty) || 0;
       sizes[name].pallets.add(p.id);
     });
   });
 
-  const keys = Object.keys(sizes).sort();
+  let keys = Object.keys(sizes).sort();
+  
+  if (selectedSizeFilter !== 'all') {
+    keys = keys.filter(k => k.includes(selectedSizeFilter));
+  }
+
   if (!keys.length) {
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:24px;">Brak danych o rozmiarach</td></tr>';
+    tbody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:24px;">Brak danych dla wybranego rozmiaru (${selectedSizeFilter})</td></tr>`;
     return;
   }
 
@@ -984,6 +1141,7 @@ function exportSummaryCSV() {
   });
 
   downloadCSV(csv, "zestawienie_tulejek.csv");
+  showToast('Eksport', 'Pobrano plik CSV z zestawieniem.', 'success');
 }
 
 function exportSizesCSV() {
@@ -998,12 +1156,18 @@ function exportSizesCSV() {
     });
   });
 
+  let keys = Object.keys(sizes).sort();
+  if (selectedSizeFilter !== 'all') {
+    keys = keys.filter(k => k.includes(selectedSizeFilter));
+  }
+
   let csv = "Produkt;Sztuki;Liczba palet\n";
-  Object.keys(sizes).sort().forEach(k => {
+  keys.forEach(k => {
     csv += `"${k}";"${sizes[k].qty}";"${sizes[k].pallets.size}"\n`;
   });
 
-  downloadCSV(csv, "podzial_na_rozmiary.csv");
+  downloadCSV(csv, `podzial_na_rozmiary_${selectedSizeFilter}.csv`);
+  showToast('Eksport', 'Pobrano plik CSV z podziałem na rozmiary.', 'success');
 }
 
 function downloadCSV(content, filename) {
@@ -1022,6 +1186,7 @@ function exportData() {
   document.body.appendChild(link);
   link.click();
   link.remove();
+  showToast('Kopia zapasowa', 'Pobrano plik JSON z kopią danych.', 'success');
 }
 
 function triggerRestoreFile() {
@@ -1039,11 +1204,11 @@ function restoreBackup(e) {
         const updateObj = {};
         importedPallets.forEach(p => updateObj[p.id] = p);
         db.set(updateObj, (err) => {
-          if(!err) alert('Kopia zapasowa została pomyślnie przywrócona!');
+          if(!err) showToast('Przywrócono', 'Kopia zapasowa została pomyślnie wgrana do systemu!', 'success');
         });
       }
     } catch(err) {
-      alert('Nieprawidłowy plik kopii zapasowej!');
+      showToast('Błąd', 'Nieprawidłowy plik kopii zapasowej!', 'danger');
     }
   };
   reader.readAsText(file);
@@ -1088,6 +1253,7 @@ function saveMapPinAssignment() {
     if(!err) {
       closeModal('assignMapModal');
       addLog('edit', `przypisał(a) paletę ${p.code} na mapie magazynu`);
+      showToast('Mapa', `Przypisano paletę ${p.code} do mapy.`, 'success');
     }
   });
 }
@@ -1104,6 +1270,7 @@ function rotatePin(id) {
       addLog('edit', `obrócił(a) pineskę ${p.code} o 90° (teraz ${p.rotation}°)`);
       renderMapPins();
       closePopover();
+      showToast('Mapa', `Obrócono pineskę ${p.code} (${p.rotation}°)`, 'info');
     }
   });
 }
@@ -1193,6 +1360,7 @@ function startPinDrag(e, palletId) {
         db.child(p.id).set(p, (err) => {
           if (!err) {
             addLog('edit', `przesunął(ęła) paletę ${p.code} na mapie`);
+            showToast('Mapa', `Zaktualizowano pozycję palety ${p.code}`, 'success');
           }
         });
       }
@@ -1276,21 +1444,23 @@ function savePallet(){
    if (!error) {
      addLog('edit', `${editingId ? 'zaktualizował(a)' : 'dodał(a)'} paletę ${code}`);
      closeModal('formModal');
+     showToast('Zapisano', `Paleta ${code} została pomyślnie zapisana.`, 'success');
    }
  });
 }
 
 function deletePallet(id){
  if (currentRole !== 'admin') return alert('Brak uprawnień!');
- const p=pallets.find(x=>x.id===id);
+ const p=pallets.find(x => x.id===id);
  if(p && confirm(`Usunąć paletę ${p.code}?`)){
    firebase.database().ref('palety/' + id).remove(() => {
      addLog('delete', `usunął(ęła) paletę ${p.code}`);
+     showToast('Usunięto', `Paleta ${p.code} została usunięta.`, 'danger');
    });
  }
 }
 
-/* PODGLĄD PALETY Z SZYBKĄ ZMIANĄ */
+/* PODGLĄD PALETY Z PRZYCISKIEM SZYBKIEGO DODAWANIA */
 function openDetails(id){
  editingId = id;
  const p = pallets.find(x => x.id === id);
@@ -1305,8 +1475,9 @@ function openDetails(id){
       <h2 style="margin:0; font-size:20px; font-weight:800;">${esc(p.code)}</h2>
       <div style="font-size:12px; color:var(--muted); margin-top:2px;">${esc(p.name || 'Bez nazwy')}</div>
     </div>
-    <div style="display:flex; gap:8px;">
-      <button class="secondary" onclick="closeModal('detailModal'); openPalletForm('${p.id}')">Edytuj</button>
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button class="primary" onclick="openQuickAddModal('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700;">+ Szybkie dodanie</button>
+      <button class="secondary" onclick="closeModal('detailModal'); openPalletForm('${p.id}')" style="padding: 8px 14px; font-size: 12px;">Edytuj</button>
       <button class="close" onclick="closeModal('detailModal')">×</button>
     </div>
   </div>
@@ -1337,20 +1508,20 @@ function openDetails(id){
           </tr>
         </thead>
         <tbody>
-          ${(p.items || []).map((item, index) => `
-            <tr>
+          ${(p.items || []).length ? (p.items || []).map((item, index) => `
+            <tr id="row-item-${index}">
               <td><strong>${esc(item.name)}</strong></td>
-              <td><strong>${item.qty} szt.</strong></td>
+              <td><strong id="qty-val-${index}">${item.qty} szt.</strong></td>
               <td style="text-align:right">
                 <div class="quick-adjust-group">
-                  <button class="btn-adjust" onclick="quickAdjustItem('${p.id}',${index}, -100)">-1 kosz</button>
-                  <button class="btn-adjust" onclick="quickAdjustItem('${p.id}',${index}, -100)">-100</button>
-                  <button class="btn-adjust" onclick="quickAdjustItem('${p.id}',${index}, 100)">+100</button>
-                  <button class="btn-adjust" onclick="quickAdjustItem('${p.id}',${index}, 100)">+1 kosz</button>
+                  <button class="btn-adjust btn-minus" onclick="quickAdjustItem('${p.id}',${index}, -400)" title="Odejmij 1 kosz (400 szt.)">-1 kosz</button>
+                  <button class="btn-adjust btn-minus" onclick="quickAdjustItem('${p.id}',${index}, -100)">-100</button>
+                  <button class="btn-adjust btn-plus" onclick="quickAdjustItem('${p.id}',${index}, 100)">+100</button>
+                  <button class="btn-adjust btn-plus" onclick="quickAdjustItem('${p.id}',${index}, 400)" title="Dodaj 1 kosz (400 szt.)">+1 kosz</button>
                 </div>
               </td>
             </tr>
-          `).join('')}
+          `).join('') : `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">Brak pozycji na palecie. Kliknij "+ Szybkie dodanie" powyżej.</td></tr>`}
         </tbody>
       </table>
     </div>
@@ -1369,10 +1540,51 @@ function openDetails(id){
  document.getElementById('detailModal').classList.add('show');
 }
 
+function openQuickAddModal(id) {
+  editingId = id;
+  document.getElementById('quickItemName').value = '';
+  document.getElementById('quickItemQty').value = '';
+  document.getElementById('quickAddModal').classList.add('show');
+}
+
+function saveQuickItem() {
+  const name = document.getElementById('quickItemName').value.trim();
+  const qty = Number(document.getElementById('quickItemQty').value);
+
+  if (!name || isNaN(qty) || qty <= 0) {
+    alert('Podaj poprawną nazwę produktu oraz ilość większą od 0.');
+    return;
+  }
+
+  const p = pallets.find(x => x.id === editingId);
+  if (!p) return;
+
+  if (!p.items) p.items = [];
+  
+  const existingItemIndex = p.items.findIndex(i => i.name.toLowerCase() === name.toLowerCase());
+  if (existingItemIndex > -1) {
+    p.items[existingItemIndex].qty = Number(p.items[existingItemIndex].qty) + qty;
+  } else {
+    p.items.push({ name, qty });
+  }
+
+  p.updatedAt = new Date().toISOString();
+
+  db.child(editingId).set(p, (err) => {
+    if (!err) {
+      closeModal('quickAddModal');
+      addLog('edit', `dodał(a) ${qty} szt. (${name}) do palety ${p.code}`);
+      showToast('Dodano produkt', `Pomyślnie dodano ${qty} szt. (${name}) do palety ${p.code}.`, 'success');
+      openDetails(editingId);
+    }
+  });
+}
+
 function quickAdjustItem(palletId, itemIndex, delta) {
   const p = pallets.find(x => x.id === palletId);
   if (!p || !p.items || !p.items[itemIndex]) return;
 
+  const itemName = p.items[itemIndex].name;
   const currentQty = Number(p.items[itemIndex].qty) || 0;
   const newQty = Math.max(0, currentQty + delta);
   
@@ -1381,10 +1593,27 @@ function quickAdjustItem(palletId, itemIndex, delta) {
   p.items[itemIndex].qty = newQty;
   p.updatedAt = new Date().toISOString();
 
+  let removedItemName = null;
+  if (newQty === 0) {
+    removedItemName = itemName;
+    p.items.splice(itemIndex, 1);
+  }
+
   db.child(palletId).set(p, (err) => {
     if (!err) {
-      addLog('edit', `zmienił(a) ilość ${p.items[itemIndex].name} na palecie ${p.code} (${delta > 0 ? '+' + delta : delta} szt.)`);
-      openDetails(palletId);
+      if (removedItemName) {
+        const logText = `usunął(ęła) pozycję "${removedItemName}" z palety ${p.code} (stan osiągnął 0)`;
+        addLog('delete', logText);
+        showToast('Usunięto pozycję', `Stan ${removedItemName} wyniósł 0 – pozycja została usunięta z palety ${p.code}.`, 'danger');
+      } else {
+        const changeText = `${delta > 0 ? '+' + delta : delta} szt. (${itemName} na ${p.code})`;
+        addLog('edit', `zmienił(a) ilość ${changeText}`);
+        showToast(delta > 0 ? 'Dodano sztuki' : 'Odebrano sztuki', `${changeText}. Nowy stan: ${newQty}`, delta > 0 ? 'success' : 'danger');
+      }
+
+      setTimeout(() => {
+        openDetails(palletId);
+      }, 300);
     }
   });
 }
@@ -1394,12 +1623,14 @@ function removePinFromMap(id) {
   const p = pallets.find(x => x.id === id);
   if(!p) return;
   p.mapX = null; p.mapY = null;
-  db.child(id).set(p, () => closeModal('detailModal'));
+  db.child(id).set(p, () => {
+    closeModal('detailModal');
+    showToast('Mapa', `Usunięto paletę ${p.code} z mapy.`, 'info');
+  });
 }
 
 function closeModal(id){
   document.getElementById(id).classList.remove('show');
-  if (id === 'detailModal') editingId = null;
 }
 </script>
 </body>
