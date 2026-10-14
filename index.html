@@ -167,12 +167,19 @@ button:active { transform: scale(0.97) !important; }
 
 .role-badge { padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
 .role-admin { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
-.role-user { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+.role-tulejarka { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.3); }
+.role-pracownik { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
 .btn-theme, .btn-logout { background: rgba(255,255,255,0.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.12); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; }
 .btn-theme:hover, .btn-logout:hover { background: rgba(255,255,255,0.15); color: #fff; }
 
+.inactivity-badge {
+  background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 6px;
+}
+
 /* Kontener Strony */
-.container { max-width: 1400px; margin: 0 auto; padding: 32px 20px; }
+.container { max-width: 1500px; margin: 0 auto; padding: 32px 20px; }
 .tab-content { display: none; }
 .tab-content.active { display: block; animation: fadeIn 0.35s ease-out; }
 
@@ -213,14 +220,14 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .pallet-actions { display: flex; gap: 10px; margin-top: 16px; }
 .pallet-actions button { flex: 1; padding: 9px; font-size: 13px; border-radius: 10px; }
 
-/* Przyciski wyboru rozmiarów */
-.size-filters {
+/* Przyciski wyboru rozmiarów / filtrów logów */
+.size-filters, .log-filters {
   display: flex;
   gap: 8px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   flex-wrap: wrap;
 }
-.size-filter-btn {
+.size-filter-btn, .log-filter-btn {
   background: var(--bg);
   border: 1.5px solid var(--line);
   color: var(--text);
@@ -229,17 +236,17 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   font-weight: 700;
   font-size: 13px;
 }
-.size-filter-btn:hover {
+.size-filter-btn:hover, .log-filter-btn:hover {
   border-color: var(--primary);
 }
-.size-filter-btn.active {
+.size-filter-btn.active, .log-filter-btn.active {
   background: var(--primary);
   color: #fff;
   border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* MAPA MAGAZYNU & PINESKI */
+/* DUŻA MAPA MAGAZYNU & ELEGANCKIE PINS / KAFELKI */
 .map-container {
   position: relative;
   width: 100%;
@@ -254,7 +261,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .map-wrapper {
   position: relative;
   display: inline-block;
-  min-width: 1000px;
+  min-width: 1700px;
   width: 100%;
 }
 .map-image {
@@ -262,40 +269,46 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   height: auto;
   display: block;
 }
-.map-pin {
+
+.map-slot {
   position: absolute;
-  transform-origin: center center;
-  background: var(--primary);
-  color: #fff;
-  padding: 7px 14px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 800;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+  transform: translate(-50%, -50%);
+  background: rgba(15, 23, 42, 0.75);
+  color: #94a3b8;
+  border: 1px dashed rgba(255, 255, 255, 0.4);
+  padding: 5px 9px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 700;
   cursor: pointer;
-  border: 2.5px solid #fff;
   white-space: nowrap;
-  transition: transform 0.2s ease, background 0.15s, box-shadow 0.15s;
+  transition: all 0.2s ease;
   z-index: 5;
-  touch-action: none;
   display: flex;
   align-items: center;
-  gap: 5px;
+  justify-content: center;
+  gap: 4px;
 }
-.map-pin.admin-pin {
-  cursor: grab;
-}
-.map-pin:hover {
-  z-index: 10;
-  background: #dc2626;
+.map-slot:hover {
+  background: rgba(15, 23, 42, 0.95);
+  border-color: var(--primary);
+  color: #fff;
   transform: translate(-50%, -50%) scale(1.05);
 }
-.map-pin.dragging {
-  cursor: grabbing;
-  z-index: 100;
+
+.map-slot.occupied {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  border: 1.5px solid #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 6px 11px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+}
+.map-slot.occupied:hover {
   background: #b91c1c;
-  box-shadow: 0 12px 25px rgba(0,0,0,0.6);
-  transition: none !important;
+  transform: translate(-50%, -50%) scale(1.06);
 }
 
 /* Popover Menu Pineski */
@@ -374,7 +387,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .btn-adjust.btn-plus { border-color: #4ade80; color: #16a34a; }
 .btn-adjust.btn-plus:hover { background: #16a34a; color: #fff; }
 
-/* Ulepszony wygląd Dziennika i Tabel dla Admina */
 .panel-section { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: var(--shadow-sm); }
 .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; gap: 10px; }
 
@@ -490,6 +502,9 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 
   <div class="spacer"></div>
   <div class="user-info">
+    <div class="inactivity-badge" title="Czas do automatycznego wylogowania">
+      <span>⏳ Wylogowanie za:</span><strong id="inactivityTimerDisplay">05:00</strong>
+    </div>
     <button class="btn-theme" id="themeToggleBtn" onclick="toggleDarkMode()">☀️ Tryb jasny</button>
     <span id="userNameDisplay" style="font-weight:700;color:#fff;"></span>
     <span class="role-badge" id="roleBadge"></span>
@@ -530,57 +545,80 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     <section class="hero">
       <div>
         <h1>Wirtualna Mapa Magazynu</h1>
-        <p class="subtitle" id="mapSubtitle">Sprawdź podgląd zlokalizowanych palet.</p>
+        <p class="subtitle" id="mapSubtitle">Kliknij w wolny kafelek, aby umieścić tam paletę.</p>
       </div>
     </section>
     
     <div class="map-container">
-      <div class="map-wrapper" id="mapWrapper" onclick="handleMapClick(event)">
-        <svg id="mapSvg" class="map-image" viewBox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+      <div class="map-wrapper" id="mapWrapper">
+        <!-- Mapa SVG (1700x750) z precyzyjnie poprawionym dolnym środkowym regałem -->
+        <svg id="mapSvg" class="map-image" viewBox="0 0 1700 750" xmlns="http://www.w3.org/2000/svg">
           <defs>
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="var(--map-grid)" stroke-width="1"/>
+            <pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse">
+              <path d="M 50 0 L 0 0 0 50" fill="none" stroke="var(--map-grid)" stroke-width="1"/>
             </pattern>
-            <pattern id="hatch" width="10" height="10" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
-              <line x1="0" y1="0" x2="0" y2="10" stroke="#16a34a" stroke-width="2" />
+            <pattern id="hatch" width="12" height="12" patternTransform="rotate(45 0 0)" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="12" stroke="#16a34a" stroke-width="2.5" />
             </pattern>
           </defs>
 
-          <rect width="1200" height="600" fill="var(--map-board)"/>
-          <rect width="1200" height="600" fill="url(#grid)"/>
-          <rect x="20" y="20" width="1160" height="560" fill="none" stroke="var(--map-border)" stroke-width="8"/>
+          <rect width="1700" height="750" fill="var(--map-board)"/>
+          <rect width="1700" height="750" fill="url(#grid)"/>
+          <rect x="25" y="25" width="1650" height="700" fill="none" stroke="var(--map-border)" stroke-width="8"/>
 
-          <g transform="translate(200, 60)">
-            <rect x="0" y="0" width="320" height="50" fill="#78350f" stroke="#451a03" stroke-width="2"/>
-            <path d="M0 0 L320 50 M0 50 L320 0" stroke="#451a03" stroke-width="1" opacity="0.4"/>
+          <!-- 1. Górny regał poziomy (5 slotów) -->
+          <g transform="translate(250, 70)">
+            <rect x="0" y="0" width="480" height="70" fill="#78350f" stroke="#451a03" stroke-width="2.5"/>
+            <path d="M0 0 L480 70 M0 70 L480 0" stroke="#451a03" stroke-width="1.5" opacity="0.4"/>
+            <line x1="96" y1="0" x2="96" y2="70" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="192" y1="0" x2="192" y2="70" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="288" y1="0" x2="288" y2="70" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="384" y1="0" x2="384" y2="70" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
           </g>
 
-          <g transform="translate(200, 240)">
-            <rect x="0" y="0" width="100" height="160" fill="#78350f" stroke="#451a03" stroke-width="2"/>
-            <path d="M0 0 L100 160 M0 160 L100 0" stroke="#451a03" stroke-width="1" opacity="0.4"/>
+          <!-- 2. Lewy pionowy regał (3 sloty) -->
+          <g transform="translate(250, 320)">
+            <rect x="0" y="0" width="140" height="220" fill="#78350f" stroke="#451a03" stroke-width="2.5"/>
+            <path d="M0 0 L140 220 M0 220 L140 0" stroke="#451a03" stroke-width="1.5" opacity="0.4"/>
+            <line x1="0" y1="73.3" x2="140" y2="73.3" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="146.6" x2="140" y2="146.6" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
           </g>
 
-          <rect x="560" y="60" width="60" height="220" fill="url(#hatch)" stroke="#16a34a" stroke-width="2"/>
-          
-          <g transform="translate(620, 60)">
-            <rect x="0" y="0" width="50" height="220" fill="#78350f" stroke="#451a03" stroke-width="2"/>
-            <line x1="0" y1="44" x2="50" y2="44" stroke="#fff" stroke-width="2"/>
-            <line x1="0" y1="88" x2="50" y2="88" stroke="#fff" stroke-width="2"/>
-            <line x1="0" y1="132" x2="50" y2="132" stroke="#fff" stroke-width="2"/>
-            <line x1="0" y1="176" x2="50" y2="176" stroke="#fff" stroke-width="2"/>
+          <!-- Środkowy sektor zielony z prawym regałem (5 slotów w rzędzie) -->
+          <rect x="800" y="70" width="70" height="320" fill="url(#hatch)" stroke="#16a34a" stroke-width="2.5"/>
+          <g transform="translate(870, 70)">
+            <rect x="0" y="0" width="180" height="320" fill="#78350f" stroke="#451a03" stroke-width="2.5"/>
+            <line x1="90" y1="0" x2="90" y2="320" stroke="#451a03" stroke-width="3"/>
+            <line x1="0" y1="64" x2="180" y2="64" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="128" x2="180" y2="128" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="192" x2="180" y2="192" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="256" x2="180" y2="256" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
           </g>
 
-          <g transform="translate(560, 400)">
-            <rect x="0" y="0" width="50" height="160" fill="url(#hatch)" stroke="#16a34a" stroke-width="2"/>
-            <rect x="50" y="0" width="90" height="160" fill="#78350f" stroke="#451a03" stroke-width="2"/>
+          <!-- 3. Dolny środkowy regał (2 kolumny po 5 slotów, poprawnie odsunięty od zielonego pola) -->
+          <g transform="translate(870, 500)">
+            <rect x="-70" y="0" width="70" height="200" fill="url(#hatch)" stroke="#16a34a" stroke-width="2.5"/>
+            <rect x="0" y="0" width="180" height="200" fill="#78350f" stroke="#451a03" stroke-width="2.5"/>
+            <line x1="90" y1="0" x2="90" y2="200" stroke="#451a03" stroke-width="3"/>
+            <line x1="0" y1="40" x2="180" y2="40" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="80" x2="180" y2="80" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="120" x2="180" y2="120" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="160" x2="180" y2="160" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
           </g>
 
-          <g transform="translate(880, 390)">
-            <rect x="0" y="0" width="140" height="180" fill="#78350f" stroke="#451a03" stroke-width="2"/>
+          <!-- 4. Dolny prawy regał (2 kolumny po 6 slotów) -->
+          <g transform="translate(1260, 440)">
+            <rect x="0" y="0" width="220" height="260" fill="#78350f" stroke="#451a03" stroke-width="2.5"/>
+            <line x1="110" y1="0" x2="110" y2="260" stroke="#451a03" stroke-width="3"/>
+            <line x1="0" y1="43.3" x2="220" y2="43.3" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="86.6" x2="220" y2="86.6" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="130" x2="220" y2="130" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="173.3" x2="220" y2="173.3" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
+            <line x1="0" y1="216.6" x2="220" y2="216.6" stroke="#451a03" stroke-width="1.5" opacity="0.6"/>
           </g>
         </svg>
 
-        <div id="mapPins"></div>
+        <div id="mapSlots"></div>
         <div id="popoverMenu" class="pin-popover" style="display:none;"></div>
       </div>
     </div>
@@ -597,6 +635,14 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     </section>
 
     <section class="panel-section">
+      <!-- Podział / Filtry w dzienniku zdarzeń -->
+      <div class="log-filters">
+        <button class="log-filter-btn active" id="log-filter-all" onclick="filterLogs('all')">Wszystkie zdarzenia</button>
+        <button class="log-filter-btn" id="log-filter-login" onclick="filterLogs('login')">Logowania</button>
+        <button class="log-filter-btn" id="log-filter-add" onclick="filterLogs('add')">Dodania / Zmiany</button>
+        <button class="log-filter-btn" id="log-filter-delete" onclick="filterLogs('delete')">Usunięcia</button>
+      </div>
+
       <ul class="logs-list" id="logsList"></ul>
     </section>
   </div>
@@ -665,7 +711,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     <section class="hero">
       <div>
         <h1>Zarządzanie użytkownikami</h1>
-        <p class="subtitle">Dodawaj nowe konta z dostępem do systemu oraz nadawaj uprawnienia.</p>
+        <p class="subtitle">Dodawaj, edytuj i zarządzaj kontami z dostępem do systemu.</p>
       </div>
       <button class="primary" onclick="openUserModal()">＋ Dodaj użytkownika</button>
     </section>
@@ -712,10 +758,10 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
  </div>
 </div>
 
-<!-- Modal Dodawania Użytkownika -->
+<!-- Modal Dodawania / Edycji Użytkownika -->
 <div class="modal-backdrop" id="userModal">
  <div class="modal" style="width:min(420px, 100%)">
-  <div class="modal-head"><h2>Dodaj użytkownika</h2><button class="close" onclick="closeModal('userModal')">×</button></div>
+  <div class="modal-head"><h2 id="userModalTitle">Dodaj użytkownika</h2><button class="close" onclick="closeModal('userModal')">×</button></div>
   <div class="modal-body">
    <div class="field" style="margin-bottom:14px;">
      <label>Imię / Nazwisko *</label>
@@ -726,20 +772,21 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
      <input id="newUserLogin" placeholder="np. jan">
    </div>
    <div class="field" style="margin-bottom:14px;">
-     <label>Hasło *</label>
+     <label>Hasło <span id="passHint" style="font-size:10px; color:var(--muted); font-weight:normal;">(zostaw puste, aby nie zmieniać)</span> *</label>
      <input id="newUserPass" type="password" placeholder="••••">
    </div>
    <div class="field">
      <label>Rola w systemie *</label>
      <select id="newUserRole">
-       <option value="user">Użytkownik</option>
+       <option value="pracownik">Pracownik</option>
+       <option value="tulejarka">Pracownik Tulejarka</option>
        <option value="admin">Administrator</option>
      </select>
    </div>
   </div>
   <div class="modal-foot">
     <button class="secondary" onclick="closeModal('userModal')">Anuluj</button>
-    <button class="primary" onclick="saveNewUser()">Utwórz konto</button>
+    <button class="primary" onclick="saveUserAccount()">Zapisz konto</button>
   </div>
  </div>
 </div>
@@ -766,19 +813,19 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
  </div>
 </div>
 
-<!-- Modal Przypisania Palety do Mapy -->
+<!-- Modal Przypisania Palety do Slotu na Mapie -->
 <div class="modal-backdrop" id="assignMapModal">
  <div class="modal" style="width:min(450px, 100%)">
-  <div class="modal-head"><h2>Przypisz paletę do punktu</h2><button class="close" onclick="closeModal('assignMapModal')">×</button></div>
+  <div class="modal-head"><h2>Przypisz paletę do slotu</h2><button class="close" onclick="closeModal('assignMapModal')">×</button></div>
   <div class="modal-body">
    <div class="field">
-     <label>Wybierz paletę do umieszczenia na mapie:</label>
+     <label>Wybierz paletę do umieszczenia w tym miejscu:</label>
      <select id="mapPalletSelect"></select>
    </div>
   </div>
   <div class="modal-foot">
     <button class="secondary" onclick="closeModal('assignMapModal')">Anuluj</button>
-    <button class="primary" onclick="saveMapPinAssignment()">Przypisz do mapy</button>
+    <button class="primary" onclick="saveMapSlotAssignment()">Przypisz do slotu</button>
   </div>
  </div>
 </div>
@@ -829,20 +876,115 @@ let logs = [];
 let usersList = [];
 let onlineUsersData = {};
 let editingId = null;
-let selectedMapCoords = null;
+let editingUserLogin = null;
+let selectedSlotId = null;
 let currentRole = localStorage.getItem('magazyn_role') || null;
 let currentUserName = localStorage.getItem('magazyn_user_name') || null;
 let selectedSizeFilter = 'all';
+let selectedLogFilter = 'all';
 
 let savedTheme = localStorage.getItem('magazyn_dark_mode');
 let isDarkMode = savedTheme !== null ? savedTheme === 'true' : true;
 
 let userPresenceRef = null;
-
-let activePinId = null;
-let isDraggingPin = false;
-let dragJustEnded = false;
 let lastSeenLogCount = Number(localStorage.getItem('magazyn_last_seen_logs') || 0);
+
+const INACTIVITY_LIMIT = 5 * 60 * 1000;
+let timeRemaining = INACTIVITY_LIMIT;
+let inactivityInterval = null;
+
+// Poprawione, precyzyjnie wyśrodkowane współrzędne slotów dla wszystkich regałówwycelowane tak, aby nie nachodziły na zielone pasy
+const MAP_SLOTS = [
+  // 1. Górny regał poziomy (5 slotów)
+  { id: 'top_1', x: 298, y: 105 },
+  { id: 'top_2', x: 394, y: 105 },
+  { id: 'top_3', x: 490, y: 105 },
+  { id: 'top_4', x: 586, y: 105 },
+  { id: 'top_5', x: 682, y: 105 },
+  
+  // 2. Lewy pionowy regał (3 sloty)
+  { id: 'left_v1', x: 320, y: 356 },
+  { id: 'left_v2', x: 320, y: 430 },
+  { id: 'left_v3', x: 320, y: 504 },
+
+  // 3. Prawy górny regał - Lewa kolumna (5 slotów)
+  { id: 'right_top_l1', x: 915, y: 102 },
+  { id: 'right_top_l2', x: 915, y: 166 },
+  { id: 'right_top_l3', x: 915, y: 230 },
+  { id: 'right_top_l4', x: 915, y: 294 },
+  { id: 'right_top_l5', x: 915, y: 358 },
+
+  // Prawy górny regał - Prawa kolumna (5 slotów)
+  { id: 'right_top_r1', x: 1015, y: 102 },
+  { id: 'right_top_r2', x: 1015, y: 166 },
+  { id: 'right_top_r3', x: 1015, y: 230 },
+  { id: 'right_top_r4', x: 1015, y: 294 },
+  { id: 'right_top_r5', x: 1015, y: 358 },
+
+  // 4. Dolny środkowy regał - Lewa kolumna (5 slotów)
+  { id: 'bot_mid_l1', x: 915, y: 520 },
+  { id: 'bot_mid_l2', x: 915, y: 560 },
+  { id: 'bot_mid_l3', x: 915, y: 600 },
+  { id: 'bot_mid_l4', x: 915, y: 640 },
+  { id: 'bot_mid_l5', x: 915, y: 680 },
+
+  // Dolny środkowy regał - Prawa kolumna (5 slotów)
+  { id: 'bot_mid_r1', x: 1005, y: 520 },
+  { id: 'bot_mid_r2', x: 1005, y: 560 },
+  { id: 'bot_mid_r3', x: 1005, y: 600 },
+  { id: 'bot_mid_r4', x: 1005, y: 640 },
+  { id: 'bot_mid_r5', x: 1005, y: 680 },
+
+  // 5. Dolny prawy regał - Lewa kolumna (6 slotów)
+  { id: 'bot_right_l1', x: 1315, y: 462 },
+  { id: 'bot_right_l2', x: 1315, y: 505 },
+  { id: 'bot_right_l3', x: 1315, y: 548 },
+  { id: 'bot_right_l4', x: 1315, y: 591 },
+  { id: 'bot_right_l5', x: 1315, y: 634 },
+  { id: 'bot_right_l6', x: 1315, y: 677 },
+
+  // Dolny prawy regał - Prawa kolumna (6 slotów)
+  { id: 'bot_right_r1', x: 1425, y: 462 },
+  { id: 'bot_right_r2', x: 1425, y: 505 },
+  { id: 'bot_right_r3', x: 1425, y: 548 },
+  { id: 'bot_right_r4', x: 1425, y: 591 },
+  { id: 'bot_right_r5', x: 1425, y: 634 },
+  { id: 'bot_right_r6', x: 1425, y: 677 }
+];
+
+function resetInactivityTimer() {
+  if (!currentRole) return;
+  timeRemaining = INACTIVITY_LIMIT;
+  updateTimerDisplay();
+}
+
+function startInactivityCountdown() {
+  if (inactivityInterval) clearInterval(inactivityInterval);
+  inactivityInterval = setInterval(() => {
+    if (!currentRole) return;
+    timeRemaining -= 1000;
+    if (timeRemaining <= 0) {
+      clearInterval(inactivityInterval);
+      showToast('Wylogowano', 'Nastąpiło automatyczne wylogowanie z powodu 5 minut bezczynności.', 'danger');
+      logout();
+    } else {
+      updateTimerDisplay();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const minutes = Math.floor(timeRemaining / 60000);
+  const seconds = Math.floor((timeRemaining % 60000) / 1000);
+  const displayEl = document.getElementById('inactivityTimerDisplay');
+  if (displayEl) {
+    displayEl.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  }
+}
+
+['click', 'keydown', 'touchstart', 'scroll'].forEach(eventName => {
+  window.addEventListener(eventName, resetInactivityTimer, { passive: true });
+});
 
 if (isDarkMode) {
   document.body.classList.add('dark-mode');
@@ -852,7 +994,6 @@ if (isDarkMode) {
   document.getElementById('themeToggleBtn').textContent = '🌙 Tryb ciemny';
 }
 
-// Inicjalizacja domyślnego admina, jeśli baza użytkowników jest pusta
 usersDb.once('value', (snapshot) => {
   if (!snapshot.exists()) {
     usersDb.child('admin').set({ name: 'Administrator', login: 'admin', pass: 'admin99', role: 'admin' });
@@ -869,6 +1010,8 @@ if (currentRole && currentUserName) {
   document.getElementById('authScreen').style.display = 'none';
   applyRoleUI();
   setupPresence();
+  resetInactivityTimer();
+  startInactivityCountdown();
 }
 
 function toggleDarkMode() {
@@ -942,11 +1085,14 @@ function loginWithDb() {
 
     applyRoleUI();
     setupPresence();
+    resetInactivityTimer();
+    startInactivityCountdown();
   });
 }
 
 function logout() {
   if (userPresenceRef) userPresenceRef.remove();
+  if (inactivityInterval) clearInterval(inactivityInterval);
   localStorage.removeItem('magazyn_role');
   localStorage.removeItem('magazyn_user_name');
   currentRole = null; currentUserName = null;
@@ -974,7 +1120,7 @@ function openOnlineUsersModal() {
     listEl.innerHTML = users.map(u => `
       <li style="display:flex; justify-content:space-between; align-items:center; padding:12px 16px; background:var(--bg); border:1px solid var(--line); border-radius:10px;">
         <strong>${esc(u.name)}</strong>
-        <span class="role-badge ${u.role === 'admin' ? 'role-admin' : 'role-user'}">${u.role === 'admin' ? 'Admin' : 'Użytkownik'}</span>
+        <span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${u.role === 'admin' ? 'Admin' : u.role === 'tulejarka' ? 'Pracownik Tulejarka' : 'Pracownik'}</span>
       </li>
     `).join('');
   }
@@ -994,7 +1140,7 @@ function applyRoleUI() {
   if (currentRole === 'admin') {
     badge.textContent = 'Admin'; badge.className = 'role-badge role-admin';
     btnClear.style.display = 'inline-block'; btnBackupRestore.style.display = 'inline-block';
-    if(mapSub) mapSub.textContent = 'Przeciągaj pineski, klikaj aby obrócić je o 90° lub sprawdź podgląd palety.';
+    if(mapSub) mapSub.textContent = 'Kliknij w wolny kafelek na regale, aby przypisać paletę.';
 
     const adminBtnLogs = document.createElement('button');
     adminBtnLogs.className = 'nav-tab admin-nav-item';
@@ -1021,10 +1167,14 @@ function applyRoleUI() {
     navTabs.appendChild(adminBtnSummary);
     navTabs.appendChild(adminBtnSizes);
     navTabs.appendChild(adminBtnUsers);
-  } else {
-    badge.textContent = 'Użytkownik'; badge.className = 'role-badge role-user';
+  } else if (currentRole === 'tulejarka') {
+    badge.textContent = 'Pracownik Tulejarka'; badge.className = 'role-badge role-tulejarka';
     btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
-    if(mapSub) mapSub.textContent = 'Kliknij w dowolną pineskę na mapie, aby zobaczyć zawartość palety.';
+    if(mapSub) mapSub.textContent = 'Kliknij w slot na mapie, aby umieścić lub zmienić przypisanie palety.';
+  } else {
+    badge.textContent = 'Pracownik'; badge.className = 'role-badge role-pracownik';
+    btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
+    if(mapSub) mapSub.textContent = 'Kliknij w zajęty kafelek na mapie, aby zobaczyć zawartość palety.';
   }
   render();
 }
@@ -1034,14 +1184,14 @@ function switchTab(tabId, btn) {
   document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
   document.getElementById(tabId).classList.add('active');
   btn.classList.add('active');
-  if(tabId === 'tabMap') renderMapPins();
+  if(tabId === 'tabMap') renderMapSlots();
 }
 
 db.on('value', (snapshot) => {
   const data = snapshot.val();
   pallets = data ? Object.values(data) : [];
   render();
-  renderMapPins();
+  renderMapSlots();
   
   const detailModal = document.getElementById('detailModal');
   if (detailModal && detailModal.classList.contains('show') && editingId) {
@@ -1083,31 +1233,59 @@ function addLog(action, text, details = '') {
 }
 
 /* ZARZĄDZANIE UŻYTKOWNIKAMI */
-function openUserModal() {
-  document.getElementById('newUserName').value = '';
-  document.getElementById('newUserLogin').value = '';
+function openUserModal(loginKey = null) {
+  editingUserLogin = loginKey;
+  const user = loginKey ? usersList.find(u => u.login === loginKey) : null;
+
+  document.getElementById('userModalTitle').textContent = user ? 'Edytuj użytkownika' : 'Dodaj użytkownika';
+  document.getElementById('passHint').style.display = user ? 'inline' : 'none';
+  
+  document.getElementById('newUserName').value = user ? user.name : '';
+  document.getElementById('newUserLogin').value = user ? user.login : '';
   document.getElementById('newUserPass').value = '';
-  document.getElementById('newUserRole').value = 'user';
+  document.getElementById('newUserRole').value = user ? user.role : 'pracownik';
+
   document.getElementById('userModal').classList.add('show');
 }
 
-function saveNewUser() {
+function saveUserAccount() {
   const name = document.getElementById('newUserName').value.trim();
   const login = document.getElementById('newUserLogin').value.trim().toLowerCase();
   const pass = document.getElementById('newUserPass').value.trim();
   const role = document.getElementById('newUserRole').value;
 
-  if (!name || !login || !pass) {
-    alert('Wszystkie pola są wymagane!');
+  if (!name || !login) {
+    alert('Imię oraz login są wymagane!');
     return;
   }
 
-  usersDb.child(login).set({ name, login, pass, role }, (err) => {
-    if (!err) {
-      closeModal('userModal');
-      addLog('edit', `dodał(a) nowe konto użytkownika: ${login} (${role})`);
-      showToast('Utworzono konto', `Konto ${login} zostało pomyślnie dodane.`, 'success');
+  if (!editingUserLogin && !pass) {
+    alert('Hasło jest wymagane dla nowego użytkownika!');
+    return;
+  }
+
+  usersDb.once('value', (snapshot) => {
+    const users = snapshot.val() || {};
+    let existingPass = '';
+
+    if (editingUserLogin) {
+      if (editingUserLogin !== login) {
+        existingPass = users[editingUserLogin]?.pass || '';
+        usersDb.child(editingUserLogin).remove();
+      } else {
+        existingPass = users[editingUserLogin]?.pass || '';
+      }
     }
+
+    const finalPass = pass ? pass : existingPass;
+
+    usersDb.child(login).set({ name, login, pass: finalPass, role }, (err) => {
+      if (!err) {
+        closeModal('userModal');
+        addLog('edit', `${editingId ? 'zaktualizował(a)' : 'dodał(a)'} konto użytkownika: ${login}`);
+        showToast('Sukces', `Konto ${login} zostało zapisane.`, 'success');
+      }
+    });
   });
 }
 
@@ -1139,26 +1317,45 @@ function renderUsersTab() {
     <tr>
       <td><strong style="font-size:14px; color:var(--text);">${esc(u.name)}</strong></td>
       <td><code>${esc(u.login)}</code></td>
-      <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : 'role-user'}">${u.role === 'admin' ? 'Admin' : 'Użytkownik'}</span></td>
+      <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${u.role === 'admin' ? 'Admin' : u.role === 'tulejarka' ? 'Pracownik Tulejarka' : 'Pracownik'}</span></td>
       <td style="text-align:right">
+        <button class="secondary" style="padding:6px 12px; font-size:12px; margin-right:6px;" onclick="openUserModal('${u.login}')">Edytuj</button>
         ${u.login !== 'admin' ? `<button class="danger" style="padding:6px 12px; font-size:12px;" onclick="deleteUser('${u.login}')">Usuń</button>` : '<span style="color:var(--muted); font-size:12px;">Główne konto</span>'}
       </td>
     </tr>
   `).join('');
 }
 
+function filterLogs(type) {
+  selectedLogFilter = type;
+  document.querySelectorAll('.log-filter-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`log-filter-${type}`).classList.add('active');
+  renderLogs();
+}
+
 function renderLogs() {
   const container = document.getElementById('logsList');
   if (!container) return;
-  if (!logs.length) {
-    container.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--muted);">Brak zdarzeń w historii.</li>';
+
+  let filteredLogs = logs;
+  if (selectedLogFilter === 'login') {
+    filteredLogs = logs.filter(l => l.action === 'login' || l.text.includes('zalogował'));
+  } else if (selectedLogFilter === 'add') {
+    filteredLogs = logs.filter(l => l.action === 'edit' || l.text.includes('dodał') || l.text.includes('przypisał') || l.text.includes('zmienił'));
+  } else if (selectedLogFilter === 'delete') {
+    filteredLogs = logs.filter(l => l.action === 'delete' || l.text.includes('usunął') || l.text.includes('zdjął'));
+  }
+
+  if (!filteredLogs.length) {
+    container.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--muted);">Brak zdarzeń spełniających kryteria.</li>';
     return;
   }
-  container.innerHTML = logs.map(l => {
+
+  container.innerHTML = filteredLogs.map(l => {
     let icon = '📝';
     if(l.text.includes('zalogował')) icon = '🔑';
     if(l.text.includes('dodał') || l.text.includes('przypisał')) icon = '✨';
-    if(l.text.includes('usunął')) icon = '🗑️';
+    if(l.text.includes('usunął') || l.text.includes('zdjął')) icon = '🗑️';
     if(l.text.includes('zmienił') || l.text.includes('obrócił')) icon = '⚡';
 
     return `
@@ -1350,30 +1547,32 @@ function restoreBackup(e) {
   reader.readAsText(file);
 }
 
-/* OBSŁUGA MAPY */
-function handleMapClick(e) {
-  if (e.target.closest('.map-pin') || e.target.closest('.pin-popover') || dragJustEnded) {
-    dragJustEnded = false;
-    return;
-  }
+/* OBSŁUGA MAPY SLOTÓW */
+function handleSlotClick(slotId) {
   closePopover();
+  const assignedPallet = pallets.find(p => p.mapSlot === slotId);
 
-  if (currentRole !== 'admin') return;
+  if (assignedPallet) {
+    showSlotPopover(slotId, assignedPallet.id);
+  } else {
+    if (currentRole !== 'admin' && currentRole !== 'tulejarka') {
+      showToast('Informacja', 'Ten slot jest wolny. Brak uprawnień do przypisywania palet.', 'info');
+      return;
+    }
+    selectedSlotId = slotId;
+    const select = document.getElementById('mapPalletSelect');
+    
+    const availablePallets = pallets.filter(p => !p.mapSlot || p.mapSlot === slotId);
+    
+    select.innerHTML = '<option value="">-- Wybierz paletę --</option>' + 
+      availablePallets.map(p => `<option value="${p.id}">${p.code} - ${p.name || 'Bez nazwy'}</option>`).join('');
 
-  const rect = document.getElementById('mapWrapper').getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
-  selectedMapCoords = { x: x.toFixed(2), y: y.toFixed(2) };
-
-  const select = document.getElementById('mapPalletSelect');
-  select.innerHTML = '<option value="">-- Wybierz paletę --</option>' + 
-    pallets.map(p => `<option value="${p.id}">${p.code} - ${p.name || 'Bez nazwy'}</option>`).join('');
-
-  document.getElementById('assignMapModal').classList.add('show');
+    document.getElementById('assignMapModal').classList.add('show');
+  }
 }
 
-function saveMapPinAssignment() {
-  if (currentRole !== 'admin') return;
+function saveMapSlotAssignment() {
+  if (currentRole !== 'admin' && currentRole !== 'tulejarka') return;
 
   const palletId = document.getElementById('mapPalletSelect').value;
   if(!palletId) return alert('Proszę wybrać paletę');
@@ -1381,49 +1580,39 @@ function saveMapPinAssignment() {
   const p = pallets.find(x => x.id === palletId);
   if(!p) return;
 
-  p.mapX = selectedMapCoords.x;
-  p.mapY = selectedMapCoords.y;
-  p.rotation = p.rotation || 0;
+  pallets.forEach(item => {
+    if (item.mapSlot === selectedSlotId) {
+      item.mapSlot = null;
+      db.child(item.id).set(item);
+    }
+  });
 
+  p.mapSlot = selectedSlotId;
   db.child(palletId).set(p, (err) => {
     if(!err) {
       closeModal('assignMapModal');
-      addLog('edit', `przypisał(a) paletę ${p.code} na mapie magazynu`);
-      showToast('Mapa', `Przypisano paletę ${p.code} do mapy.`, 'success');
+      addLog('edit', `przypisał(a) paletę ${p.code} do slotu ${selectedSlotId} na mapie`);
+      showToast('Mapa', `Przypisano paletę ${p.code} do slotu.`, 'success');
+      renderMapSlots();
     }
   });
 }
 
-function rotatePin(id) {
-  if (currentRole !== 'admin') return;
-
-  const p = pallets.find(x => x.id === id);
-  if (!p) return;
-
-  p.rotation = ((p.rotation || 0) + 90) % 360;
-  db.child(id).set(p, (err) => {
-    if (!err) {
-      addLog('edit', `obrócił(a) pineskę ${p.code} o 90° (teraz ${p.rotation}°)`);
-      renderMapPins();
-      closePopover();
-      showToast('Mapa', `Obrócono pineskę ${p.code} (${p.rotation}°)`, 'info');
-    }
-  });
-}
-
-function showPopover(id, x, y) {
+function showSlotPopover(slotId, palletId) {
   const popover = document.getElementById('popoverMenu');
-  const p = pallets.find(x => x.id === id);
-  if(!p) return;
+  const p = pallets.find(x => x.id === palletId);
+  const slotConfig = MAP_SLOTS.find(s => s.id === slotId);
+  if(!p || !slotConfig) return;
 
-  popover.style.left = `${x}%`;
-  popover.style.top = `${y}%`;
+  popover.style.left = `${(slotConfig.x / 1700) * 100}%`;
+  popover.style.top = `${(slotConfig.y / 750) * 100}%`;
 
-  if (currentRole === 'admin') {
+  const canEdit = currentRole === 'admin' || currentRole === 'tulejarka';
+
+  if (canEdit) {
     popover.innerHTML = `
-      <button onclick="rotatePin('${p.id}')">🔄 Obróć 90°</button>
       <button onclick="closePopover(); openDetails('${p.id}')">👁️ Podgląd</button>
-      <button onclick="closePopover(); removePinFromMap('${p.id}')" style="color:var(--danger)">❌ Usuń</button>
+      <button onclick="closePopover(); removePalletFromSlot('${p.id}')" style="color:var(--danger)">❌ Zdejmij ze slotu</button>
     `;
   } else {
     popover.innerHTML = `
@@ -1438,91 +1627,41 @@ function closePopover() {
   if(popover) popover.style.display = 'none';
 }
 
-function startPinDrag(e, palletId) {
-  e.stopPropagation();
-  closePopover();
-
-  if (currentRole !== 'admin') {
-    openDetails(palletId);
-    return;
-  }
-
-  activePinId = palletId;
-  isDraggingPin = false;
+function removePalletFromSlot(palletId) {
+  if (currentRole !== 'admin' && currentRole !== 'tulejarka') return;
+  const p = pallets.find(x => x.id === palletId);
+  if(!p) return;
   
-  const pinEl = e.currentTarget;
-  pinEl.classList.add('dragging');
-
-  const onPointerMove = (moveEvt) => {
-    isDraggingPin = true;
-    const wrapper = document.getElementById('mapWrapper');
-    const rect = wrapper.getBoundingClientRect();
-
-    let clientX = moveEvt.clientX;
-    let clientY = moveEvt.clientY;
-
-    if (moveEvt.touches && moveEvt.touches[0]) {
-      clientX = moveEvt.touches[0].clientX;
-      clientY = moveEvt.touches[0].clientY;
-    }
-
-    let x = ((clientX - rect.left) / rect.width) * 100;
-    let y = ((clientY - rect.top) / rect.height) * 100;
-
-    x = Math.max(0, Math.min(100, x));
-    y = Math.max(0, Math.min(100, y));
-
-    pinEl.style.left = `${x.toFixed(2)}%`;
-    pinEl.style.top = `${y.toFixed(2)}%`;
-  };
-
-  const onPointerUp = (upEvt) => {
-    window.removeEventListener('mousemove', onPointerMove);
-    window.removeEventListener('mouseup', onPointerUp);
-    window.removeEventListener('touchmove', onPointerMove);
-    window.removeEventListener('touchend', onPointerUp);
-
-    pinEl.classList.remove('dragging');
-
-    if (isDraggingPin) {
-      dragJustEnded = true;
-      const finalX = parseFloat(pinEl.style.left);
-      const finalY = parseFloat(pinEl.style.top);
-
-      const p = pallets.find(x => x.id === activePinId);
-      if (p) {
-        p.mapX = finalX.toFixed(2);
-        p.mapY = finalY.toFixed(2);
-        db.child(p.id).set(p, (err) => {
-          if (!err) {
-            addLog('edit', `przesunął(ęła) paletę ${p.code} na mapie`);
-            showToast('Mapa', `Zaktualizowano pozycję palety ${p.code}`, 'success');
-          }
-        });
-      }
-    } else {
-      const p = pallets.find(x => x.id === palletId);
-      if(p) showPopover(palletId, p.mapX, p.mapY);
-    }
-    activePinId = null;
-  };
-
-  window.addEventListener('mousemove', onPointerMove);
-  window.addEventListener('mouseup', onPointerUp);
-  window.addEventListener('touchmove', onPointerMove, { passive: false });
-  window.addEventListener('touchend', onPointerUp);
+  p.mapSlot = null;
+  db.child(palletId).set(p, () => {
+    closeModal('detailModal');
+    closePopover();
+    addLog('edit', `zdjął(ęła) paletę ${p.code} ze slotu na mapie`);
+    showToast('Mapa', `Zdejmowano paletę ${p.code} ze slotu.`, 'info');
+    renderMapSlots();
+  });
 }
 
-function renderMapPins() {
-  const container = document.getElementById('mapPins');
+function renderMapSlots() {
+  const container = document.getElementById('mapSlots');
   if(!container) return;
-  const isAdmin = currentRole === 'admin';
 
-  container.innerHTML = pallets.filter(p => p.mapX && p.mapY).map(p => `
-    <div class="map-pin ${isAdmin ? 'admin-pin' : ''}" style="left: ${p.mapX}%; top: ${p.mapY}%; transform: translate(-50%, -50%) rotate(${p.rotation || 0}deg);" onmousedown="startPinDrag(event, '${p.id}')" ontouchstart="startPinDrag(event, '${p.id}')">
-      📍 ${p.code}
-    </div>
-  `).join('');
+  container.innerHTML = MAP_SLOTS.map(slot => {
+    const assignedPallet = pallets.find(p => p.mapSlot === slot.id);
+    if (assignedPallet) {
+      return `
+        <div class="map-slot occupied" style="left: ${(slot.x / 1700) * 100}%; top: ${(slot.y / 750) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+          📍 ${esc(assignedPallet.code)}
+        </div>
+      `;
+    } else {
+      return `
+        <div class="map-slot" style="left: ${(slot.x / 1700) * 100}%; top: ${(slot.y / 750) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+          [ + Wolne ]
+        </div>
+      `;
+    }
+  }).join('');
 }
 
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
@@ -1574,7 +1713,7 @@ function savePallet(){
  const id = editingId || db.push().key;
  const existing = pallets.find(x => x.id === id);
  
- const obj={ id, code, name:document.getElementById('pName').value.trim(), location:document.getElementById('pLocation').value.trim(), items, mapX: existing?.mapX||null, mapY: existing?.mapY||null, rotation: existing?.rotation||0, updatedAt:new Date().toISOString() };
+ const obj={ id, code, name:document.getElementById('pName').value.trim(), location:document.getElementById('pLocation').value.trim(), items, mapSlot: existing?.mapSlot||null, updatedAt:new Date().toISOString() };
 
  firebase.database().ref('palety/' + id).set(obj, (error) => {
    if (!error) {
@@ -1603,6 +1742,7 @@ function openDetails(id){
 
  const itemsCount = (p.items || []).length;
  const total = totalQty(p);
+ const canEditMap = currentRole === 'admin' || currentRole === 'tulejarka';
 
  document.getElementById('detailContent').innerHTML = `
   <div class="modal-head">
@@ -1661,13 +1801,10 @@ function openDetails(id){
       </table>
     </div>
 
-    ${p.mapX && currentRole === 'admin' ? `
+    ${p.mapSlot && canEditMap ? `
       <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-        <span style="font-size:12px; color:var(--muted)">Orientacja na mapie: <strong>${p.rotation || 0}°</strong></span>
-        <div style="display:flex; gap:8px;">
-          <button class="secondary" onclick="rotatePin('${p.id}')">🔄 Obróć o 90°</button>
-          <button class="danger" onclick="removePinFromMap('${p.id}')">Usuń z mapy</button>
-        </div>
+        <span style="font-size:12px; color:var(--muted)">Przypisany slot na mapie: <strong>${p.mapSlot}</strong></span>
+        <button class="danger" onclick="removePalletFromSlot('${p.id}')">Zdejmij ze slotu</button>
       </div>
     ` : ''}
   </div>
@@ -1750,17 +1887,6 @@ function quickAdjustItem(palletId, itemIndex, delta) {
         openDetails(palletId);
       }, 300);
     }
-  });
-}
-
-function removePinFromMap(id) {
-  if (currentRole !== 'admin') return;
-  const p = pallets.find(x => x.id === id);
-  if(!p) return;
-  p.mapX = null; p.mapY = null;
-  db.child(id).set(p, () => {
-    closeModal('detailModal');
-    showToast('Mapa', `Usunięto paletę ${p.code} z mapy.`, 'info');
   });
 }
 
