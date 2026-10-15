@@ -300,22 +300,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 }
 .map-slot.occupied:hover { background: #b91c1c; transform: translate(-50%, -50%) scale(1.08); }
 
-/* Efektowne podświetlenie wybranej palety na mapie */
-.map-slot.highlighted-slot {
-  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
-  color: #fff !important;
-  border: 2.5px solid #ffffff !important;
-  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.4), 0 8px 20px rgba(0,0,0,0.3) !important;
-  transform: translate(-50%, -50%) scale(1.2) !important;
-  z-index: 50 !important;
-  animation: pulseHighlight 1.2s infinite alternate ease-in-out;
-}
-
-@keyframes pulseHighlight {
-  from { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4), 0 8px 20px rgba(0,0,0,0.3); }
-  to { transform: translate(-50%, -50%) scale(1.25); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0.6), 0 12px 25px rgba(0,0,0,0.4); }
-}
-
 .map-slot.rack-slot { background: #16a34a; color: #ffffff; border: 1px solid #15803d; }
 .map-slot.rack-slot:hover { background: #15803d; }
 
@@ -454,7 +438,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 <header class="topbar">
   <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
     <div class="logo"><div class="logo-icon">🛠️</div> Magazyn Tulejek</div>
-    <div class="online-counter" id="onlineCounterBox" onclick="openOnlineUsersModal()" title="Kliknij, aby zobaczyć kto jest online" style="display:none;">
+    <div class="online-counter" onclick="openOnlineUsersModal()" title="Kliknij, aby zobaczyć kto jest online">
       <span>🟢 Online:</span><strong id="onlineCount">1</strong>
     </div>
   </div>
@@ -484,7 +468,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
         <h1>Magazyn Tulejek</h1>
         <p class="subtitle">Zarządzaj paletami i synchronizuj dane na żywo w zespole.</p>
       </div>
-      <button class="primary" id="btnAddPalletHero" onclick="openPalletForm()">＋ Dodaj paletę</button>
+      <button class="primary" onclick="openPalletForm()">＋ Dodaj paletę</button>
     </section>
 
     <section class="stats">
@@ -835,7 +819,6 @@ let onlineUsersData = {};
 let editingId = null;
 let editingUserLogin = null;
 let selectedSlotId = null;
-let highlightedMapSlotId = null; // Zmienna przechowująca ID slotu do podświetlenia
 let currentRole = localStorage.getItem('magazyn_role') || null;
 let currentUserName = localStorage.getItem('magazyn_user_name') || null;
 let selectedSizeFilter = 'all';
@@ -1032,13 +1015,10 @@ function setupPresence() {
 presenceDb.on('value', (snapshot) => {
   const data = snapshot.val();
   onlineUsersData = data || {};
-  if (currentRole === 'admin') {
-    document.getElementById('onlineCount').textContent = Object.keys(onlineUsersData).length;
-  }
+  document.getElementById('onlineCount').textContent = Object.keys(onlineUsersData).length;
 });
 
 function openOnlineUsersModal() {
-  if (currentRole !== 'admin') return;
   const listEl = document.getElementById('onlineUsersList');
   const users = Object.values(onlineUsersData);
   if (!users.length) {
@@ -1073,8 +1053,6 @@ function applyRoleUI() {
   const btnBackupRestore = document.getElementById('btnBackupRestore');
   const navTabs = document.getElementById('navTabs');
   const mapSub = document.getElementById('mapSubtitle');
-  const btnAddPalletHero = document.getElementById('btnAddPalletHero');
-  const onlineCounterBox = document.getElementById('onlineCounterBox');
   
   document.getElementById('userNameDisplay').textContent = currentUserName;
   document.querySelectorAll('.admin-nav-item').forEach(e => e.remove());
@@ -1082,9 +1060,6 @@ function applyRoleUI() {
   if (currentRole === 'admin') {
     badge.textContent = 'Admin'; badge.className = 'role-badge role-admin';
     btnClear.style.display = 'inline-block'; btnBackupRestore.style.display = 'inline-block';
-    if(btnAddPalletHero) btnAddPalletHero.style.display = 'inline-block';
-    if(onlineCounterBox) onlineCounterBox.style.display = 'flex';
-    document.getElementById('onlineCount').textContent = Object.keys(onlineUsersData).length;
     if(mapSub) mapSub.textContent = 'Kliknij w wolny kafelek na regale, aby przypisać paletę.';
 
     const dropdownWrap = document.createElement('div');
@@ -1111,14 +1086,10 @@ function applyRoleUI() {
   } else if (currentRole === 'tulejarka') {
     badge.textContent = 'Pracownik Tulejarka'; badge.className = 'role-badge role-tulejarka';
     btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
-    if(btnAddPalletHero) btnAddPalletHero.style.display = 'inline-block';
-    if(onlineCounterBox) onlineCounterBox.style.display = 'none';
     if(mapSub) mapSub.textContent = 'Kliknij w slot na mapie, aby umieścić lub zmienić przypisanie palety.';
   } else {
     badge.textContent = 'Pracownik'; badge.className = 'role-badge role-pracownik';
     btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
-    if(btnAddPalletHero) btnAddPalletHero.style.display = 'none';
-    if(onlineCounterBox) onlineCounterBox.style.display = 'none';
     if(mapSub) mapSub.textContent = 'Kliknij w zajęty kafelek na mapie, aby zobaczyć zawartość palety.';
   }
   render();
@@ -1496,38 +1467,6 @@ function restoreBackup(e) {
   reader.readAsText(file);
 }
 
-/* FUNKCJA: Pokaż paletę bezpośrednio na mapie */
-function showPalletOnMap(palletId) {
-  const p = pallets.find(x => x.id === palletId);
-  if (!p) return;
-
-  if (!p.mapSlot) {
-    showToast('Brak na mapie', `Paleta ${p.code} nie jest aktualnie przypisana do żadnego slotu na mapie.`, 'danger');
-    return;
-  }
-
-  // Zamknij okno szczegółów palety
-  closeModal('detailModal');
-
-  // Przełącz zakładkę na mapę
-  const mapBtn = document.getElementById('tabBtnMap');
-  switchTab('tabMap', mapBtn);
-
-  // Ustaw slot do podświetlenia i przelicz sloty na mapie
-  highlightedMapSlotId = p.mapSlot;
-  renderMapSlots();
-
-  // Automatycznie przewiń / zresetuj podświetlenie po 4 sekundach
-  setTimeout(() => {
-    if (highlightedMapSlotId === p.mapSlot) {
-      highlightedMapSlotId = null;
-      renderMapSlots();
-    }
-  }, 4000);
-
-  showToast('Lokalizacja', `Paleta ${p.code} została podświetlona na mapie!`, 'info');
-}
-
 /* OBSŁUGA MAPY SLOTÓW */
 function handleSlotClick(slotId) {
   closePopover();
@@ -1630,23 +1569,22 @@ function renderMapSlots() {
   container.innerHTML = MAP_SLOTS.map(slot => {
     const assignedPallet = pallets.find(p => p.mapSlot === slot.id);
     const isRack = slot.isRack;
-    const isHighlighted = (slot.id === highlightedMapSlotId);
 
     if (assignedPallet) {
       return `
-        <div class="map-slot occupied ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot occupied" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           📍 ${esc(assignedPallet.code)}
         </div>
       `;
     } else if (isRack) {
       return `
-        <div class="map-slot rack-slot ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot rack-slot" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           [ REGAŁ ]
         </div>
       `;
     } else {
       return `
-        <div class="map-slot ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           [ + Wolne ]
         </div>
       `;
@@ -1681,8 +1619,6 @@ function render(){
      return rawQuery ? highlightQuery(itemText, rawQuery) : esc(itemText);
    }).slice(0, 3);
 
-   const canManagePallet = currentRole === 'admin' || currentRole === 'tulejarka';
-
    return `
     <article class="pallet" onclick="openDetails('${p.id}')">
      <div class="pallet-head">
@@ -1703,12 +1639,10 @@ function render(){
        <strong>${totalQty(p)} szt.</strong>
      </div>
 
-     ${canManagePallet ? `
-       <div class="pallet-actions" onclick="event.stopPropagation()">
-         <button class="secondary" onclick="openPalletForm('${p.id}')">Edytuj</button>
-         ${currentRole === 'admin' ? `<button class="danger" onclick="deletePallet('${p.id}')">Usuń</button>` : ''}
-       </div>
-     ` : ''}
+     <div class="pallet-actions" onclick="event.stopPropagation()">
+       <button class="secondary" onclick="openPalletForm('${p.id}')">Edytuj</button>
+       ${currentRole === 'admin' ? `<button class="danger" onclick="deletePallet('${p.id}')">Usuń</button>` : ''}
+     </div>
     </article>`;
  }).join('') : `<div class="empty" style="grid-column:1/-1; text-align:center; color:var(--muted); padding:40px;">Brak palet w magazynie pasujących do wyszukiwania</div>`;
  
@@ -1718,7 +1652,6 @@ function render(){
 }
 
 function openPalletForm(id=null){
- if (currentRole === 'pracownik') return;
  editingId=id;
  const p=id?pallets.find(x=>x.id===id):null;
  document.getElementById('formTitle').textContent=p?'Edytuj paletę':'Dodaj paletę';
@@ -1739,7 +1672,6 @@ function addItemRow(data={name:'',qty:''}){
 }
 
 function savePallet(){
- if (currentRole === 'pracownik') return;
  const code=document.getElementById('pCode').value.trim();
  if(!code) return alert('Podaj numer palety.');
  const items=[...document.querySelectorAll('.item-row')].map(r=>({name:r.querySelector('.iname').value.trim(),qty:Number(r.querySelector('.iqty').value)||0})).filter(i=>i.name);
@@ -1776,7 +1708,6 @@ function openDetails(id){
  const itemsCount = (p.items || []).length;
  const total = totalQty(p);
  const canEditMap = currentRole === 'admin' || currentRole === 'tulejarka';
- const canManage = currentRole === 'admin' || currentRole === 'tulejarka';
  const rawQuery = document.getElementById('search')?.value.trim() || '';
 
  const palletLogs = logs.filter(l => l.text.includes(p.code) || (l.details && l.details.includes(p.code)));
@@ -1787,10 +1718,9 @@ function openDetails(id){
       <h2 style="margin:0; font-size:20px; font-weight:800;">${esc(p.code)}</h2>
       <div style="font-size:12px; color:var(--muted); margin-top:2px;">${esc(p.name || 'Bez opisu')}</div>
     </div>
-    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
-      <button class="secondary" onclick="showPalletOnMap('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-color: #3b82f6; color: #3b82f6;">🗺️ Pokaż na mapie</button>
-      ${canManage ? `<button class="primary" onclick="openQuickAddModal('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700;">+ Szybkie dodanie</button>` : ''}
-      ${canManage ? `<button class="secondary" onclick="closeModal('detailModal'); openPalletForm('${p.id}')" style="padding: 8px 14px; font-size: 12px;">Edytuj</button>` : ''}
+    <div style="display:flex; gap:8px; align-items:center;">
+      <button class="primary" onclick="openQuickAddModal('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700;">+ Szybkie dodanie</button>
+      <button class="secondary" onclick="closeModal('detailModal'); openPalletForm('${p.id}')" style="padding: 8px 14px; font-size: 12px;">Edytuj</button>
       <button class="close" onclick="closeModal('detailModal')">×</button>
     </div>
   </div>
@@ -1818,7 +1748,7 @@ function openDetails(id){
           <tr>
             <th>ROZMIAR I NAZWA PRODUKTU</th>
             <th>ILOŚĆ</th>
-            ${canManage ? '<th style="text-align:right">SZYBKA ZMIANA</th>' : ''}
+            <th style="text-align:right">SZYBKA ZMIANA</th>
           </tr>
         </thead>
         <tbody>
@@ -1827,19 +1757,18 @@ function openDetails(id){
             return `
             <tr id="row-item-${index}">
               <td><strong>${itemNameDisp}</strong></td>
-              <td><strong id="qty-val-${index}">${item.qty} szt.</strong></td>${canManage ? `
-                <td style="text-align:right">
-                  <div class="quick-adjust-group">
-                    <button class="btn-adjust btn-minus" onclick="quickAdjustItem('${p.id}', ${index}, -400)" title="Odejmij 1 kosz (400 szt.)">-1 kosz</button>
-                    <button class="btn-adjust btn-minus" onclick="quickAdjustItem('${p.id}', ${index}, -100)">-100</button>
-                    <button class="btn-adjust btn-plus" onclick="quickAdjustItem('${p.id}', ${index}, 100)">+100</button>
-                    <button class="btn-adjust btn-plus" onclick="quickAdjustItem('${p.id}', ${index}, 400)" title="Dodaj 1 kosz (400 szt.)">+1 kosz</button>
-                  </div>
-                </td>
-              ` : ''}
+              <td><strong id="qty-val-${index}">${item.qty} szt.</strong></td>
+              <td style="text-align:right">
+                <div class="quick-adjust-group">
+                  <button class="btn-adjust btn-minus" onclick="quickAdjustItem('${p.id}',${index}, -400)" title="Odejmij 1 kosz (400 szt.)">-1 kosz</button>
+                  <button class="btn-adjust btn-minus" onclick="quickAdjustItem('${p.id}',${index}, -100)">-100</button>
+                  <button class="btn-adjust btn-plus" onclick="quickAdjustItem('${p.id}',${index}, 100)">+100</button>
+                  <button class="btn-adjust btn-plus" onclick="quickAdjustItem('${p.id}',${index}, 400)" title="Dodaj 1 kosz (400 szt.)">+1 kosz</button>
+                </div>
+              </td>
             </tr>
           `;
-          }).join('') : `<tr><td colspan="${canManage ? 3 : 2}" style="text-align:center; color:var(--muted); padding:20px;">Brak pozycji na palecie.</td></tr>`}
+          }).join('') : `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">Brak pozycji na palecie. Kliknij "+ Szybkie dodanie" powyżej.</td></tr>`}
         </tbody>
       </table>
     </div>
@@ -1886,7 +1815,6 @@ function openDetails(id){
 }
 
 function openQuickAddModal(id) {
-  if (currentRole === 'pracownik') return;
   editingId = id;
   document.getElementById('quickItemName').value = '';
   document.getElementById('quickItemQty').value = '';
@@ -1894,7 +1822,6 @@ function openQuickAddModal(id) {
 }
 
 function saveQuickItem() {
-  if (currentRole === 'pracownik') return;
   const name = document.getElementById('quickItemName').value.trim();
   const qty = Number(document.getElementById('quickItemQty').value);
 
@@ -1928,7 +1855,6 @@ function saveQuickItem() {
 }
 
 function quickAdjustItem(palletId, itemIndex, delta) {
-  if (currentRole === 'pracownik') return;
   const p = pallets.find(x => x.id === palletId);
   if (!p || !p.items || !p.items[itemIndex]) return;
 
