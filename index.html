@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Magazyn Tulejek </title>
+<title>Magazyn Tulejek (Online)</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🛠️</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -299,6 +299,22 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   padding: 0.35em 0.6em; border-radius: 8px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
 }
 .map-slot.occupied:hover { background: #b91c1c; transform: translate(-50%, -50%) scale(1.08); }
+
+/* Efektowne podświetlenie wybranej palety na mapie */
+.map-slot.highlighted-slot {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  color: #fff !important;
+  border: 2.5px solid #ffffff !important;
+  box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.4), 0 8px 20px rgba(0,0,0,0.3) !important;
+  transform: translate(-50%, -50%) scale(1.2) !important;
+  z-index: 50 !important;
+  animation: pulseHighlight 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes pulseHighlight {
+  from { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4), 0 8px 20px rgba(0,0,0,0.3); }
+  to { transform: translate(-50%, -50%) scale(1.25); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0.6), 0 12px 25px rgba(0,0,0,0.4); }
+}
 
 .map-slot.rack-slot { background: #16a34a; color: #ffffff; border: 1px solid #15803d; }
 .map-slot.rack-slot:hover { background: #15803d; }
@@ -819,6 +835,7 @@ let onlineUsersData = {};
 let editingId = null;
 let editingUserLogin = null;
 let selectedSlotId = null;
+let highlightedMapSlotId = null; // Zmienna przechowująca ID slotu do podświetlenia
 let currentRole = localStorage.getItem('magazyn_role') || null;
 let currentUserName = localStorage.getItem('magazyn_user_name') || null;
 let selectedSizeFilter = 'all';
@@ -1479,6 +1496,38 @@ function restoreBackup(e) {
   reader.readAsText(file);
 }
 
+/* FUNKCJA: Pokaż paletę bezpośrednio na mapie */
+function showPalletOnMap(palletId) {
+  const p = pallets.find(x => x.id === palletId);
+  if (!p) return;
+
+  if (!p.mapSlot) {
+    showToast('Brak na mapie', `Paleta ${p.code} nie jest aktualnie przypisana do żadnego slotu na mapie.`, 'danger');
+    return;
+  }
+
+  // Zamknij okno szczegółów palety
+  closeModal('detailModal');
+
+  // Przełącz zakładkę na mapę
+  const mapBtn = document.getElementById('tabBtnMap');
+  switchTab('tabMap', mapBtn);
+
+  // Ustaw slot do podświetlenia i przelicz sloty na mapie
+  highlightedMapSlotId = p.mapSlot;
+  renderMapSlots();
+
+  // Automatycznie przewiń / zresetuj podświetlenie po 4 sekundach
+  setTimeout(() => {
+    if (highlightedMapSlotId === p.mapSlot) {
+      highlightedMapSlotId = null;
+      renderMapSlots();
+    }
+  }, 4000);
+
+  showToast('Lokalizacja', `Paleta ${p.code} została podświetlona na mapie!`, 'info');
+}
+
 /* OBSŁUGA MAPY SLOTÓW */
 function handleSlotClick(slotId) {
   closePopover();
@@ -1581,22 +1630,23 @@ function renderMapSlots() {
   container.innerHTML = MAP_SLOTS.map(slot => {
     const assignedPallet = pallets.find(p => p.mapSlot === slot.id);
     const isRack = slot.isRack;
+    const isHighlighted = (slot.id === highlightedMapSlotId);
 
     if (assignedPallet) {
       return `
-        <div class="map-slot occupied" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot occupied ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           📍 ${esc(assignedPallet.code)}
         </div>
       `;
     } else if (isRack) {
       return `
-        <div class="map-slot rack-slot" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot rack-slot ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           [ REGAŁ ]
         </div>
       `;
     } else {
       return `
-        <div class="map-slot" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           [ + Wolne ]
         </div>
       `;
@@ -1737,7 +1787,8 @@ function openDetails(id){
       <h2 style="margin:0; font-size:20px; font-weight:800;">${esc(p.code)}</h2>
       <div style="font-size:12px; color:var(--muted); margin-top:2px;">${esc(p.name || 'Bez opisu')}</div>
     </div>
-    <div style="display:flex; gap:8px; align-items:center;">
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <button class="secondary" onclick="showPalletOnMap('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-color: #3b82f6; color: #3b82f6;">🗺️ Pokaż na mapie</button>
       ${canManage ? `<button class="primary" onclick="openQuickAddModal('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700;">+ Szybkie dodanie</button>` : ''}
       ${canManage ? `<button class="secondary" onclick="closeModal('detailModal'); openPalletForm('${p.id}')" style="padding: 8px 14px; font-size: 12px;">Edytuj</button>` : ''}
       <button class="close" onclick="closeModal('detailModal')">×</button>
