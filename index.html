@@ -76,7 +76,7 @@ button:active { transform: scale(0.96) !important; }
   to { opacity: 0; transform: translateX(50px) scale(0.9); }
 }
 
-/* Oś czasu (Timeline) */
+/* Timeline */
 .timeline { position: relative; padding-left: 28px; margin-top: 12px; }
 .timeline::before { content: ''; position: absolute; left: 8px; top: 6px; bottom: 6px; width: 2px; background: var(--line); }
 .timeline-item { position: relative; margin-bottom: 18px; }
@@ -179,10 +179,6 @@ button:active { transform: scale(0.96) !important; }
   padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;
 }
 .user-menu-btn:hover { background: rgba(255,255,255,0.12); border-color: var(--primary); color: #fff; }
-
-mark.highlight {
-  background-color: rgba(6, 182, 212, 0.3); color: #38bdf8; padding: 2px 4px; border-radius: 4px; font-weight: 800; border: 1px solid rgba(6, 182, 212, 0.5);
-}
 
 .container { max-width: 1500px; margin: 0 auto; padding: 32px 20px; }
 .tab-content { display: none; }
@@ -406,7 +402,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 
 <div class="toast-container" id="toastContainer"></div>
 
-<!-- Niestandardowy Modal Alertu -->
+<!-- Modal Alertu -->
 <div class="modal-backdrop" id="customAlertModal">
   <div class="modal" style="width:min(400px, 100%); text-align:center;" onclick="event.stopPropagation()">
     <div class="modal-body" style="padding: 32px 24px 20px;">
@@ -420,7 +416,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   </div>
 </div>
 
-<!-- Niestandardowy Modal Potwierdzenia -->
+<!-- Modal Potwierdzenia -->
 <div class="modal-backdrop" id="customConfirmModal">
   <div class="modal" style="width:min(400px, 100%); text-align:center;" onclick="event.stopPropagation()">
     <div class="modal-body" style="padding: 32px 24px 20px;">
@@ -481,8 +477,8 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   <div class="spacer"></div>
   <div class="user-info">
     <!-- Przełącznik oddziałów dla Administratora -->
-    <div id="adminBranchSelectorContainer" style="display:none;">
-      <div class="branch-selector-pill" onclick="toggleBranchSwitch()">
+    <div id="adminBranchSelectorContainer" style="display:none; position:relative;">
+      <div class="branch-selector-pill" onclick="toggleBranchSwitch(event)">
         <span>🏢 Oddział: <strong id="activeBranchLabel" style="color:#fff;">Rosnów</strong> ▾</span>
       </div>
       <div class="dropdown-menu" id="branchDropdownMenu" style="right: auto; left: 0;">
@@ -668,7 +664,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     </section>
   </div>
 
-  <!-- Rozbudowane Statystyki -->
+  <!-- Statystyki -->
   <div class="tab-content" id="tabStats">
     <section class="hero">
       <div>
@@ -677,7 +673,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
       </div>
     </section>
 
-    <!-- Rząd KPI (4 Karty) -->
+    <!-- Rząd KPI -->
     <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:18px; margin-bottom:24px;">
       <div class="panel-section" style="padding:18px 22px;">
         <div style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase;">Całkowity Wolumen Sztuk</div>
@@ -701,7 +697,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
       </div>
     </section>
 
-    <!-- Rząd 2: Sloty i Wykres Chart.js -->
+    <!-- Wykresy -->
     <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap:20px; margin-bottom:24px;">
       <div class="panel-section">
         <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">📡 Wykorzystanie Miejsc na Mapie</h3>
@@ -722,7 +718,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
       </div>
     </section>
 
-    <!-- Rząd 3: Top produkty i palety -->
+    <!-- Top Produkty -->
     <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap:20px; margin-bottom:24px;">
       <div class="panel-section">
         <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">🔥 Top 5 Produktów</h3>
@@ -734,7 +730,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
       </div>
     </section>
 
-    <!-- Rząd 4: Aktywność i Sektory -->
+    <!-- Sektory -->
     <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap:20px;">
       <div class="panel-section">
         <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">⚡ Statystyki Dziennika Oddziału</h3>
@@ -923,24 +919,26 @@ function getActiveBranch() {
 }
 
 let db = null, logsDb = null, presenceDb = null, usersDb = null, issuesDb = null;
-let dbRef = null, logsRef = null, issuesRef = null;
+let dbRef = null, logsRef = null, issuesRef = null, presenceRef = null;
 
 function initBranchDatabase() {
   const branch = getActiveBranch();
-  // Bezpieczne czyszczenie poprzednich nasłuchiwaczy Firebase zapobiegające duplikowaniu eventów
+  
   if (dbRef) dbRef.off();
   if (logsRef) logsRef.off();
   if (issuesRef) issuesRef.off();
+  if (presenceRef) presenceRef.off();
 
   dbRef = firebase.database().ref(`branches/${branch}/palety`);
   logsRef = firebase.database().ref(`branches/${branch}/dziennik`);
-  presenceDb = firebase.database().ref(`branches/${branch}/obecni`);
+  presenceRef = firebase.database().ref(`branches/${branch}/obecni`);
   issuesRef = firebase.database().ref(`branches/${branch}/zgloszenia`);
   usersDb = firebase.database().ref('uzytkownicy');
   
   db = dbRef;
   logsDb = logsRef;
   issuesDb = issuesRef;
+  presenceDb = presenceRef;
 }
 initBranchDatabase();
 
@@ -1096,6 +1094,15 @@ function bindBranchListeners() {
       renderIssuesTab();
     }
   });
+
+  presenceDb.on('value', (snapshot) => {
+    const data = snapshot.val();
+    onlineUsersData = data || {};
+    if (currentRole === 'admin') {
+      const countEl = document.getElementById('onlineCount');
+      if(countEl) countEl.textContent = Object.keys(onlineUsersData).length;
+    }
+  });
 }
 
 usersDb.on('value', (snapshot) => {
@@ -1129,11 +1136,12 @@ function switchBranch(branchKey) {
 
   initBranchDatabase();
   bindBranchListeners();
-  setupPresence(); // aktualizacja obecności dla nowego oddziału
+  setupPresence();
   showToast('Oddział', branchKey === 'rosnowo' ? 'Przełączono na Rosnów' : 'Przełączono na Niepruszewo', 'info');
 }
 
-function toggleBranchSwitch() {
+function toggleBranchSwitch(e) {
+  if (e) e.stopPropagation();
   const menu = document.getElementById('branchDropdownMenu');
   if (menu) menu.classList.toggle('show');
 }
@@ -1348,15 +1356,6 @@ function setupPresence() {
   userPresenceRef.set({ name: currentUserName, role: currentRole, login: currentUserLogin, branch: getActiveBranch() });
   userPresenceRef.onDisconnect().remove();
 }
-
-presenceDb.on('value', (snapshot) => {
-  const data = snapshot.val();
-  onlineUsersData = data || {};
-  if (currentRole === 'admin') {
-    const countEl = document.getElementById('onlineCount');
-    if(countEl) countEl.textContent = Object.keys(onlineUsersData).length;
-  }
-});
 
 function openOnlineUsersModal() {
   if (currentRole !== 'admin') return;
