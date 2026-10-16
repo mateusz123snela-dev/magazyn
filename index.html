@@ -444,7 +444,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
       <button class="primary" onclick="loginWithDb()">Zaloguj się</button>
     </div>
 
-    <!-- Sekcja Zmiany Hasła przy pierwszym logowaniu (pokazywana poniżej / zamiennie) -->
+    <!-- Sekcja Zmiany Hasła przy pierwszym logowaniu -->
     <div id="forcePasswordFields" style="display: none; text-align: left;">
       <div class="field" style="margin-bottom: 12px;">
         <label>Stare / Tymczasowe hasło *</label>
@@ -920,7 +920,7 @@ let currentSessionToken = localStorage.getItem('magazyn_session_token') || null;
 let currentUserBranch = (localStorage.getItem('magazyn_user_branch') || 'rosnowo').toLowerCase();
 let activeAdminBranch = (localStorage.getItem('magazyn_admin_branch') || 'rosnowo').toLowerCase();
 
-let pendingUserObj = null; // Tymczasowe przechowywanie użytkownika wymuszającego zmianę hasła
+let pendingUserObj = null;
 
 function getActiveBranch() {
   if (currentRole === 'admin') return activeAdminBranch;
@@ -1253,7 +1253,7 @@ function processFoundUser(foundUser) {
   const errorEl = document.getElementById('authError');
   errorEl.style.display = 'none';
 
-  // Wygeneruj unikalny token sesji dla tego konta
+  // 1. Zawsze generujemy i zapisujemy activeToken w bazie JAKO PIERWSZE
   const newSessionToken = 'session_' + Math.random().toString(36).substring(2) + Date.now();
   const userKey = (foundUser.login || 'admin').toLowerCase();
   
@@ -1265,7 +1265,7 @@ function processFoundUser(foundUser) {
   currentSessionToken = newSessionToken;
   currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
 
-  // Wymuszenie zmiany hasła bezpośrednio na karcie logowania
+  // 2. Jeśli użytkownik ma wymuszoną zmianę hasła
   if (foundUser.mustChangePassword) {
     pendingUserObj = foundUser;
     
@@ -1422,7 +1422,6 @@ function logout() {
 
   currentRole = null; currentUserName = null; currentUserLogin = null; currentSessionToken = null;
   
-  // Zresetuj układ formularza logowania
   document.getElementById('loginFormFields').style.display = 'block';
   document.getElementById('forcePasswordFields').style.display = 'none';
   document.getElementById('authTitle').textContent = 'Magazyn Tulejek';
