@@ -41,7 +41,7 @@ body {
 
 button, input, select { font: inherit; }
 button { cursor: pointer; border: 0; transition: all var(--transition-fast); }
-button:active { transform: scale(0.97) !important; }
+button:active { transform: scale(0.96) !important; }
 
 /* Powiadomienia typu Toast */
 .toast-container {
@@ -69,7 +69,7 @@ button:active { transform: scale(0.97) !important; }
   align-items: center;
   gap: 12px;
   pointer-events: auto;
-  animation: slideInRight var(--transition-normal) forwards;
+  animation: slideInRight 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 .toast.toast-success { border-left: 4px solid #16a34a; }
 .toast.toast-danger { border-left: 4px solid #ef4444; }
@@ -79,12 +79,12 @@ button:active { transform: scale(0.97) !important; }
 .toast-title { font-weight: 800; font-size: 14px; margin-bottom: 2px; }
 
 @keyframes slideInRight {
-  from { opacity: 0; transform: translateX(40px) scale(0.95); }
+  from { opacity: 0; transform: translateX(60px) scale(0.9); }
   to { opacity: 1; transform: translateX(0) scale(1); }
 }
 @keyframes fadeOutLeft {
   from { opacity: 1; transform: translateX(0) scale(1); }
-  to { opacity: 0; transform: translateX(40px) scale(0.95); }
+  to { opacity: 0; transform: translateX(50px) scale(0.9); }
 }
 
 /* Ekran Logowania */
@@ -92,11 +92,12 @@ button:active { transform: scale(0.97) !important; }
   position: fixed; inset: 0;
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
   display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100000;
-  animation: fadeIn 0.3s ease-out;
+  animation: fadeIn 0.4s ease-out;
 }
 .auth-box {
   background: var(--panel); border: 1px solid var(--line); border-radius: 24px; padding: 40px 32px; width: min(420px, 100%);
   box-shadow: var(--shadow-lg); text-align: center; color: var(--text);
+  animation: scaleUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .auth-box .icon-wrap {
   width: 68px; height: 68px; background: rgba(239, 68, 68, 0.1); color: var(--primary);
@@ -107,9 +108,9 @@ button:active { transform: scale(0.97) !important; }
 .auth-box input {
   width: 100%; padding: 14px 18px; border: 1.5px solid var(--line); border-radius: var(--radius);
   outline: none; text-align: center; font-size: 15px; margin-bottom: 14px; background: var(--bg); color: var(--text);
-  transition: border-color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
-.auth-box input:focus { border-color: var(--primary); }
+.auth-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12); }
 .auth-box button { width: 100%; padding: 14px; font-size: 15px; }
 .auth-error { color: var(--danger); font-size: 13px; font-weight: 600; margin-top: 12px; display: none; }
 
@@ -132,10 +133,9 @@ button:active { transform: scale(0.97) !important; }
   font-weight: 600; font-size: 13px; white-space: nowrap; position: relative; border: 1px solid transparent;
   display: flex; align-items: center; gap: 6px; transition: all var(--transition-fast);
 }
-.nav-tab:hover { color: #fff; background: rgba(255,255,255,0.12); }
+.nav-tab:hover { color: #fff; background: rgba(255,255,255,0.12); transform: translateY(-1px); }
 .nav-tab.active { background: #ef4444; color: #ffffff; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35); }
 
-/* Menu Rozwijane (Dropdown) */
 .nav-dropdown { position: relative; display: inline-block; }
 .dropdown-menu {
   display: none;
@@ -154,8 +154,8 @@ button:active { transform: scale(0.97) !important; }
 }
 .dropdown-menu.show { display: flex; animation: dropdownFade var(--transition-fast) forwards; }
 @keyframes dropdownFade {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(-10px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .dropdown-item {
@@ -163,7 +163,7 @@ button:active { transform: scale(0.97) !important; }
   padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600;
   display: flex; align-items: center; justify-content: space-between;
 }
-.dropdown-item:hover { background: rgba(255, 255, 255, 0.08); color: #fff; }
+.dropdown-item:hover { background: rgba(255, 255, 255, 0.08); color: #fff; transform: translateX(2px); }
 .dropdown-item.active { background: #ef4444; color: #fff; font-weight: 700; }
 
 .tab-badge {
@@ -174,28 +174,19 @@ button:active { transform: scale(0.97) !important; }
 .dropdown-item .tab-badge { background: #ffffff; color: #ef4444; }
 
 .topbar .spacer { flex: 1; }
-.user-info { font-size: 13px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.online-counter {
-  background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 6px 14px; border-radius: 99px; font-weight: 700; font-size: 12px; display: flex; align-items: center; gap: 6px; cursor: pointer;
-  transition: all var(--transition-fast);
-}
-.online-counter:hover { background: rgba(255, 255, 255, 0.16); color: #fff; }
+.user-info { font-size: 13px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; position: relative; }
 
 .role-badge { padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
 .role-admin { background: rgba(245, 158, 11, 0.18); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.35); }
 .role-tulejarka { background: rgba(59, 130, 246, 0.18); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.35); }
 .role-pracownik { background: rgba(239, 68, 68, 0.18); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); }
 
-.btn-logout { background: rgba(255,255,255,0.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.12); padding: 8px 14px; border-radius: 10px; font-size: 12px; font-weight: 600; }
-.btn-logout:hover { background: rgba(255,255,255,0.18); color: #fff; }
-
-.inactivity-badge {
-  background: rgba(255, 255, 255, 0.08); color: #cbd5e1; border: 1px solid rgba(255, 255, 255, 0.12);
-  padding: 6px 12px; border-radius: 8px; font-weight: 600; font-size: 12px; display: flex; align-items: center; gap: 6px;
+.user-menu-btn {
+  background: rgba(255,255,255,0.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.12);
+  padding: 6px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px;
 }
+.user-menu-btn:hover { background: rgba(255,255,255,0.18); color: #fff; }
 
-/* Podświetlenie wyszukiwanej frazy */
 mark.highlight {
   background-color: #fef08a;
   color: #854d0e;
@@ -204,13 +195,12 @@ mark.highlight {
   font-weight: 800;
 }
 
-/* Kontener Strony */
 .container { max-width: 1500px; margin: 0 auto; padding: 32px 20px; }
 .tab-content { display: none; }
-.tab-content.active { display: block; animation: tabFadeIn var(--transition-normal) forwards; }
+.tab-content.active { display: block; animation: tabFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
 @keyframes tabFadeIn {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -233,7 +223,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 
 .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 28px; }
 .stat { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; display: flex; align-items: center; gap: 18px; box-shadow: var(--shadow-sm); transition: transform var(--transition-fast), box-shadow var(--transition-fast); }
-.stat:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.stat:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
 .stat-icon { width: 52px; height: 52px; border-radius: 14px; background: rgba(239, 68, 68, 0.1); color: var(--primary); display: grid; place-items: center; font-size: 22px; flex-shrink: 0; }
 .stat-label { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 .stat-value { font-size: 26px; font-weight: 800; margin-top: 2px; }
@@ -245,8 +235,8 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .search span { position: absolute; left: 16px; top: 13px; font-size: 18px; color: var(--muted); }
 
 .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-.pallet { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-sm); transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast); }
-.pallet:hover { transform: translateY(-4px); box-shadow: var(--shadow); border-color: var(--primary); }
+.pallet { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; box-shadow: var(--shadow-sm); transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color var(--transition-fast); }
+.pallet:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: var(--primary); }
 .pallet-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
 .pallet-code { font-size: 19px; font-weight: 800; color: var(--text); letter-spacing: -0.3px; }
 .badge { font-size: 11px; background: rgba(239, 68, 68, 0.1); color: var(--primary); border-radius: 99px; padding: 5px 12px; font-weight: 700; }
@@ -256,7 +246,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .pallet-actions { display: flex; gap: 10px; margin-top: 16px; }
 .pallet-actions button { flex: 1; padding: 9px; font-size: 13px; border-radius: 10px; }
 
-/* Przyciski filtrów */
 .size-filters, .log-filters {
   display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
 }
@@ -265,13 +254,12 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   padding: 8px 16px; border-radius: 10px; font-weight: 700; font-size: 13px;
   transition: all var(--transition-fast);
 }
-.size-filter-btn:hover, .log-filter-btn:hover { border-color: var(--primary); color: var(--primary); }
+.size-filter-btn:hover, .log-filter-btn:hover { border-color: var(--primary); color: var(--primary); transform: translateY(-1px); }
 .size-filter-btn.active, .log-filter-btn.active {
   background: var(--primary); color: #fff; border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
-/* KONTENER MAPY */
 .map-container {
   position: relative; width: 100%; border: 2px solid var(--line);
   border-radius: var(--radius); overflow: hidden; background: var(--map-bg);
@@ -290,7 +278,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 }
 .map-slot:hover {
   background: #0f172a; border-color: #ef4444; color: #fff;
-  transform: translate(-50%, -50%) scale(1.08); z-index: 10;
+  transform: translate(-50%, -50%) scale(1.1); z-index: 10;
 }
 
 .map-slot.occupied {
@@ -298,17 +286,36 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   border: 1.5px solid #ffffff; font-size: clamp(8px, 0.75vw, 11px); font-weight: 800;
   padding: 0.35em 0.6em; border-radius: 8px; box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
 }
-.map-slot.occupied:hover { background: #b91c1c; transform: translate(-50%, -50%) scale(1.08); }
+.map-slot.occupied:hover { background: #b91c1c; transform: translate(-50%, -50%) scale(1.1); }
+
+.map-slot.highlighted-slot {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+  color: #fff !important;
+  border: 2.5px solid #ffffff !important;
+  box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7), 0 10px 25px rgba(0,0,0,0.4) !important;
+  transform: translate(-50%, -50%) scale(1.25) !important;
+  z-index: 100 !important;
+  animation: radarPulse 1.2s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+@keyframes radarPulse {
+  0% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.8), 0 10px 25px rgba(0,0,0,0.4); transform: translate(-50%, -50%) scale(1.2); }
+  70% { box-shadow: 0 0 0 22px rgba(59, 130, 246, 0), 0 15px 30px rgba(0,0,0,0.5); transform: translate(-50%, -50%) scale(1.3); }
+  100% { box-shadow: 0 0 0 0 rgba(59, 130, 246, 0), 0 10px 25px rgba(0,0,0,0.4); transform: translate(-50%, -50%) scale(1.25); }
+}
 
 .map-slot.rack-slot { background: #16a34a; color: #ffffff; border: 1px solid #15803d; }
 .map-slot.rack-slot:hover { background: #15803d; }
 
-/* Popover Menu Pineski */
 .pin-popover {
   position: absolute; background: var(--panel); border: 1px solid var(--line);
   border-radius: 14px; padding: 8px; box-shadow: var(--shadow-lg); display: flex;
   gap: 6px; z-index: 110; transform: translate(-50%, -120%); flex-wrap: wrap;
-  animation: modalFadeIn var(--transition-fast) forwards;
+  animation: popoverFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@keyframes popoverFadeIn {
+  from { opacity: 0; transform: translate(-50%, -100%) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, -120%) scale(1); }
 }
 .pin-popover button {
   padding: 9px 14px; font-size: 12px; font-weight: 700; border-radius: 10px;
@@ -316,9 +323,9 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 }
 .pin-popover button:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
 
-/* Kafelki podglądu w karcie */
 .detail-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 14px; margin: 18px 0 24px; }
-.detail-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.detail-card { background: var(--bg); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; transition: transform var(--transition-fast); }
+.detail-card:hover { transform: translateY(-2px); }
 .detail-card-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
 .detail-card-value { font-size: 15px; font-weight: 800; color: var(--text); }
 
@@ -337,7 +344,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius);
   font-size: 13px; flex-wrap: wrap; gap: 10px; transition: transform var(--transition-fast);
 }
-.log-item:hover { transform: translateX(3px); }
+.log-item:hover { transform: translateX(4px); }
 .log-content { display: flex; align-items: center; gap: 12px; font-weight: 600; }
 .log-badge-icon {
   width: 36px; height: 36px; border-radius: 10px; background: var(--panel);
@@ -346,13 +353,12 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 }
 .log-time { color: var(--muted); font-size: 11px; font-weight: 700; background: var(--panel); padding: 5px 10px; border-radius: 20px; border: 1px solid var(--line); }
 
-/* Przycisk usuwania z historii ruchów palety */
 .btn-delete-log {
   background: rgba(239, 68, 68, 0.08); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2);
   width: 26px; height: 26px; border-radius: 8px; display: inline-grid; place-items: center;
   font-weight: 800; font-size: 14px; margin-left: 6px; flex-shrink: 0; transition: all var(--transition-fast);
 }
-.btn-delete-log:hover { background: #ef4444; color: #fff; border-color: #ef4444; }
+.btn-delete-log:hover { background: #ef4444; color: #fff; border-color: #ef4444; transform: scale(1.1); }
 
 .styled-table-container { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 14px; border: 1px solid var(--line); }
 .table { width: 100%; border-collapse: collapse; background: var(--panel); min-width: 550px; }
@@ -361,26 +367,24 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .table tbody tr:last-child td { border-bottom: 0; }
 .table tbody tr:hover { background: var(--bg); }
 
-.pallet-tag {
-  display: inline-block; background: var(--bg); color: var(--text);
-  border: 1px solid var(--line); padding: 4px 10px; border-radius: 8px;
-  font-size: 12px; font-weight: 700; margin-right: 4px; margin-bottom: 4px;
-}
+/* Progress Bar & Visual Charts dla Statystyk */
+.progress-bar-wrap { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; height: 16px; width: 100%; position: relative; }
+.progress-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%); transition: width 0.5s ease-out; }
 
-/* Modale i Nakładki */
 .modal-backdrop { 
-  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(5px);
+  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(6px);
   display: none; align-items: center; justify-content: center; padding: 16px; z-index: 500;
-  opacity: 0; transition: opacity var(--transition-fast);
+  opacity: 0; transition: opacity 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .modal-backdrop.show { display: flex; opacity: 1; }
 
 #quickAddModal { z-index: 600; }
+#forcePasswordModal { z-index: 999999; }
 
 .modal { 
   background: var(--panel); color: var(--text); width: min(850px, 100%); max-height: 92vh; 
   overflow: auto; border-radius: 24px; border: 1px solid var(--line); box-shadow: var(--shadow-lg);
-  transform: scale(0.95) translateY(10px); transition: transform var(--transition-fast);
+  transform: scale(0.9) translateY(16px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .modal-backdrop.show .modal { transform: scale(1) translateY(0); }
 
@@ -394,10 +398,12 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .field input:focus, .field select:focus { border-color: var(--primary); }
 .field.full { grid-column: 1/-1; }
 
-.item-row { display: grid; grid-template-columns: 2fr 1fr 40px; gap: 10px; margin-bottom: 10px; }
+/* Osobne pola dla Rozmiaru i Nazwy */
+.item-row { display: grid; grid-template-columns: 110px 1.8fr 1fr 40px; gap: 10px; margin-bottom: 10px; animation: fadeInRow 0.25s ease-out; }
+@keyframes fadeInRow { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 .item-row input { padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); font-size: 14px; }
-.remove-item { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 10px; font-size: 18px; font-weight: 700; }
-.remove-item:hover { background: rgba(239, 68, 68, 0.2); }
+.remove-item { background: rgba(239, 68, 68, 0.1); color: var(--danger); border-radius: 10px; font-size: 18px; font-weight: 700; transition: all var(--transition-fast); }
+.remove-item:hover { background: rgba(239, 68, 68, 0.2); transform: scale(1.05); }
 
 @media (max-width: 640px) {
   .topbar { padding: 14px 18px; flex-direction: column; align-items: stretch; gap: 14px; }
@@ -412,9 +418,11 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   .quick-adjust-group { justify-content: flex-start; margin-top: 8px; }
   .map-container { overflow-x: auto; }
   .map-wrapper { min-width: 800px; }
+  .item-row { grid-template-columns: 90px 1fr 80px 36px; gap: 6px; }
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes scaleUp { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 </style>
 </head>
 <body>
@@ -434,13 +442,35 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   </div>
 </div>
 
+<!-- Modal Wymuszenia Zmiany Hasła przy Pierwszym Logowaniu -->
+<div class="modal-backdrop" id="forcePasswordModal" style="display:none;">
+ <div class="modal" style="width:min(420px, 100%)" onclick="event.stopPropagation()">
+  <div class="modal-head"><h2>Zmiana hasła wymagana</h2></div>
+  <div class="modal-body">
+   <p style="font-size:13px; color:var(--muted); margin-top:0; margin-bottom:16px;">Logujesz się po raz pierwszy lub administrator wymusił zmianę hasła. Podaj stare oraz nowe hasło.</p>
+   <div class="field" style="margin-bottom:14px;">
+     <label>Stare hasło *</label>
+     <input id="forceOldPass" type="password" placeholder="••••">
+   </div>
+   <div class="field" style="margin-bottom:14px;">
+     <label>Nowe hasło *</label>
+     <input id="forceNewPass" type="password" placeholder="••••">
+   </div>
+   <div class="field">
+     <label>Potwierdź nowe hasło *</label>
+     <input id="forceConfirmPass" type="password" placeholder="••••" onkeydown="if(event.key==='Enter') saveForcedPasswordChange()">
+   </div>
+  </div>
+  <div class="modal-foot">
+    <button class="primary" style="width:100%;" onclick="saveForcedPasswordChange()">Zmień hasło i kontynuuj</button>
+  </div>
+ </div>
+</div>
+
 <div class="app">
 <header class="topbar">
   <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
     <div class="logo"><div class="logo-icon">🛠️</div> Magazyn Tulejek</div>
-    <div class="online-counter" onclick="openOnlineUsersModal()" title="Kliknij, aby zobaczyć kto jest online">
-      <span>🟢 Online:</span><strong id="onlineCount">1</strong>
-    </div>
   </div>
   
   <nav class="nav-tabs" id="navTabs">
@@ -450,25 +480,43 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 
   <div class="spacer"></div>
   <div class="user-info">
-    <div class="inactivity-badge" title="Czas do automatycznego wylogowania">
-      <span>⏳ Wylogowanie za:</span><strong id="inactivityTimerDisplay">05:00</strong>
-    </div>
     <span id="userNameDisplay" style="font-weight:700;color:#fff;"></span>
     <span class="role-badge" id="roleBadge"></span>
-    <button class="btn-logout" onclick="logout()">Wyloguj</button>
+    
+    <!-- Rozwijane menu w prawym górnym rogu pod strzałką -->
+    <div class="nav-dropdown">
+      <button class="user-menu-btn" onclick="toggleUserDropdown(event)">
+        <span>▼</span>
+      </button>
+      <div class="dropdown-menu" id="userDropdownMenu" style="right: 0; left: auto;">
+        <div class="dropdown-item" style="cursor: default; background: rgba(255,255,255,0.03);">
+          <span>⏳ Wylogowanie za:</span>
+          <strong id="inactivityTimerDisplay" style="color: #fff;">05:00</strong>
+        </div>
+        <div class="dropdown-item" id="onlineCounterBox" onclick="openOnlineUsersModal()" style="display:none; justify-content: space-between;">
+          <span>🟢 Online:</span>
+          <strong id="onlineCount" style="color: #fff;">1</strong>
+        </div>
+        <button class="dropdown-item" onclick="openChangePasswordModal()">
+          <span>🔑 Zmień hasło</span>
+        </button>
+        <button class="dropdown-item" onclick="logout()" style="color: #ef4444;">
+          <span>🚪 Wyloguj</span>
+        </button>
+      </div>
+    </div>
   </div>
 </header>
 
 <main class="container">
 
-  <!-- ZAKŁADKA 1: MAGAZYN -->
   <div class="tab-content active" id="tabPallets">
     <section class="hero">
       <div>
         <h1>Magazyn Tulejek</h1>
         <p class="subtitle">Zarządzaj paletami i synchronizuj dane na żywo w zespole.</p>
       </div>
-      <button class="primary" onclick="openPalletForm()">＋ Dodaj paletę</button>
+      <button class="primary" id="btnAddPalletHero" onclick="openPalletForm()">＋ Dodaj paletę</button>
     </section>
 
     <section class="stats">
@@ -487,7 +535,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     <section class="grid" id="palletGrid"></section>
   </div>
 
-  <!-- ZAKŁADKA 2: MAPA MAGAZYNU -->
   <div class="tab-content" id="tabMap">
     <section class="hero">
       <div>
@@ -505,25 +552,21 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
             </pattern>
           </defs>
 
-          <!-- Tło hali -->
           <rect width="1600" height="800" fill="var(--map-board)"/>
           <rect width="1600" height="800" fill="url(#grid)"/>
           <rect x="20" y="20" width="1560" height="760" fill="none" stroke="#ef4444" stroke-width="8"/>
 
-          <!-- 1. BRAMA (Lewy górny róg) -->
           <g transform="translate(60, 50)">
             <rect x="0" y="0" width="180" height="50" fill="none" stroke="#ef4444" stroke-width="3" stroke-dasharray="6,6"/>
             <text x="90" y="30" fill="#ef4444" font-size="18" font-weight="800" text-anchor="middle">🚪 BRAMA</text>
           </g>
 
-          <!-- 2. LEWY PIONOWY BLOK PALET -->
           <g transform="translate(50, 380)">
             <rect x="0" y="0" width="150" height="210" fill="none" stroke="#ef4444" stroke-width="4"/>
             <line x1="0" y1="70" x2="150" y2="70" stroke="#ef4444" stroke-width="3"/>
             <line x1="0" y1="140" x2="150" y2="140" stroke="#ef4444" stroke-width="3"/>
           </g>
 
-          <!-- 3. GÓRNY RZĄD PALET -->
           <g transform="translate(260, 50)">
             <rect x="0" y="0" width="550" height="130" fill="none" stroke="#ef4444" stroke-width="4"/>
             <line x1="110" y1="0" x2="110" y2="130" stroke="#ef4444" stroke-width="3"/>
@@ -532,13 +575,11 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
             <line x1="440" y1="0" x2="440" y2="130" stroke="#ef4444" stroke-width="3"/>
           </g>
 
-          <!-- 4. GÓRNY ZIELONY REGAŁ -->
           <g transform="translate(810, 50)">
             <rect x="0" y="0" width="90" height="300" fill="rgba(22, 163, 74, 0.12)" stroke="#16a34a" stroke-width="4"/>
             <text x="45" y="150" fill="#16a34a" font-size="16" font-weight="800" text-anchor="middle" transform="rotate(-90 45 150)">REGAŁ</text>
           </g>
 
-          <!-- 5. PALETY PO PRAWEJ STRONIE ZIELONEGO REGAŁU -->
           <g transform="translate(900, 50)">
             <rect x="0" y="0" width="110" height="300" fill="none" stroke="#ef4444" stroke-width="4"/>
             <line x1="0" y1="60" x2="110" y2="60" stroke="#ef4444" stroke-width="3"/>
@@ -547,16 +588,13 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
             <line x1="0" y1="240" x2="110" y2="240" stroke="#ef4444" stroke-width="3"/>
           </g>
 
-          <!-- NAPIS: WEJŚCIE NA TULEJKI -->
           <text x="855" y="415" fill="#ef4444" font-size="17" font-weight="800" text-anchor="middle">🚶 WEJŚCIE NA TULEJKI</text>
 
-          <!-- 6. DOLNY ZIELONY REGAŁ -->
           <g transform="translate(810, 460)">
             <rect x="0" y="0" width="90" height="300" fill="rgba(22, 163, 74, 0.12)" stroke="#16a34a" stroke-width="4"/>
             <text x="45" y="150" fill="#16a34a" font-size="16" font-weight="800" text-anchor="middle" transform="rotate(-90 45 150)">REGAŁ</text>
           </g>
 
-          <!-- 7. DOLNY ŚRODKOWY BLOK PALET -->
           <g transform="translate(900, 460)">
             <rect x="0" y="0" width="220" height="300" fill="none" stroke="#ef4444" stroke-width="4"/>
             <line x1="110" y1="0" x2="110" y2="300" stroke="#ef4444" stroke-width="3"/>
@@ -566,13 +604,11 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
             <line x1="0" y1="240" x2="220" y2="240" stroke="#ef4444" stroke-width="3"/>
           </g>
 
-          <!-- 8. MASZYNA TULEJARKA -->
           <g transform="translate(1180, 280)">
             <rect x="0" y="0" width="370" height="85" fill="#f1f5f9" stroke="#0f172a" stroke-width="4"/>
             <text x="185" y="50" fill="#0f172a" font-size="18" font-weight="800" text-anchor="middle">⚙️ TULEJARKA (MASZYNA)</text>
           </g>
 
-          <!-- 9. DOLNY PRAWY BLOK PALET -->
           <g transform="translate(1220, 460)">
             <rect x="0" y="0" width="330" height="300" fill="none" stroke="#ef4444" stroke-width="4"/>
             <line x1="110" y1="0" x2="110" y2="300" stroke="#ef4444" stroke-width="3"/>
@@ -590,14 +626,16 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     </div>
   </div>
 
-  <!-- ZAKŁADKA 3: DZIENNIK ZDARZEŃ -->
   <div class="tab-content" id="tabLogs">
     <section class="hero">
       <div>
         <h1>Dziennik zdarzeń</h1>
         <p class="subtitle">Pełna historia aktywności i zmian wprowadzanych przez zespół w czasie rzeczywistym.</p>
       </div>
-      <button class="danger" id="btnClearLogs" onclick="clearLogs()" style="display:none;">🗑️ Wyczyść historię</button>
+      <div style="display:flex; gap:10px;">
+        <button class="secondary" onclick="exportLogsCSV()">⬇ Eksport Dziennika (CSV)</button>
+        <button class="danger" id="btnClearLogs" onclick="clearLogs()" style="display:none;">🗑️ Wyczyść historię</button>
+      </div>
     </section>
 
     <section class="panel-section">
@@ -619,7 +657,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     </section>
   </div>
 
-  <!-- ZAKŁADKA 4: ROZMIARY -->
   <div class="tab-content" id="tabSizes">
     <section class="hero">
       <div>
@@ -652,7 +689,100 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     </section>
   </div>
 
-  <!-- ZAKŁADKA 5: UŻYTKOWNICY -->
+  <!-- Rozbudowane Statystyki (Tylko dla Admina) -->
+  <div class="tab-content" id="tabStats">
+    <section class="hero">
+      <div>
+        <h1>📊 Zaawansowana Analityka i Statystyki Magazynowe</h1>
+        <p class="subtitle">Pełny wgląd w wydajność, zapasy, obłożenie przestrzeni i historię aktywności.</p>
+      </div>
+    </section>
+
+    <!-- Rząd KPI Top (4 Karty) -->
+    <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:18px; margin-bottom:24px;">
+      <div class="panel-section" style="padding:18px 22px;">
+        <div style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Całkowity Wolumen Sztuk</div>
+        <div style="font-size:28px; font-weight:800; color:#ef4444; margin-top:4px;" id="advStatTotalQty">0</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;" id="advStatBoxes">~ 0 koszy</div>
+      </div>
+      <div class="panel-section" style="padding:18px 22px;">
+        <div style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Wskaźnik Zapełnienia Mapy</div>
+        <div style="font-size:28px; font-weight:800; color:#16a34a; margin-top:4px;" id="advStatFillRate">0%</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;" id="advStatSlotsDetail">0 z 0 slotów</div>
+      </div>
+      <div class="panel-section" style="padding:18px 22px;">
+        <div style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Średnio na Palecie</div>
+        <div style="font-size:28px; font-weight:800; color:#3b82f6; margin-top:4px;" id="advStatAvgQty">0 szt.</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;" id="advStatAvgItems">~ 0.0 pozycji / paletę</div>
+      </div>
+      <div class="panel-section" style="padding:18px 22px;">
+        <div style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Palety Poza Mapą</div>
+        <div style="font-size:28px; font-weight:800; color:#f59e0b; margin-top:4px;" id="advStatUnassigned">0</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">Czekają na przypisanie</div>
+      </div>
+    </section>
+
+    <!-- Rząd 2: Sloty i Rozkład Rozmiarów -->
+    <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap:20px; margin-bottom:24px;">
+      <div class="panel-section">
+        <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">🗺️ Wykorzystanie Miejsc na Mapie</h3>
+        <div style="font-size:32px; font-weight:800; margin-bottom:8px;" id="mapUsageText">0 / 0</div>
+        <div class="progress-bar-wrap" style="margin-bottom:14px; height:20px;">
+          <div class="progress-bar-fill" id="mapUsageFill" style="width: 0%;"></div>
+        </div>
+        <div style="font-size:13px; color:var(--muted); display:flex; justify-content:space-between; border-top:1px solid var(--line); padding-top:12px;">
+          <span>Wolne miejsca: <strong id="freeSlotsCount" style="color:#16a34a;">0</strong></span>
+          <span>Zapełnienie: <strong id="mapUsagePercent">0%</strong></span>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">📏 Udział Rozmiarów Tulejek</h3>
+        <div id="sizeShareBars" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+    </section>
+
+    <!-- Rząd 3: Top 5 i Największe Palety -->
+    <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap:20px; margin-bottom:24px;">
+      <div class="panel-section">
+        <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">🔥 Top 5 Najczęściej Magazynowanych Produktów</h3>
+        <div id="topSizesContainer" style="display:flex; flex-direction:column; gap:12px;"></div>
+      </div>
+
+      <div class="panel-section">
+        <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">📦 TOP 5 Najbardziej Załadowanych Palet</h3>
+        <div id="topPalletsContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>
+    </section>
+
+    <!-- Rząd 4: Analityka Dziennika & Strefy -->
+    <section style="display:grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap:20px;">
+      <div class="panel-section">
+        <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">⚡ Statystyki Dziennika i Aktywności</h3>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg); border-radius:10px;">
+            <span style="font-size:13px; color:var(--muted); font-weight:600;">Wszystkie wpisy w historii:</span>
+            <strong id="statTotalLogs" style="font-size:15px;">0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg); border-radius:10px;">
+            <span style="font-size:13px; color:var(--muted); font-weight:600;">Liczba logowań:</span>
+            <strong id="statLoginsCount" style="font-size:15px; color:#3b82f6;">0</strong>
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg); border-radius:10px;">
+            <span style="font-size:13px; color:var(--muted); font-weight:600;">Ostatnia aktywność:</span>
+            <strong id="statLastActivity" style="font-size:13px;">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <h3 style="margin:0 0 16px 0; font-weight:800; font-size:16px;">📍 Najbardziej Zapełnione Sektory Mapy</h3>
+        <div id="sectorUsageBars" style="display:flex; flex-direction:column; gap:10px;"></div>
+      </div>
+    </section>
+
+  </div>
+
   <div class="tab-content" id="tabUsers">
     <section class="hero">
       <div>
@@ -682,13 +812,13 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 </main>
 </div>
 
-<!-- Modale z obsługą zamykania po kliknięciu w tło -->
+<!-- Modal Dodawania / Edycji Palety -->
 <div class="modal-backdrop" id="formModal" onclick="closeModal('formModal')">
  <div class="modal" onclick="event.stopPropagation()">
   <div class="modal-head"><h2 id="formTitle">Dodaj paletę</h2><button class="close" onclick="closeModal('formModal')">×</button></div>
   <div class="modal-body">
    <div class="form-grid">
-    <div class="field"><label>Numer palety *</label><input id="pCode" placeholder="np. P-001"></div>
+    <div class="field"><label>Numer palety *</label><input id="pCode" placeholder="np. P-019"></div>
     <div class="field"><label>Opis / Opis palety</label><input id="pName" placeholder="np. Towar do wysyłki"></div>
     <div class="field full"><label>Lokalizacja w magazynie</label><input id="pLocation" placeholder="np. Regał A / Sektor 12"></div>
    </div>
@@ -704,6 +834,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
  </div>
 </div>
 
+<!-- Modal Użytkownika z Opcją Wymuszenia Zmiany Hasła -->
 <div class="modal-backdrop" id="userModal" onclick="closeModal('userModal')">
  <div class="modal" style="width:min(420px, 100%)" onclick="event.stopPropagation()">
   <div class="modal-head"><h2 id="userModalTitle">Dodaj użytkownika</h2><button class="close" onclick="closeModal('userModal')">×</button></div>
@@ -720,13 +851,17 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
      <label>Hasło <span id="passHint" style="font-size:10px; color:var(--muted); font-weight:normal;">(zostaw puste, aby nie zmieniać)</span> *</label>
      <input id="newUserPass" type="password" placeholder="••••">
    </div>
-   <div class="field">
+   <div class="field" style="margin-bottom:14px;">
      <label>Rola w systemie *</label>
      <select id="newUserRole">
        <option value="pracownik">Pracownik</option>
        <option value="tulejarka">Pracownik Tulejarka</option>
        <option value="admin">Administrator</option>
      </select>
+   </div>
+   <div class="field" style="display:flex; align-items:center; gap:10px; background:var(--bg); padding:12px 14px; border-radius:10px; border:1px solid var(--line);">
+     <input type="checkbox" id="newUserForceChange" style="width:20px; height:20px; accent-color:var(--primary); cursor:pointer;">
+     <label for="newUserForceChange" style="margin:0; cursor:pointer; font-size:12px; color:var(--text);">Wymuś zmianę hasła przy pierwszym logowaniu</label>
    </div>
   </div>
   <div class="modal-foot">
@@ -736,19 +871,49 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
  </div>
 </div>
 
+<!-- Modal Standardowej Zmiany Hasła -->
+<div class="modal-backdrop" id="changePasswordModal" onclick="closeModal('changePasswordModal')">
+ <div class="modal" style="width:min(420px, 100%)" onclick="event.stopPropagation()">
+  <div class="modal-head"><h2>Zmiana hasła</h2><button class="close" onclick="closeModal('changePasswordModal')">×</button></div>
+  <div class="modal-body">
+   <div class="field" style="margin-bottom:14px;">
+     <label>Stare hasło *</label>
+     <input id="changeOldPass" type="password" placeholder="••••">
+   </div>
+   <div class="field" style="margin-bottom:14px;">
+     <label>Nowe hasło *</label>
+     <input id="changeNewPass" type="password" placeholder="••••">
+   </div>
+   <div class="field">
+     <label>Potwierdź nowe hasło *</label>
+     <input id="changeConfirmPass" type="password" placeholder="••••" onkeydown="if(event.key==='Enter') saveUserPasswordChange()">
+   </div>
+  </div>
+  <div class="modal-foot">
+    <button class="secondary" onclick="closeModal('changePasswordModal')">Anuluj</button>
+    <button class="primary" onclick="saveUserPasswordChange()">Zmień hasło</button>
+  </div>
+ </div>
+</div>
+
+<!-- Modal Szybkiego Dodawania -->
 <div class="modal-backdrop" id="quickAddModal" onclick="closeModal('quickAddModal')">
- <div class="modal" style="width:min(400px, 100%)" onclick="event.stopPropagation()">
+ <div class="modal" style="width:min(420px, 100%)" onclick="event.stopPropagation()">
   <div class="modal-head"><h2>Szybkie dodawanie</h2><button class="close" onclick="closeModal('quickAddModal')">×</button></div>
   <div class="modal-body">
    <div class="field" style="margin-bottom:14px;">
-     <label>Rozmiar i nazwa tulejki *</label>
-     <input id="quickItemName" placeholder="np. 50 DALPO SOMA">
+     <label>Rozmiar tulejki *</label>
+     <input id="quickItemSize" placeholder="np. 50">
+   </div>
+   <div class="field" style="margin-bottom:14px;">
+     <label>Nazwa / Klient *</label>
+     <input id="quickItemName" placeholder="np. DALPO SOMA">
    </div>
    <div class="field" style="margin-bottom:4px;">
      <label>Ilość sztuk *</label>
      <input id="quickItemQty" type="number" min="1" placeholder="np. 400" onkeydown="if(event.key==='Enter') saveQuickItem()">
    </div>
-   <div style="font-size:11px; color:var(--muted); font-weight:600; margin-top:4px;">💡 1 kosz = 400 sztuk, 1 paleta = 4000</div>
+   <div style="font-size:11px; color:var(--muted); font-weight:600; margin-top:6px;">💡 1 kosz = 400 sztuk, 1 paleta = 4000</div>
   </div>
   <div class="modal-foot">
     <button class="secondary" onclick="closeModal('quickAddModal')">Anuluj</button>
@@ -819,12 +984,18 @@ let onlineUsersData = {};
 let editingId = null;
 let editingUserLogin = null;
 let selectedSlotId = null;
+let highlightedMapSlotId = null;
+
 let currentRole = localStorage.getItem('magazyn_role') || null;
 let currentUserName = localStorage.getItem('magazyn_user_name') || null;
+let currentUserLogin = localStorage.getItem('magazyn_user_login') || null;
+let currentSessionToken = localStorage.getItem('magazyn_session_token') || null;
+
 let selectedSizeFilter = 'all';
 let selectedLogFilter = 'all';
 
 let userPresenceRef = null;
+let sessionMonitorRef = null;
 let lastSeenLogCount = Number(localStorage.getItem('magazyn_last_seen_logs') || 0);
 
 const INACTIVITY_LIMIT = 5 * 60 * 1000;
@@ -832,46 +1003,46 @@ let timeRemaining = INACTIVITY_LIMIT;
 let inactivityInterval = null;
 
 const MAP_SLOTS = [
-  { id: 'left_1', x: 125, y: 415 },
-  { id: 'left_2', x: 125, y: 485 },
-  { id: 'left_3', x: 125, y: 555 },
-  { id: 'top_1', x: 315, y: 115 },
-  { id: 'top_2', x: 425, y: 115 },
-  { id: 'top_3', x: 535, y: 115 },
-  { id: 'top_4', x: 645, y: 115 },
-  { id: 'top_5', x: 755, y: 115 },
-  { id: 'rack_top_1', x: 855, y: 200, isRack: true },
-  { id: 'top_right_v1', x: 955, y: 80 },
-  { id: 'top_right_v2', x: 955, y: 140 },
-  { id: 'top_right_v3', x: 955, y: 200 },
-  { id: 'top_right_v4', x: 955, y: 260 },
-  { id: 'top_right_v5', x: 955, y: 320 },
-  { id: 'rack_bot_1', x: 855, y: 610, isRack: true },
-  { id: 'bot_mid_l1', x: 955, y: 490 },
-  { id: 'bot_mid_l2', x: 955, y: 550 },
-  { id: 'bot_mid_l3', x: 955, y: 610 },
-  { id: 'bot_mid_l4', x: 955, y: 670 },
-  { id: 'bot_mid_l5', x: 955, y: 730 },
-  { id: 'bot_mid_r1', x: 1065, y: 490 },
-  { id: 'bot_mid_r2', x: 1065, y: 550 },
-  { id: 'bot_mid_r3', x: 1065, y: 610 },
-  { id: 'bot_mid_r4', x: 1065, y: 670 },
-  { id: 'bot_mid_r5', x: 1065, y: 730 },
-  { id: 'bot_right_c1_1', x: 1275, y: 490 },
-  { id: 'bot_right_c1_2', x: 1275, y: 550 },
-  { id: 'bot_right_c1_3', x: 1275, y: 610 },
-  { id: 'bot_right_c1_4', x: 1275, y: 670 },
-  { id: 'bot_right_c1_5', x: 1275, y: 730 },
-  { id: 'bot_right_c2_1', x: 1385, y: 490 },
-  { id: 'bot_right_c2_2', x: 1385, y: 550 },
-  { id: 'bot_right_c2_3', x: 1385, y: 610 },
-  { id: 'bot_right_c2_4', x: 1385, y: 670 },
-  { id: 'bot_right_c2_5', x: 1385, y: 730 },
-  { id: 'bot_right_c3_1', x: 1495, y: 490 },
-  { id: 'bot_right_c3_2', x: 1495, y: 550 },
-  { id: 'bot_right_c3_3', x: 1495, y: 610 },
-  { id: 'bot_right_c3_4', x: 1495, y: 670 },
-  { id: 'bot_right_c3_5', x: 1495, y: 730 }
+  { id: 'left_1', x: 125, y: 415, sector: 'Sektor Lewy' },
+  { id: 'left_2', x: 125, y: 485, sector: 'Sektor Lewy' },
+  { id: 'left_3', x: 125, y: 555, sector: 'Sektor Lewy' },
+  { id: 'top_1', x: 315, y: 115, sector: 'Sektor Górny' },
+  { id: 'top_2', x: 425, y: 115, sector: 'Sektor Górny' },
+  { id: 'top_3', x: 535, y: 115, sector: 'Sektor Górny' },
+  { id: 'top_4', x: 645, y: 115, sector: 'Sektor Górny' },
+  { id: 'top_5', x: 755, y: 115, sector: 'Sektor Górny' },
+  { id: 'rack_top_1', x: 855, y: 200, isRack: true, sector: 'Regał Górny' },
+  { id: 'top_right_v1', x: 955, y: 80, sector: 'Sektor Prawy Górny' },
+  { id: 'top_right_v2', x: 955, y: 140, sector: 'Sektor Prawy Górny' },
+  { id: 'top_right_v3', x: 955, y: 200, sector: 'Sektor Prawy Górny' },
+  { id: 'top_right_v4', x: 955, y: 260, sector: 'Sektor Prawy Górny' },
+  { id: 'top_right_v5', x: 955, y: 320, sector: 'Sektor Prawy Górny' },
+  { id: 'rack_bot_1', x: 855, y: 610, isRack: true, sector: 'Regał Dolny' },
+  { id: 'bot_mid_l1', x: 955, y: 490, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_l2', x: 955, y: 550, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_l3', x: 955, y: 610, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_l4', x: 955, y: 670, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_l5', x: 955, y: 730, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_r1', x: 1065, y: 490, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_r2', x: 1065, y: 550, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_r3', x: 1065, y: 610, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_r4', x: 1065, y: 670, sector: 'Sektor Środkowy' },
+  { id: 'bot_mid_r5', x: 1065, y: 730, sector: 'Sektor Środkowy' },
+  { id: 'bot_right_c1_1', x: 1275, y: 490, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c1_2', x: 1275, y: 550, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c1_3', x: 1275, y: 610, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c1_4', x: 1275, y: 670, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c1_5', x: 1275, y: 730, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c2_1', x: 1385, y: 490, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c2_2', x: 1385, y: 550, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c2_3', x: 1385, y: 610, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c2_4', x: 1385, y: 670, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c2_5', x: 1385, y: 730, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c3_1', x: 1495, y: 490, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c3_2', x: 1495, y: 550, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c3_3', x: 1495, y: 610, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c3_4', x: 1495, y: 670, sector: 'Sektor Tulejarki' },
+  { id: 'bot_right_c3_5', x: 1495, y: 730, sector: 'Sektor Tulejarki' }
 ];
 
 function resetInactivityTimer() {
@@ -910,7 +1081,7 @@ function updateTimerDisplay() {
 
 usersDb.once('value', (snapshot) => {
   if (!snapshot.exists()) {
-    usersDb.child('admin').set({ name: 'Administrator', login: 'admin', pass: 'admin99', role: 'admin' });
+    usersDb.child('admin').set({ name: 'Administrator', login: 'admin', pass: 'admin99', role: 'admin', mustChangePassword: false });
   }
 });
 
@@ -920,10 +1091,11 @@ usersDb.on('value', (snapshot) => {
   if (currentRole === 'admin') renderUsersTab();
 });
 
-if (currentRole && currentUserName) {
+if (currentRole && currentUserName && currentUserLogin && currentSessionToken) {
   document.getElementById('authScreen').style.display = 'none';
   applyRoleUI();
   setupPresence();
+  startSessionMonitoring();
   resetInactivityTimer();
   startInactivityCountdown();
 }
@@ -947,7 +1119,7 @@ function showToast(title, message, type = 'success') {
   container.appendChild(toast);
 
   setTimeout(() => {
-    toast.style.animation = 'fadeOutLeft var(--transition-normal) forwards';
+    toast.style.animation = 'fadeOutLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards';
     setTimeout(() => toast.remove(), 300);
   }, 3500);
 }
@@ -965,10 +1137,12 @@ function loginWithDb() {
 
   usersDb.once('value', (snapshot) => {
     const users = snapshot.val() || {};
+    let foundKey = null;
     let foundUser = null;
 
     for (let key in users) {
       if (users[key].login.toLowerCase() === loginInput && users[key].pass === passInput) {
+        foundKey = key;
         foundUser = users[key];
         break;
       }
@@ -980,45 +1154,172 @@ function loginWithDb() {
       return;
     }
 
-    currentRole = foundUser.role;
-    currentUserName = foundUser.name;
-    localStorage.setItem('magazyn_role', currentRole);
-    localStorage.setItem('magazyn_user_name', currentUserName);
+    // Sprawdzenie czy wymusza zmianę hasła
+    if (foundUser.mustChangePassword) {
+      currentUserLogin = foundUser.login;
+      currentUserName = foundUser.name;
+      currentRole = foundUser.role;
+      errorEl.style.display = 'none';
+      document.getElementById('forceOldPass').value = '';
+      document.getElementById('forceNewPass').value = '';
+      document.getElementById('forceConfirmPass').value = '';
+      document.getElementById('forcePasswordModal').style.display = 'flex';
+      setTimeout(() => document.getElementById('forcePasswordModal').classList.add('show'), 10);
+      return;
+    }
 
-    errorEl.style.display = 'none';
-    document.getElementById('authScreen').style.display = 'none';
-    addLog('login', `zalogował(a) się do systemu`);
-    showToast('Zalogowano', `Witaj w systemie, ${currentUserName}!`, 'success');
+    completeLogin(foundUser);
+  });
+}
 
-    applyRoleUI();
-    setupPresence();
-    resetInactivityTimer();
-    startInactivityCountdown();
+function completeLogin(foundUser) {
+  const newSessionToken = 'session_' + Math.random().toString(36).substring(2) + Date.now();
+  usersDb.child(foundUser.login).update({ activeToken: newSessionToken });
+
+  currentRole = foundUser.role;
+  currentUserName = foundUser.name;
+  currentUserLogin = foundUser.login;
+  currentSessionToken = newSessionToken;
+
+  localStorage.setItem('magazyn_role', currentRole);
+  localStorage.setItem('magazyn_user_name', currentUserName);
+  localStorage.setItem('magazyn_user_login', currentUserLogin);
+  localStorage.setItem('magazyn_session_token', currentSessionToken);
+
+  document.getElementById('authScreen').style.display = 'none';
+  const forceModal = document.getElementById('forcePasswordModal');
+  forceModal.classList.remove('show');
+  setTimeout(() => forceModal.style.display = 'none', 250);
+
+  addLog('login', `zalogował(a) się do systemu`);
+  showToast('Zalogowano', `Witaj w systemie, ${currentUserName}!`, 'success');
+
+  applyRoleUI();
+  setupPresence();
+  startSessionMonitoring();
+  resetInactivityTimer();
+  startInactivityCountdown();
+}
+
+function saveForcedPasswordChange() {
+  const oldPass = document.getElementById('forceOldPass').value.trim();
+  const newPass = document.getElementById('forceNewPass').value.trim();
+  const confirmPass = document.getElementById('forceConfirmPass').value.trim();
+
+  if (!oldPass || !newPass || !confirmPass) {
+    return alert('Wszystkie pola są wymagane!');
+  }
+  if (newPass !== confirmPass) {
+    return alert('Nowe hasło i potwierdzenie muszą być takie same!');
+  }
+  if (newPass.length < 4) {
+    return alert('Nowe hasło musi mieć co najmniej 4 znaki!');
+  }
+
+  usersDb.child(currentUserLogin).once('value', (snap) => {
+    const user = snap.val();
+    if (!user || user.pass !== oldPass) {
+      return alert('Stare hasło jest nieprawidłowe!');
+    }
+
+    usersDb.child(currentUserLogin).update({ pass: newPass, mustChangePassword: false }, (err) => {
+      if (!err) {
+        showToast('Sukces', 'Hasło zostało zmienione!', 'success');
+        user.pass = newPass;
+        user.mustChangePassword = false;
+        completeLogin(user);
+      }
+    });
+  });
+}
+
+function openChangePasswordModal() {
+  document.getElementById('changeOldPass').value = '';
+  document.getElementById('changeNewPass').value = '';
+  document.getElementById('changeConfirmPass').value = '';
+  openModal('changePasswordModal');
+}
+
+function saveUserPasswordChange() {
+  const oldPass = document.getElementById('changeOldPass').value.trim();
+  const newPass = document.getElementById('changeNewPass').value.trim();
+  const confirmPass = document.getElementById('changeConfirmPass').value.trim();
+
+  if (!oldPass || !newPass || !confirmPass) {
+    return alert('Wszystkie pola są wymagane!');
+  }
+  if (newPass !== confirmPass) {
+    return alert('Nowe hasło i potwierdzenie muszą być takie same!');
+  }
+  if (newPass.length < 4) {
+    return alert('Nowe hasło musi mieć co najmniej 4 znaki!');
+  }
+
+  usersDb.child(currentUserLogin).once('value', (snap) => {
+    const user = snap.val();
+    if (!user || user.pass !== oldPass) {
+      return alert('Stare hasło jest nieprawidłowe!');
+    }
+
+    usersDb.child(currentUserLogin).update({ pass: newPass }, (err) => {
+      if (!err) {
+        closeModal('changePasswordModal');
+        addLog('edit', `zmienił(a) swoje hasło dostępu`);
+        showToast('Sukces', 'Hasło zostało zmienione pomyślnie.', 'success');
+      }
+    });
+  });
+}
+
+function startSessionMonitoring() {
+  if (sessionMonitorRef) sessionMonitorRef.off();
+  if (!currentUserLogin) return;
+
+  sessionMonitorRef = usersDb.child(currentUserLogin).child('activeToken');
+  sessionMonitorRef.on('value', (snapshot) => {
+    const tokenInDb = snapshot.val();
+    if (tokenInDb && tokenInDb !== currentSessionToken) {
+      alert('Twoje konto zostało zalogowane na innym urządzeniu! Nastąpi automatyczne wylogowanie.');
+      logout();
+    }
   });
 }
 
 function logout() {
   if (userPresenceRef) userPresenceRef.remove();
+  if (sessionMonitorRef) sessionMonitorRef.off();
   if (inactivityInterval) clearInterval(inactivityInterval);
+
   localStorage.removeItem('magazyn_role');
   localStorage.removeItem('magazyn_user_name');
-  currentRole = null; currentUserName = null;
+  localStorage.removeItem('magazyn_user_login');
+  localStorage.removeItem('magazyn_session_token');
+
+  currentRole = null; 
+  currentUserName = null;
+  currentUserLogin = null;
+  currentSessionToken = null;
+
   document.getElementById('authScreen').style.display = 'flex';
 }
 
 function setupPresence() {
   userPresenceRef = presenceDb.push();
-  userPresenceRef.set({ name: currentUserName, role: currentRole });
+  userPresenceRef.set({ name: currentUserName, role: currentRole, login: currentUserLogin });
   userPresenceRef.onDisconnect().remove();
 }
 
 presenceDb.on('value', (snapshot) => {
   const data = snapshot.val();
   onlineUsersData = data || {};
-  document.getElementById('onlineCount').textContent = Object.keys(onlineUsersData).length;
+  if (currentRole === 'admin') {
+    const countEl = document.getElementById('onlineCount');
+    if(countEl) countEl.textContent = Object.keys(onlineUsersData).length;
+  }
 });
 
 function openOnlineUsersModal() {
+  if (currentRole !== 'admin') return;
   const listEl = document.getElementById('onlineUsersList');
   const users = Object.values(onlineUsersData);
   if (!users.length) {
@@ -1040,10 +1341,20 @@ function toggleAdminDropdown(e) {
   if(menu) menu.classList.toggle('show');
 }
 
+function toggleUserDropdown(e) {
+  if(e) e.stopPropagation();
+  const menu = document.getElementById('userDropdownMenu');
+  if(menu) menu.classList.toggle('show');
+}
+
 window.addEventListener('click', () => {
   const menu = document.getElementById('adminDropdownMenu');
   if (menu && menu.classList.contains('show')) {
     menu.classList.remove('show');
+  }
+  const userMenu = document.getElementById('userDropdownMenu');
+  if (userMenu && userMenu.classList.contains('show')) {
+    userMenu.classList.remove('show');
   }
 });
 
@@ -1053,6 +1364,8 @@ function applyRoleUI() {
   const btnBackupRestore = document.getElementById('btnBackupRestore');
   const navTabs = document.getElementById('navTabs');
   const mapSub = document.getElementById('mapSubtitle');
+  const btnAddPalletHero = document.getElementById('btnAddPalletHero');
+  const onlineCounterBox = document.getElementById('onlineCounterBox');
   
   document.getElementById('userNameDisplay').textContent = currentUserName;
   document.querySelectorAll('.admin-nav-item').forEach(e => e.remove());
@@ -1060,6 +1373,10 @@ function applyRoleUI() {
   if (currentRole === 'admin') {
     badge.textContent = 'Admin'; badge.className = 'role-badge role-admin';
     btnClear.style.display = 'inline-block'; btnBackupRestore.style.display = 'inline-block';
+    if(btnAddPalletHero) btnAddPalletHero.style.display = 'inline-block';
+    if(onlineCounterBox) onlineCounterBox.style.display = 'flex';
+    const countEl = document.getElementById('onlineCount');
+    if(countEl) countEl.textContent = Object.keys(onlineUsersData).length;
     if(mapSub) mapSub.textContent = 'Kliknij w wolny kafelek na regale, aby przypisać paletę.';
 
     const dropdownWrap = document.createElement('div');
@@ -1076,6 +1393,11 @@ function applyRoleUI() {
         <button class="dropdown-item" id="dropItemSizes" onclick="switchTab('tabSizes', this); renderSizesTab();">
           <span>📏 Podział na rozmiary</span>
         </button>
+
+        <button class="dropdown-item" id="dropItemStats" onclick="switchTab('tabStats', this); renderAdminStats();">
+          <span>📊 Statystyki magazynu</span>
+        </button>
+
         <button class="dropdown-item" id="dropItemUsers" onclick="switchTab('tabUsers', this); renderUsersTab();">
           <span>👥 Użytkownicy</span>
         </button>
@@ -1086,10 +1408,14 @@ function applyRoleUI() {
   } else if (currentRole === 'tulejarka') {
     badge.textContent = 'Pracownik Tulejarka'; badge.className = 'role-badge role-tulejarka';
     btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
+    if(btnAddPalletHero) btnAddPalletHero.style.display = 'inline-block';
+    if(onlineCounterBox) onlineCounterBox.style.display = 'none';
     if(mapSub) mapSub.textContent = 'Kliknij w slot na mapie, aby umieścić lub zmienić przypisanie palety.';
   } else {
     badge.textContent = 'Pracownik'; badge.className = 'role-badge role-pracownik';
     btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
+    if(btnAddPalletHero) btnAddPalletHero.style.display = 'none';
+    if(onlineCounterBox) onlineCounterBox.style.display = 'none';
     if(mapSub) mapSub.textContent = 'Kliknij w zajęty kafelek na mapie, aby zobaczyć zawartość palety.';
   }
   render();
@@ -1111,6 +1437,7 @@ function switchTab(tabId, btn) {
   if (menu) menu.classList.remove('show');
 
   if(tabId === 'tabMap') renderMapSlots();
+  if(tabId === 'tabStats') renderAdminStats();
 }
 
 db.on('value', (snapshot) => {
@@ -1124,7 +1451,10 @@ db.on('value', (snapshot) => {
     openDetails(editingId);
   }
 
-  if (currentRole === 'admin') { renderSizesTab(); }
+  if (currentRole === 'admin') { 
+    renderSizesTab(); 
+    if (document.getElementById('tabStats').classList.contains('active')) renderAdminStats();
+  }
 });
 
 logsDb.on('value', (snapshot) => {
@@ -1147,8 +1477,165 @@ logsDb.on('value', (snapshot) => {
       }
     }
     renderLogs();
+    if (document.getElementById('tabStats').classList.contains('active')) renderAdminStats();
   }
 });
+
+function renderAdminStats() {
+  if (currentRole !== 'admin') return;
+
+  const totalSlots = MAP_SLOTS.filter(s => !s.isRack).length;
+  const occupiedSlots = pallets.filter(p => p.mapSlot).length;
+  const freeSlots = Math.max(0, totalSlots - occupiedSlots);
+  const usagePercent = totalSlots > 0 ? Math.round((occupiedSlots / totalSlots) * 100) : 0;
+
+  const totalQtyVal = pallets.reduce((a,p) => a + totalQty(p), 0);
+  const totalItemsCount = pallets.reduce((a,p) => a + (p.items||[]).length, 0);
+  const avgQty = pallets.length ? Math.round(totalQtyVal / pallets.length) : 0;
+  const avgItems = pallets.length ? (totalItemsCount / pallets.length).toFixed(1) : "0.0";
+  const unassignedCount = pallets.filter(p => !p.mapSlot).length;
+  const totalBoxes = Math.round(totalQtyVal / 400);
+
+  document.getElementById('advStatTotalQty').textContent = `${totalQtyVal.toLocaleString('pl-PL')} szt.`;
+  document.getElementById('advStatBoxes').textContent = `~ ${totalBoxes} koszy (po 400 szt.)`;
+  document.getElementById('advStatFillRate').textContent = `${usagePercent}%`;
+  document.getElementById('advStatSlotsDetail').textContent = `${occupiedSlots} z ${totalSlots} slotów zajęte`;
+  document.getElementById('advStatAvgQty').textContent = `${avgQty} szt.`;
+  document.getElementById('advStatAvgItems').textContent = `~ ${avgItems} pozycji / paletę`;
+  document.getElementById('advStatUnassigned').textContent = unassignedCount;
+
+  document.getElementById('mapUsageText').textContent = `${occupiedSlots} / ${totalSlots}`;
+  document.getElementById('mapUsageFill').style.width = `${usagePercent}%`;
+  document.getElementById('freeSlotsCount').textContent = freeSlots;
+  document.getElementById('mapUsagePercent').textContent = `${usagePercent}%`;
+
+  const sizeCategoryMap = {};
+  pallets.forEach(p => {
+    (p.items || []).forEach(item => {
+      const sz = item.size ? item.size.trim() : 'Inne';
+      const q = Number(item.qty) || 0;
+      sizeCategoryMap[sz] = (sizeCategoryMap[sz] || 0) + q;
+    });
+  });
+
+  const sortedSizeCats = Object.entries(sizeCategoryMap).sort((a,b) => b[1] - a[1]);
+  const sizeBarsContainer = document.getElementById('sizeShareBars');
+  
+  if (!sortedSizeCats.length) {
+    sizeBarsContainer.innerHTML = '<div style="color:var(--muted); font-size:13px;">Brak danych</div>';
+  } else {
+    sizeBarsContainer.innerHTML = sortedSizeCats.slice(0, 5).map(([sz, qty]) => {
+      const pct = totalQtyVal > 0 ? Math.round((qty / totalQtyVal) * 100) : 0;
+      return `
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
+            <span>Rozmiar: ${esc(sz)}</span>
+            <span>${qty.toLocaleString('pl-PL')} szt. (${pct}%)</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width: ${pct}%; background: linear-gradient(90deg, #3b82f6 0%, #1d4ed8 100%);"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const sizesMap = {};
+  pallets.forEach(p => {
+    (p.items || []).forEach(item => {
+      const sizeStr = item.size ? item.size.trim() : '';
+      const nameStr = item.name ? item.name.trim() : '';
+      const fullName = (sizeStr + ' ' + nameStr).trim();
+      if (!fullName) return;
+      sizesMap[fullName] = (sizesMap[fullName] || 0) + (Number(item.qty) || 0);
+    });
+  });
+
+  const sortedSizes = Object.entries(sizesMap).sort((a,b) => b[1] - a[1]);
+  const topContainer = document.getElementById('topSizesContainer');
+  const maxQty = sortedSizes.length ? sortedSizes[0][1] : 1;
+
+  if (!sortedSizes.length) {
+    topContainer.innerHTML = '<div style="color:var(--muted); font-size:13px; text-align:center;">Brak danych do analizy.</div>';
+  } else {
+    topContainer.innerHTML = sortedSizes.slice(0, 5).map(([name, qty]) => {
+      const fillPercent = Math.round((qty / maxQty) * 100);
+      return `
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:4px;">
+            <span>${esc(name)}</span>
+            <span>${qty.toLocaleString('pl-PL')} szt.</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width: ${fillPercent}%;"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const topPallets = [...pallets].sort((a,b) => totalQty(b) - totalQty(a)).slice(0, 5);
+  const topPalletsContainer = document.getElementById('topPalletsContainer');
+  const maxPalletQty = topPallets.length ? totalQty(topPallets[0]) : 1;
+
+  if (!topPallets.length) {
+    topPalletsContainer.innerHTML = '<div style="color:var(--muted); font-size:13px;">Brak palet</div>';
+  } else {
+    topPalletsContainer.innerHTML = topPallets.map(p => {
+      const q = totalQty(p);
+      const fillPct = Math.round((q / Math.max(1, maxPalletQty)) * 100);
+      return `
+        <div style="display:flex; align-items:center; gap:12px; background:var(--bg); padding:10px 14px; border-radius:10px; border:1px solid var(--line);">
+          <strong style="font-size:14px; min-width:65px; color:var(--text);">${esc(p.code)}</strong>
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; font-size:11px; font-weight:700; color:var(--muted); margin-bottom:3px;">
+              <span>${esc(p.name || 'Bez opisu')}</span>
+              <span>${q.toLocaleString('pl-PL')} szt.</span>
+            </div>
+            <div class="progress-bar-wrap" style="height:8px;">
+              <div class="progress-bar-fill" style="width: ${fillPct}%; background:#ef4444;"></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  document.getElementById('statTotalLogs').textContent = logs.length;
+  const loginsCount = logs.filter(l => l.action === 'login' || l.text.includes('zalogował')).length;
+  document.getElementById('statLoginsCount').textContent = loginsCount;
+  
+  if (logs.length > 0) {
+    document.getElementById('statLastActivity').textContent = new Date(logs[0].time).toLocaleString('pl-PL');
+  } else {
+    document.getElementById('statLastActivity').textContent = 'Brak zdarzeń';
+  }
+
+  const sectorCounts = {};
+  MAP_SLOTS.filter(s => !s.isRack).forEach(s => {
+    if (!sectorCounts[s.sector]) sectorCounts[s.sector] = { total: 0, occupied: 0 };
+    sectorCounts[s.sector].total++;
+    if (pallets.some(p => p.mapSlot === s.id)) {
+      sectorCounts[s.sector].occupied++;
+    }
+  });
+
+  const sectorBarsContainer = document.getElementById('sectorUsageBars');
+  sectorBarsContainer.innerHTML = Object.entries(sectorCounts).map(([sectorName, data]) => {
+    const pct = data.total > 0 ? Math.round((data.occupied / data.total) * 100) : 0;
+    return `
+      <div>
+        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:4px;">
+          <span>${sectorName}</span>
+          <span>${data.occupied} / ${data.total} slotów (${pct}%)</span>
+        </div>
+        <div class="progress-bar-wrap">
+          <div class="progress-bar-fill" style="width: ${pct}%; background: linear-gradient(90deg, #16a34a 0%, #15803d 100%);"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
 
 function clearLogBadge() {
   lastSeenLogCount = logs.length;
@@ -1164,7 +1651,6 @@ function addLog(action, text, details = '') {
   logsDb.child(logObj.id).set(logObj);
 }
 
-/* ZARZĄDZANIE UŻYTKOWNIKAMI */
 function openUserModal(loginKey = null) {
   editingUserLogin = loginKey;
   const user = loginKey ? usersList.find(u => u.login === loginKey) : null;
@@ -1176,6 +1662,7 @@ function openUserModal(loginKey = null) {
   document.getElementById('newUserLogin').value = user ? user.login : '';
   document.getElementById('newUserPass').value = '';
   document.getElementById('newUserRole').value = user ? user.role : 'pracownik';
+  document.getElementById('newUserForceChange').checked = user ? !!user.mustChangePassword : true;
 
   openModal('userModal');
 }
@@ -1185,6 +1672,7 @@ function saveUserAccount() {
   const login = document.getElementById('newUserLogin').value.trim().toLowerCase();
   const pass = document.getElementById('newUserPass').value.trim();
   const role = document.getElementById('newUserRole').value;
+  const mustChangePassword = document.getElementById('newUserForceChange').checked;
 
   if (!name || !login) {
     alert('Imię oraz login są wymagane!');
@@ -1199,22 +1687,26 @@ function saveUserAccount() {
   usersDb.once('value', (snapshot) => {
     const users = snapshot.val() || {};
     let existingPass = '';
+    let existingForce = false;
 
     if (editingUserLogin) {
       if (editingUserLogin !== login) {
         existingPass = users[editingUserLogin]?.pass || '';
+        existingForce = users[editingUserLogin]?.mustChangePassword || false;
         usersDb.child(editingUserLogin).remove();
       } else {
         existingPass = users[editingUserLogin]?.pass || '';
+        existingForce = users[editingUserLogin]?.mustChangePassword || false;
       }
     }
 
     const finalPass = pass ? pass : existingPass;
+    const finalForce = pass ? mustChangePassword : existingForce;
 
-    usersDb.child(login).set({ name, login, pass: finalPass, role }, (err) => {
+    usersDb.child(login).set({ name, login, pass: finalPass, role, mustChangePassword: finalForce }, (err) => {
       if (!err) {
         closeModal('userModal');
-        addLog('edit', `${editingId ? 'zaktualizował(a)' : 'dodał(a)'} konto użytkownika: ${login}`);
+        addLog('edit', `${editingUserLogin ? 'zaktualizował(a)' : 'dodał(a)'} konto użytkownika: ${login}`);
         showToast('Sukces', `Konto ${login} zostało zapisane.`, 'success');
       }
     });
@@ -1247,7 +1739,7 @@ function renderUsersTab() {
 
   tbody.innerHTML = usersList.map(u => `
     <tr>
-      <td><strong style="font-size:14px; color:var(--text);">${esc(u.name)}</strong></td>
+      <td><strong style="font-size:14px; color:var(--text);">${esc(u.name)}</strong> ${u.mustChangePassword ? '<span style="font-size:10px; background:#fef08a; color:#854d0e; padding:2px 6px; border-radius:4px; font-weight:700; margin-left:6px;">Wymaga zmiany hasła</span>' : ''}</td>
       <td><code>${esc(u.login)}</code></td>
       <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${u.role === 'admin' ? 'Admin' : u.role === 'tulejarka' ? 'Pracownik Tulejarka' : 'Pracownik'}</span></td>
       <td style="text-align:right">
@@ -1317,6 +1809,21 @@ function renderLogs() {
   }).join('');
 }
 
+function exportLogsCSV() {
+  if (!logs.length) {
+    return showToast('Brak danych', 'Dziennik jest pusty.', 'info');
+  }
+
+  let csv = "Data i czas;Akcja;Treść wpisu\n";
+  logs.forEach(l => {
+    const timeStr = new Date(l.time).toLocaleString('pl-PL');
+    csv += `"${timeStr}";"${l.action || ''}";"${l.text.replace(/"/g, '""')}"\n`;
+  });
+
+  downloadCSV(csv, `dziennik_zdarzen_${new Date().toISOString().slice(0,10)}.csv`);
+  showToast('Eksport', 'Pobrano plik CSV z historią zdarzeń.', 'success');
+}
+
 function deleteSingleLog(logId) {
   if (currentRole !== 'admin') return;
   if (confirm('Czy na pewno chcesz usunąć ten wpis z dziennika?')) {
@@ -1367,13 +1874,15 @@ function renderSizesTab() {
   const sizes = {};
   pallets.forEach(p => {
     (p.items || []).forEach(item => {
-      const name = item.name.trim();
-      if (!name) return;
-      if (!sizes[name]) {
-        sizes[name] = { qty: 0, pallets: new Set() };
+      const sizeStr = item.size ? item.size.trim() : '';
+      const nameStr = item.name ? item.name.trim() : '';
+      const fullName = (sizeStr + ' ' + nameStr).trim();
+      if (!fullName) return;
+      if (!sizes[fullName]) {
+        sizes[fullName] = { qty: 0, pallets: new Set() };
       }
-      sizes[name].qty += Number(item.qty) || 0;
-      sizes[name].pallets.add(p.id);
+      sizes[fullName].qty += Number(item.qty) || 0;
+      sizes[fullName].pallets.add(p.id);
     });
   });
 
@@ -1401,11 +1910,13 @@ function exportSizesCSV() {
   const sizes = {};
   pallets.forEach(p => {
     (p.items || []).forEach(item => {
-      const name = item.name.trim();
-      if (!name) return;
-      if (!sizes[name]) sizes[name] = { qty: 0, pallets: new Set() };
-      sizes[name].qty += Number(item.qty) || 0;
-      sizes[name].pallets.add(p.id);
+      const sizeStr = item.size ? item.size.trim() : '';
+      const nameStr = item.name ? item.name.trim() : '';
+      const fullName = (sizeStr + ' ' + nameStr).trim();
+      if (!fullName) return;
+      if (!sizes[fullName]) sizes[fullName] = { qty: 0, pallets: new Set() };
+      sizes[fullName].qty += Number(item.qty) || 0;
+      sizes[fullName].pallets.add(p.id);
     });
   });
 
@@ -1467,7 +1978,46 @@ function restoreBackup(e) {
   reader.readAsText(file);
 }
 
-/* OBSŁUGA MAPY SLOTÓW */
+function showPalletOnMap(palletId) {
+  const p = pallets.find(x => x.id === palletId);
+  if (!p) return;
+
+  if (!p.mapSlot) {
+    showToast('Brak na mapie', `Paleta ${p.code} nie jest aktualnie przypisana do żadnego slotu na mapie.`, 'danger');
+    return;
+  }
+
+  closeModal('detailModal');
+  const mapBtn = document.getElementById('tabBtnMap');
+  switchTab('tabMap', mapBtn);
+
+  highlightedMapSlotId = p.mapSlot;
+  renderMapSlots();
+
+  setTimeout(() => {
+    if (highlightedMapSlotId === p.mapSlot) {
+      highlightedMapSlotId = null;
+      renderMapSlots();
+    }
+  }, 4000);
+
+  showToast('Lokalizacja', `Paleta ${p.code} została oznaczona na mapie!`, 'info');
+}
+
+function copyPalletSummary(palletId) {
+  const p = pallets.find(x => x.id === palletId);
+  if (!p) return;
+
+  const itemsTxt = (p.items || []).map(i => `${(i.size ? i.size + ' ' : '') + i.name}: ${i.qty} szt.`).join('\n');
+  const txt = `PALETA: ${p.code}\nOPIS: ${p.name || 'Brak'}\nLOKALIZACJA: ${p.location || 'Brak'}\nSUMA: ${totalQty(p)} szt.\n\nZAWARTOŚĆ:\n${itemsTxt}`;
+
+  navigator.clipboard.writeText(txt).then(() => {
+    showToast('Skopiowano', `Dane palety ${p.code} zostały skopiowane do schowka!`, 'success');
+  }).catch(() => {
+    showToast('Błąd', 'Nie udało się skopiować danych.', 'danger');
+  });
+}
+
 function handleSlotClick(slotId) {
   closePopover();
   const assignedPallet = pallets.find(p => p.mapSlot === slotId);
@@ -1569,22 +2119,23 @@ function renderMapSlots() {
   container.innerHTML = MAP_SLOTS.map(slot => {
     const assignedPallet = pallets.find(p => p.mapSlot === slot.id);
     const isRack = slot.isRack;
+    const isHighlighted = (slot.id === highlightedMapSlotId);
 
     if (assignedPallet) {
       return `
-        <div class="map-slot occupied" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot occupied ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           📍 ${esc(assignedPallet.code)}
         </div>
       `;
     } else if (isRack) {
       return `
-        <div class="map-slot rack-slot" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot rack-slot ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           [ REGAŁ ]
         </div>
       `;
     } else {
       return `
-        <div class="map-slot" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
+        <div class="map-slot ${isHighlighted ? 'highlighted-slot' : ''}" style="left: ${(slot.x / 1600) * 100}%; top: ${(slot.y / 800) * 100}%;" onclick="handleSlotClick('${slot.id}')">
           [ + Wolne ]
         </div>
       `;
@@ -1607,7 +2158,7 @@ function render(){
  const q = document.getElementById('search').value.toLowerCase().trim();
  const rawQuery = document.getElementById('search').value.trim();
 
- const list = pallets.filter(p => !q || [p.code, p.name, p.location, ...(p.items || []).map(i => i.name)].join(' ').toLowerCase().includes(q));
+ const list = pallets.filter(p => !q || [p.code, p.name, p.location, ...(p.items || []).map(i => (i.size || '') + ' ' + (i.name || ''))].join(' ').toLowerCase().includes(q));
  
  document.getElementById('palletGrid').innerHTML = list.length ? list.map((p) => {
    const codeDisp = rawQuery ? highlightQuery(p.code, rawQuery) : esc(p.code);
@@ -1615,9 +2166,11 @@ function render(){
    const locDisp = rawQuery ? highlightQuery(p.location || 'Brak', rawQuery) : esc(p.location || 'Brak');
 
    const matchingItems = (p.items || []).map(i => {
-     const itemText = `${i.name} (${i.qty} szt.)`;
+     const itemText = `${i.size ? i.size + ' ' : ''}${i.name} (${i.qty} szt.)`;
      return rawQuery ? highlightQuery(itemText, rawQuery) : esc(itemText);
    }).slice(0, 3);
+
+   const canManagePallet = currentRole === 'admin' || currentRole === 'tulejarka';
 
    return `
     <article class="pallet" onclick="openDetails('${p.id}')">
@@ -1639,10 +2192,12 @@ function render(){
        <strong>${totalQty(p)} szt.</strong>
      </div>
 
-     <div class="pallet-actions" onclick="event.stopPropagation()">
-       <button class="secondary" onclick="openPalletForm('${p.id}')">Edytuj</button>
-       ${currentRole === 'admin' ? `<button class="danger" onclick="deletePallet('${p.id}')">Usuń</button>` : ''}
-     </div>
+     ${canManagePallet ? `
+       <div class="pallet-actions" onclick="event.stopPropagation()">
+         <button class="secondary" onclick="openPalletForm('${p.id}')">Edytuj</button>
+         ${currentRole === 'admin' ? `<button class="danger" onclick="deletePallet('${p.id}')">Usuń</button>` : ''}
+       </div>
+     ` : ''}
     </article>`;
  }).join('') : `<div class="empty" style="grid-column:1/-1; text-align:center; color:var(--muted); padding:40px;">Brak palet w magazynie pasujących do wyszukiwania</div>`;
  
@@ -1652,6 +2207,7 @@ function render(){
 }
 
 function openPalletForm(id=null){
+ if (currentRole === 'pracownik') return;
  editingId=id;
  const p=id?pallets.find(x=>x.id===id):null;
  document.getElementById('formTitle').textContent=p?'Edytuj paletę':'Dodaj paletę';
@@ -1659,22 +2215,39 @@ function openPalletForm(id=null){
  document.getElementById('pName').value=p?.name||'';
  document.getElementById('pLocation').value=p?.location||'';
  document.getElementById('itemRows').innerHTML='';
- (p?.items?.length?p.items:[{name:'',qty:''}]).forEach(addItemRow);
+ (p?.items?.length?p.items:[{size:'',name:'',qty:''}]).forEach(addItemRow);
  openModal('formModal');
 }
 
 function nextCode(){let n=1;while(pallets.some(p=>p.code===`P-${String(n).padStart(3,'0')}`))n++;return `P-${String(n).padStart(3,'0')}`}
 
-function addItemRow(data={name:'',qty:''}){
+function addItemRow(data={size:'',name:'',qty:''}){
  const row=document.createElement('div');row.className='item-row';
- row.innerHTML=`<input class="iname" placeholder="Rozmiar i nazwa" value="${esc(data.name)}"><input class="iqty" type="number" min="0" placeholder="Ilość" value="${esc(data.qty)}"><button class="remove-item" onclick="this.parentElement.remove()">×</button>`;
+ row.innerHTML=`
+   <input class="isize" placeholder="Rozmiar" value="${esc(data.size||'')}">
+   <input class="iname" placeholder="Nazwa / Klient" value="${esc(data.name||'')}">
+   <input class="iqty" type="number" min="0" placeholder="Ilość" value="${esc(data.qty||'')}">
+   <button class="remove-item" onclick="this.parentElement.remove()">×</button>
+ `;
  document.getElementById('itemRows').appendChild(row);
 }
 
 function savePallet(){
+ if (currentRole === 'pracownik') return;
  const code=document.getElementById('pCode').value.trim();
  if(!code) return alert('Podaj numer palety.');
- const items=[...document.querySelectorAll('.item-row')].map(r=>({name:r.querySelector('.iname').value.trim(),qty:Number(r.querySelector('.iqty').value)||0})).filter(i=>i.name);
+
+ const duplicate = pallets.find(x => x.code.toLowerCase() === code.toLowerCase() && x.id !== editingId);
+ if (duplicate) {
+   return alert(`Paleta o numerze ${code} już istnieje w magazynie! Użyj innego numeru.`);
+ }
+
+ const items=[...document.querySelectorAll('.item-row')].map(r=>({
+   size: r.querySelector('.isize').value.trim(),
+   name: r.querySelector('.iname').value.trim(),
+   qty: Number(r.querySelector('.iqty').value)||0
+ })).filter(i => i.name || i.size);
+
  const id = editingId || db.push().key;
  const existing = pallets.find(x => x.id === id);
  
@@ -1708,6 +2281,7 @@ function openDetails(id){
  const itemsCount = (p.items || []).length;
  const total = totalQty(p);
  const canEditMap = currentRole === 'admin' || currentRole === 'tulejarka';
+ const canManageFull = currentRole === 'admin' || currentRole === 'tulejarka';
  const rawQuery = document.getElementById('search')?.value.trim() || '';
 
  const palletLogs = logs.filter(l => l.text.includes(p.code) || (l.details && l.details.includes(p.code)));
@@ -1718,9 +2292,11 @@ function openDetails(id){
       <h2 style="margin:0; font-size:20px; font-weight:800;">${esc(p.code)}</h2>
       <div style="font-size:12px; color:var(--muted); margin-top:2px;">${esc(p.name || 'Bez opisu')}</div>
     </div>
-    <div style="display:flex; gap:8px; align-items:center;">
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+      <button class="secondary" onclick="showPalletOnMap('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700; border-color: #3b82f6; color: #3b82f6;">🗺️ Pokaż na mapie</button>
+      <button class="secondary" onclick="copyPalletSummary('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700;">📋 Kopiuj dane</button>
       <button class="primary" onclick="openQuickAddModal('${p.id}')" style="padding: 8px 14px; font-size: 12px; font-weight: 700;">+ Szybkie dodanie</button>
-      <button class="secondary" onclick="closeModal('detailModal'); openPalletForm('${p.id}')" style="padding: 8px 14px; font-size: 12px;">Edytuj</button>
+      ${canManageFull ? `<button class="secondary" onclick="closeModal('detailModal'); openPalletForm('${p.id}')" style="padding: 8px 14px; font-size: 12px;">Edytuj</button>` : ''}
       <button class="close" onclick="closeModal('detailModal')">×</button>
     </div>
   </div>
@@ -1753,7 +2329,8 @@ function openDetails(id){
         </thead>
         <tbody>
           ${(p.items || []).length ? (p.items || []).map((item, index) => {
-            const itemNameDisp = rawQuery ? highlightQuery(item.name, rawQuery) : esc(item.name);
+            const fullText = `${item.size ? item.size + ' ' : ''}${item.name}`;
+            const itemNameDisp = rawQuery ? highlightQuery(fullText, rawQuery) : esc(fullText);
             return `
             <tr id="row-item-${index}">
               <td><strong>${itemNameDisp}</strong></td>
@@ -1768,12 +2345,11 @@ function openDetails(id){
               </td>
             </tr>
           `;
-          }).join('') : `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">Brak pozycji na palecie. Kliknij "+ Szybkie dodanie" powyżej.</td></tr>`}
+          }).join('') : `<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">Brak pozycji na palecie.</td></tr>`}
         </tbody>
       </table>
     </div>
 
-    <!-- SEKCJA: HISTORIA RUCHÓW PALETY Z MOŻLIWOŚCIĄ USUWANIA -->
     <div style="margin-top:28px; padding-top:20px; border-top:1px solid var(--line);">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; flex-wrap:wrap; gap:10px;">
         <h3 style="font-size:15px; font-weight:800; margin:0; display:flex; align-items:center; gap:8px;">
@@ -1816,17 +2392,19 @@ function openDetails(id){
 
 function openQuickAddModal(id) {
   editingId = id;
+  document.getElementById('quickItemSize').value = '';
   document.getElementById('quickItemName').value = '';
   document.getElementById('quickItemQty').value = '';
   openModal('quickAddModal');
 }
 
 function saveQuickItem() {
+  const size = document.getElementById('quickItemSize').value.trim();
   const name = document.getElementById('quickItemName').value.trim();
   const qty = Number(document.getElementById('quickItemQty').value);
 
-  if (!name || isNaN(qty) || qty <= 0) {
-    alert('Podaj poprawny rozmiar i nazwę produktu oraz ilość większą od 0.');
+  if ((!size && !name) || isNaN(qty) || qty <= 0) {
+    alert('Podaj rozmiar lub nazwę produktu oraz ilość większą od 0.');
     return;
   }
 
@@ -1835,11 +2413,15 @@ function saveQuickItem() {
 
   if (!p.items) p.items = [];
   
-  const existingItemIndex = p.items.findIndex(i => i.name.toLowerCase() === name.toLowerCase());
+  const existingItemIndex = p.items.findIndex(i => 
+    (i.size||'').toLowerCase() === size.toLowerCase() && 
+    (i.name||'').toLowerCase() === name.toLowerCase()
+  );
+
   if (existingItemIndex > -1) {
     p.items[existingItemIndex].qty = Number(p.items[existingItemIndex].qty) + qty;
   } else {
-    p.items.push({ name, qty });
+    p.items.push({ size, name, qty });
   }
 
   p.updatedAt = new Date().toISOString();
@@ -1847,8 +2429,9 @@ function saveQuickItem() {
   db.child(editingId).set(p, (err) => {
     if (!err) {
       closeModal('quickAddModal');
-      addLog('edit', `dodał(a) ${qty} szt. (${name}) do palety ${p.code}`);
-      showToast('Dodano produkt', `Pomyślnie dodano ${qty} szt. (${name}) do palety ${p.code}.`, 'success');
+      const itemLabel = `${size ? size + ' ' : ''}${name}`;
+      addLog('edit', `dodał(a) ${qty} szt. (${itemLabel}) do palety ${p.code}`);
+      showToast('Dodano produkt', `Pomyślnie dodano ${qty} szt. (${itemLabel}) do palety ${p.code}.`, 'success');
       openDetails(editingId);
     }
   });
@@ -1858,8 +2441,9 @@ function quickAdjustItem(palletId, itemIndex, delta) {
   const p = pallets.find(x => x.id === palletId);
   if (!p || !p.items || !p.items[itemIndex]) return;
 
-  const itemName = p.items[itemIndex].name;
-  const currentQty = Number(p.items[itemIndex].qty) || 0;
+  const itemObj = p.items[itemIndex];
+  const itemLabel = `${itemObj.size ? itemObj.size + ' ' : ''}${itemObj.name}`;
+  const currentQty = Number(itemObj.qty) || 0;
   const newQty = Math.max(0, currentQty + delta);
   
   if (currentQty === newQty) return;
@@ -1869,7 +2453,7 @@ function quickAdjustItem(palletId, itemIndex, delta) {
 
   let removedItemName = null;
   if (newQty === 0) {
-    removedItemName = itemName;
+    removedItemName = itemLabel;
     p.items.splice(itemIndex, 1);
   }
 
@@ -1880,7 +2464,7 @@ function quickAdjustItem(palletId, itemIndex, delta) {
         addLog('delete', logText);
         showToast('Usunięto pozycję', `Stan ${removedItemName} wyniósł 0 – pozycja została usunięta z palety ${p.code}.`, 'danger');
       } else {
-        const changeText = `${delta > 0 ? '+' + delta : delta} szt. (${itemName} na ${p.code})`;
+        const changeText = `${delta > 0 ? '+' + delta : delta} szt. (${itemLabel} na ${p.code})`;
         addLog('edit', `zmienił(a) ilość ${changeText}`);
         showToast(delta > 0 ? 'Dodano sztuki' : 'Odebrano sztuki', `${changeText}. Nowy stan: ${newQty}`, delta > 0 ? 'success' : 'danger');
       }
@@ -1904,7 +2488,7 @@ function closeModal(id){
   const modal = document.getElementById(id);
   if (modal) {
     modal.classList.remove('show');
-    setTimeout(() => modal.style.display = 'none', 200);
+    setTimeout(() => modal.style.display = 'none', 250);
   }
 }
 </script>
