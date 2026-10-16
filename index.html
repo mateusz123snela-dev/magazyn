@@ -367,7 +367,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .table tbody tr:last-child td { border-bottom: 0; }
 .table tbody tr:hover { background: var(--bg); }
 
-/* Progress Bar & Visual Charts dla Statystyk */
 .progress-bar-wrap { background: var(--bg); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; height: 16px; width: 100%; position: relative; }
 .progress-bar-fill { height: 100%; background: linear-gradient(90deg, #ef4444 0%, #b91c1c 100%); transition: width 0.5s ease-out; }
 
@@ -380,6 +379,8 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 
 #quickAddModal { z-index: 600; }
 #forcePasswordModal { z-index: 999999; }
+#customAlertModal { z-index: 9999999; }
+#customConfirmModal { z-index: 9999999; }
 
 .modal { 
   background: var(--panel); color: var(--text); width: min(850px, 100%); max-height: 92vh; 
@@ -398,7 +399,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .field input:focus, .field select:focus { border-color: var(--primary); }
 .field.full { grid-column: 1/-1; }
 
-/* Osobne pola dla Rozmiaru i Nazwy */
 .item-row { display: grid; grid-template-columns: 110px 1.8fr 1fr 40px; gap: 10px; margin-bottom: 10px; animation: fadeInRow 0.25s ease-out; }
 @keyframes fadeInRow { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 .item-row input { padding: 10px 14px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--bg); color: var(--text); font-size: 14px; }
@@ -428,6 +428,35 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 <body>
 
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- Niestandardowy ładny Modal Alertu -->
+<div class="modal-backdrop" id="customAlertModal">
+  <div class="modal" style="width:min(400px, 100%); text-align:center;" onclick="event.stopPropagation()">
+    <div class="modal-body" style="padding: 32px 24px 20px;">
+      <div style="font-size: 38px; margin-bottom: 12px;" id="alertModalIcon">⚠️</div>
+      <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 800;" id="alertModalTitle">Komunikat</h3>
+      <p style="color: var(--muted); font-size: 14px; margin: 0; line-height: 1.5;" id="alertModalMessage">Treść wiadomości...</p>
+    </div>
+    <div class="modal-foot" style="justify-content: center; border-top: 0; padding: 0 24px 24px;">
+      <button class="primary" style="width: 100%;" onclick="closeCustomAlert()">Rozumiem</button>
+    </div>
+  </div>
+</div>
+
+<!-- Niestandardowy ładny Modal Potwierdzenia (Confirm) -->
+<div class="modal-backdrop" id="customConfirmModal">
+  <div class="modal" style="width:min(400px, 100%); text-align:center;" onclick="event.stopPropagation()">
+    <div class="modal-body" style="padding: 32px 24px 20px;">
+      <div style="font-size: 38px; margin-bottom: 12px;">❓</div>
+      <h3 style="margin: 0 0 8px; font-size: 18px; font-weight: 800;" id="confirmModalTitle">Potwierdzenie</h3>
+      <p style="color: var(--muted); font-size: 14px; margin: 0; line-height: 1.5;" id="confirmModalMessage">Czy na pewno chcesz to zrobić?</p>
+    </div>
+    <div class="modal-foot" style="justify-content: center; border-top: 0; padding: 0 24px 24px; gap: 10px;">
+      <button class="secondary" style="flex: 1;" id="confirmCancelBtn">Anuluj</button>
+      <button class="primary" style="flex: 1;" id="confirmOkBtn">Tak, potwierdź</button>
+    </div>
+  </div>
+</div>
 
 <!-- Ekran Logowania -->
 <div class="auth-screen" id="authScreen">
@@ -483,7 +512,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
     <span id="userNameDisplay" style="font-weight:700;color:#fff;"></span>
     <span class="role-badge" id="roleBadge"></span>
     
-    <!-- Rozwijane menu w prawym górnym rogu pod strzałką -->
     <div class="nav-dropdown">
       <button class="user-menu-btn" onclick="toggleUserDropdown(event)">
         <span>▼</span>
@@ -1002,6 +1030,42 @@ const INACTIVITY_LIMIT = 5 * 60 * 1000;
 let timeRemaining = INACTIVITY_LIMIT;
 let inactivityInterval = null;
 
+// Obsługa ładnych okien alert / confirm zamiast przeglądarkowych
+function showCustomAlert(title, message, icon = '⚠️') {
+  document.getElementById('alertModalTitle').textContent = title;
+  document.getElementById('alertModalMessage').textContent = message;
+  document.getElementById('alertModalIcon').textContent = icon;
+  openModal('customAlertModal');
+}
+
+function closeCustomAlert() {
+  closeModal('customAlertModal');
+}
+
+function showCustomConfirm(title, message, onConfirm) {
+  document.getElementById('confirmModalTitle').textContent = title;
+  document.getElementById('confirmModalMessage').textContent = message;
+  
+  const okBtn = document.getElementById('confirmOkBtn');
+  const cancelBtn = document.getElementById('confirmCancelBtn');
+  
+  // Zastąpienie referencji przycisków poprzez klonowanie, aby uniknąć nakładania się starych listenerów
+  const newOkBtn = okBtn.cloneNode(true);
+  const newCancelBtn = cancelBtn.cloneNode(true);
+  okBtn.parentNode.replaceChild(newOkBtn, okBtn);
+  cancelBtn.parentNode.replaceChild(newCancelBtn, cancelBtn);
+
+  newOkBtn.onclick = () => {
+    closeModal('customConfirmModal');
+    if (onConfirm) onConfirm();
+  };
+  newCancelBtn.onclick = () => {
+    closeModal('customConfirmModal');
+  };
+
+  openModal('customConfirmModal');
+}
+
 const MAP_SLOTS = [
   { id: 'left_1', x: 125, y: 415, sector: 'Sektor Lewy' },
   { id: 'left_2', x: 125, y: 485, sector: 'Sektor Lewy' },
@@ -1137,12 +1201,10 @@ function loginWithDb() {
 
   usersDb.once('value', (snapshot) => {
     const users = snapshot.val() || {};
-    let foundKey = null;
     let foundUser = null;
 
     for (let key in users) {
       if (users[key].login.toLowerCase() === loginInput && users[key].pass === passInput) {
-        foundKey = key;
         foundUser = users[key];
         break;
       }
@@ -1154,7 +1216,6 @@ function loginWithDb() {
       return;
     }
 
-    // Sprawdzenie czy wymusza zmianę hasła
     if (foundUser.mustChangePassword) {
       currentUserLogin = foundUser.login;
       currentUserName = foundUser.name;
@@ -1207,19 +1268,19 @@ function saveForcedPasswordChange() {
   const confirmPass = document.getElementById('forceConfirmPass').value.trim();
 
   if (!oldPass || !newPass || !confirmPass) {
-    return alert('Wszystkie pola są wymagane!');
+    return showCustomAlert('Błędne dane', 'Wszystkie pola są wymagane!', '⚠️');
   }
   if (newPass !== confirmPass) {
-    return alert('Nowe hasło i potwierdzenie muszą być takie same!');
+    return showCustomAlert('Błąd', 'Nowe hasło i potwierdzenie muszą być takie same!', '⚠️');
   }
   if (newPass.length < 4) {
-    return alert('Nowe hasło musi mieć co najmniej 4 znaki!');
+    return showCustomAlert('Za krótkie hasło', 'Nowe hasło musi mieć co najmniej 4 znaki!', '⚠️');
   }
 
   usersDb.child(currentUserLogin).once('value', (snap) => {
     const user = snap.val();
     if (!user || user.pass !== oldPass) {
-      return alert('Stare hasło jest nieprawidłowe!');
+      return showCustomAlert('Błąd', 'Stare hasło jest nieprawidłowe!', '⚠️');
     }
 
     usersDb.child(currentUserLogin).update({ pass: newPass, mustChangePassword: false }, (err) => {
@@ -1246,19 +1307,19 @@ function saveUserPasswordChange() {
   const confirmPass = document.getElementById('changeConfirmPass').value.trim();
 
   if (!oldPass || !newPass || !confirmPass) {
-    return alert('Wszystkie pola są wymagane!');
+    return showCustomAlert('Błąd', 'Wszystkie pola są wymagane!', '⚠️');
   }
   if (newPass !== confirmPass) {
-    return alert('Nowe hasło i potwierdzenie muszą być takie same!');
+    return showCustomAlert('Błąd', 'Nowe hasło i potwierdzenie muszą być takie same!', '⚠️');
   }
   if (newPass.length < 4) {
-    return alert('Nowe hasło musi mieć co najmniej 4 znaki!');
+    return showCustomAlert('Za krótkie hasło', 'Nowe hasło musi mieć co najmniej 4 znaki!', '⚠️');
   }
 
   usersDb.child(currentUserLogin).once('value', (snap) => {
     const user = snap.val();
     if (!user || user.pass !== oldPass) {
-      return alert('Stare hasło jest nieprawidłowe!');
+      return showCustomAlert('Błąd', 'Stare hasło jest nieprawidłowe!', '⚠️');
     }
 
     usersDb.child(currentUserLogin).update({ pass: newPass }, (err) => {
@@ -1279,7 +1340,7 @@ function startSessionMonitoring() {
   sessionMonitorRef.on('value', (snapshot) => {
     const tokenInDb = snapshot.val();
     if (tokenInDb && tokenInDb !== currentSessionToken) {
-      alert('Twoje konto zostało zalogowane na innym urządzeniu! Nastąpi automatyczne wylogowanie.');
+      showCustomAlert('Wylogowanie', 'Twoje konto zostało zalogowane na innym urządzeniu! Nastąpi automatyczne wylogowanie.', '⚠️');
       logout();
     }
   });
@@ -1675,13 +1736,11 @@ function saveUserAccount() {
   const mustChangePassword = document.getElementById('newUserForceChange').checked;
 
   if (!name || !login) {
-    alert('Imię oraz login są wymagane!');
-    return;
+    return showCustomAlert('Błąd', 'Imię oraz login są wymagane!', '⚠️');
   }
 
   if (!editingUserLogin && !pass) {
-    alert('Hasło jest wymagane dla nowego użytkownika!');
-    return;
+    return showCustomAlert('Błąd', 'Hasło jest wymagane dla nowego użytkownika!', '⚠️');
   }
 
   usersDb.once('value', (snapshot) => {
@@ -1715,17 +1774,16 @@ function saveUserAccount() {
 
 function deleteUser(loginKey) {
   if (loginKey === 'admin') {
-    alert('Nie można usunąć głównego konta administratora!');
-    return;
+    return showCustomAlert('Błąd', 'Nie można usunąć głównego konta administratora!', '⚠️');
   }
-  if (confirm(`Czy na pewno chcesz usunąć konto użytkownika "${loginKey}"?`)) {
+  showCustomConfirm('Usuwanie konta', `Czy na pewno chcesz usunąć konto użytkownika "${loginKey}"?`, () => {
     usersDb.child(loginKey).remove((err) => {
       if (!err) {
         addLog('delete', `usunął(ęła) konto użytkownika: ${loginKey}`);
         showToast('Usunięto konto', `Konto ${loginKey} zostało usunięte.`, 'danger');
       }
     });
-  }
+  });
 }
 
 function renderUsersTab() {
@@ -1826,17 +1884,17 @@ function exportLogsCSV() {
 
 function deleteSingleLog(logId) {
   if (currentRole !== 'admin') return;
-  if (confirm('Czy na pewno chcesz usunąć ten wpis z dziennika?')) {
+  showCustomConfirm('Usuwanie wpisu', 'Czy na pewno chcesz usunąć ten wpis z dziennika?', () => {
     logsDb.child(logId).remove(() => {
       showToast('Usunięto wpis', 'Pomyślnie usunięto pojedynczy wpis z historii.', 'info');
       if (editingId) openDetails(editingId);
     });
-  }
+  });
 }
 
 function clearLogsForPallet(palletCode) {
   if (currentRole !== 'admin') return;
-  if (confirm(`Czy na pewno chcesz usunąć całą historię dla palety ${palletCode}?`)) {
+  showCustomConfirm('Wyczyszczanie historii', `Czy na pewno chcesz usunąć całą historię dla palety ${palletCode}?`, () => {
     const logsToDelete = logs.filter(l => l.text.includes(palletCode) || (l.details && l.details.includes(palletCode)));
     const updates = {};
     logsToDelete.forEach(l => updates[l.id] = null);
@@ -1847,17 +1905,17 @@ function clearLogsForPallet(palletCode) {
         openDetails(editingId);
       }
     });
-  }
+  });
 }
 
 function clearLogs() {
-  if (confirm('Czy na pewno chcesz wyczyścić cały dziennik zdarzeń?')) {
+  showCustomConfirm('Czyszczenie dziennika', 'Czy na pewno chcesz wyczyścić cały dziennik zdarzeń?', () => {
     logsDb.remove(() => {
       lastSeenLogCount = 0;
       localStorage.setItem('magazyn_last_seen_logs', 0);
       showToast('Wyczyszczono', 'Dziennik zdarzeń został pomyślnie wyczyszczony.', 'info');
     });
-  }
+  });
 }
 
 function filterBySize(size) {
@@ -1964,15 +2022,17 @@ function restoreBackup(e) {
   reader.onload = function(evt) {
     try {
       const importedPallets = JSON.parse(evt.target.result);
-      if (Array.isArray(importedPallets) && confirm('Przywrócenie kopii nadpisze aktualne dane. Kontynuować?')) {
-        const updateObj = {};
-        importedPallets.forEach(p => updateObj[p.id] = p);
-        db.set(updateObj, (err) => {
-          if(!err) showToast('Przywrócono', 'Kopia zapasowa została pomyślnie wgrana do systemu!', 'success');
+      if (Array.isArray(importedPallets)) {
+        showCustomConfirm('Przywracanie kopii', 'Przywrócenie kopii nadpisze aktualne dane. Kontynuować?', () => {
+          const updateObj = {};
+          importedPallets.forEach(p => updateObj[p.id] = p);
+          db.set(updateObj, (err) => {
+            if(!err) showToast('Przywrócono', 'Kopia zapasowa została pomyślnie wgrana do systemu!', 'success');
+          });
         });
       }
     } catch(err) {
-      showToast('Błąd', 'Nieprawidłowy plik kopii zapasowej!', 'danger');
+      showCustomAlert('Błąd', 'Nieprawidłowy plik kopii zapasowej!', '⚠️');
     }
   };
   reader.readAsText(file);
@@ -2045,7 +2105,7 @@ function saveMapSlotAssignment() {
   if (currentRole !== 'admin' && currentRole !== 'tulejarka') return;
 
   const palletId = document.getElementById('mapPalletSelect').value;
-  if(!palletId) return alert('Proszę wybrać paletę');
+  if(!palletId) return showCustomAlert('Wybór palety', 'Proszę wybrać paletę.', '⚠️');
   
   const p = pallets.find(x => x.id === palletId);
   if(!p) return;
@@ -2235,11 +2295,11 @@ function addItemRow(data={size:'',name:'',qty:''}){
 function savePallet(){
  if (currentRole === 'pracownik') return;
  const code=document.getElementById('pCode').value.trim();
- if(!code) return alert('Podaj numer palety.');
+ if(!code) return showCustomAlert('Błąd', 'Podaj numer palety.', '⚠️');
 
  const duplicate = pallets.find(x => x.code.toLowerCase() === code.toLowerCase() && x.id !== editingId);
  if (duplicate) {
-   return alert(`Paleta o numerze ${code} już istnieje w magazynie! Użyj innego numeru.`);
+   return showCustomAlert('Duplikat', `Paleta o numerze ${code} już istnieje w magazynie! Użyj innego numeru.`, '⚠️');
  }
 
  const items=[...document.querySelectorAll('.item-row')].map(r=>({
@@ -2263,12 +2323,14 @@ function savePallet(){
 }
 
 function deletePallet(id){
- if (currentRole !== 'admin') return alert('Brak uprawnień!');
+ if (currentRole !== 'admin') return showCustomAlert('Brak uprawnień', 'Brak uprawnień!', '⚠️');
  const p=pallets.find(x => x.id===id);
- if(p && confirm(`Usunąć paletę ${p.code}?`)){
-   firebase.database().ref('palety/' + id).remove(() => {
-     addLog('delete', `usunął(ęła) paletę ${p.code}`);
-     showToast('Usunięto', `Paleta ${p.code} została usunięta.`, 'danger');
+ if(p){
+   showCustomConfirm('Usuwanie palety', `Czy na pewno chcesz usunąć paletę ${p.code}?`, () => {
+     firebase.database().ref('palety/' + id).remove(() => {
+       addLog('delete', `usunął(ęła) paletę ${p.code}`);
+       showToast('Usunięto', `Paleta ${p.code} została usunięta.`, 'danger');
+     });
    });
  }
 }
@@ -2404,8 +2466,7 @@ function saveQuickItem() {
   const qty = Number(document.getElementById('quickItemQty').value);
 
   if ((!size && !name) || isNaN(qty) || qty <= 0) {
-    alert('Podaj rozmiar lub nazwę produktu oraz ilość większą od 0.');
-    return;
+    return showCustomAlert('Błąd', 'Podaj rozmiar lub nazwę produktu oraz ilość większą od 0.', '⚠️');
   }
 
   const p = pallets.find(x => x.id === editingId);
