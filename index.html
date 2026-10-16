@@ -39,7 +39,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-button, input, select { font: inherit; }
+button, input, select, textarea { font: inherit; }
 button { cursor: pointer; border: 0; transition: all var(--transition-fast); }
 button:active { transform: scale(0.96) !important; }
 
@@ -180,6 +180,11 @@ button:active { transform: scale(0.96) !important; }
 .role-admin { background: rgba(245, 158, 11, 0.18); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.35); }
 .role-tulejarka { background: rgba(59, 130, 246, 0.18); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.35); }
 .role-pracownik { background: rgba(239, 68, 68, 0.18); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.35); }
+
+.status-badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+.status-new { background: #fef3c7; color: #d97706; }
+.status-progress { background: #dbeafe; color: #2563eb; }
+.status-resolved { background: #dcfce7; color: #16a34a; }
 
 .user-menu-btn {
   background: rgba(255,255,255,0.08); color: #e2e8f0; border: 1px solid rgba(255,255,255,0.12);
@@ -395,8 +400,8 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .field label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
-.field input, .field select { width: 100%; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: var(--radius); outline: none; background: var(--bg); color: var(--text); font-size: 14px; transition: border-color var(--transition-fast); }
-.field input:focus, .field select:focus { border-color: var(--primary); }
+.field input, .field select, .field textarea { width: 100%; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: var(--radius); outline: none; background: var(--bg); color: var(--text); font-size: 14px; transition: border-color var(--transition-fast); }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--primary); }
 .field.full { grid-column: 1/-1; }
 
 .item-row { display: grid; grid-template-columns: 110px 1.8fr 1fr 40px; gap: 10px; margin-bottom: 10px; animation: fadeInRow 0.25s ease-out; }
@@ -505,6 +510,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   <nav class="nav-tabs" id="navTabs">
     <button class="nav-tab active" id="tabBtnPallets" onclick="switchTab('tabPallets', this)">📦 Magazyn</button>
     <button class="nav-tab" id="tabBtnMap" onclick="switchTab('tabMap', this)">🗺️ Mapa magazynu</button>
+    <button class="nav-tab" id="tabBtnReportIssue" onclick="switchTab('tabReportIssue', this)">🐛 Zgłoś błąd</button>
   </nav>
 
   <div class="spacer"></div>
@@ -652,6 +658,70 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
         <div id="popoverMenu" class="pin-popover" style="display:none;"></div>
       </div>
     </div>
+  </div>
+
+  <!-- Zakładka: Formularz Zgłaszania Błędów -->
+  <div class="tab-content" id="tabReportIssue">
+    <section class="hero">
+      <div>
+        <h1>🐛 Zgłoś usterkę lub błąd</h1>
+        <p class="subtitle">Zauważyłeś problem z aplikacją, nieprawidłowe stany palet lub masz pomysł na ulepszenie? Wyślij zgłoszenie.</p>
+      </div>
+    </section>
+
+    <section class="panel-section" style="max-width: 650px; margin: 0 auto;">
+      <form onsubmit="submitIssue(event)">
+        <div class="field" style="margin-bottom: 16px;">
+          <label>Kategoria zgłoszenia *</label>
+          <select id="issueType" required>
+            <option value="błąd_systemu">⚠️ Błąd w działaniu strony / systemu</option>
+            <option value="błąd_stanu">📦 Błąd w stanach palet / towaru</option>
+            <option value="propozycja">💡 Propozycja ulepszenia / nowa funkcja</option>
+            <option value="inne">💬 Inne</option>
+          </select>
+        </div>
+
+        <div class="field" style="margin-bottom: 16px;">
+          <label>Tytuł zgłoszenia *</label>
+          <input type="text" id="issueTitle" placeholder="np. Nie można zapisać palety P-012" required>
+        </div>
+
+        <div class="field" style="margin-bottom: 20px;">
+          <label>Opis problemu / szczegóły *</label>
+          <textarea id="issueDescription" rows="5" placeholder="Opisz dokładnie gdzie występuje błąd oraz jakie działania go wywołały..." required style="resize: vertical;"></textarea>
+        </div>
+
+        <button type="submit" class="primary" style="width: 100%;">🚀 Wyślij zgłoszenie</button>
+      </form>
+    </section>
+  </div>
+
+  <!-- Zakładka dla Admina: Lista Zgłoszonych Błędów -->
+  <div class="tab-content" id="tabIssuesList">
+    <section class="hero">
+      <div>
+        <h1>🐛 Zarządzanie zgłoszonymi błędami</h1>
+        <p class="subtitle">Przeglądaj szczegółowo zgłoszenia od pracowników i zarządzaj ich statusem.</p>
+      </div>
+    </section>
+
+    <section class="panel-section">
+      <div class="styled-table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Zgłaszający</th>
+              <th>Kategoria</th>
+              <th>Tytuł</th>
+              <th>Status</th>
+              <th style="text-align:right">Akcje</th>
+            </tr>
+          </thead>
+          <tbody id="issuesTableBody"></tbody>
+        </table>
+      </div>
+    </section>
   </div>
 
   <div class="tab-content" id="tabLogs">
@@ -862,6 +932,13 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
  </div>
 </div>
 
+<!-- Modal Szczegółów Zgłoszenia Błędu -->
+<div class="modal-backdrop" id="issueDetailModal" onclick="closeModal('issueDetailModal')">
+ <div class="modal" onclick="event.stopPropagation()">
+  <div class="details" id="issueDetailContent"></div>
+ </div>
+</div>
+
 <!-- Modal Użytkownika z Opcją Wymuszenia Zmiany Hasła -->
 <div class="modal-backdrop" id="userModal" onclick="closeModal('userModal')">
  <div class="modal" style="width:min(420px, 100%)" onclick="event.stopPropagation()">
@@ -1004,10 +1081,12 @@ const db = firebase.database().ref('palety');
 const logsDb = firebase.database().ref('dziennik');
 const presenceDb = firebase.database().ref('obecni');
 const usersDb = firebase.database().ref('uzytkownicy');
+const issuesDb = firebase.database().ref('zgloszenia');
 
 let pallets = [];
 let logs = [];
 let usersList = [];
+let issuesList = [];
 let onlineUsersData = {};
 let editingId = null;
 let editingUserLogin = null;
@@ -1030,7 +1109,6 @@ const INACTIVITY_LIMIT = 5 * 60 * 1000;
 let timeRemaining = INACTIVITY_LIMIT;
 let inactivityInterval = null;
 
-// Obsługa ładnych okien alert / confirm zamiast przeglądarkowych
 function showCustomAlert(title, message, icon = '⚠️') {
   document.getElementById('alertModalTitle').textContent = title;
   document.getElementById('alertModalMessage').textContent = message;
@@ -1049,7 +1127,6 @@ function showCustomConfirm(title, message, onConfirm) {
   const okBtn = document.getElementById('confirmOkBtn');
   const cancelBtn = document.getElementById('confirmCancelBtn');
   
-  // Zastąpienie referencji przycisków poprzez klonowanie, aby uniknąć nakładania się starych listenerów
   const newOkBtn = okBtn.cloneNode(true);
   const newCancelBtn = cancelBtn.cloneNode(true);
   okBtn.parentNode.replaceChild(newOkBtn, okBtn);
@@ -1153,6 +1230,31 @@ usersDb.on('value', (snapshot) => {
   const data = snapshot.val();
   usersList = data ? Object.values(data) : [];
   if (currentRole === 'admin') renderUsersTab();
+});
+
+issuesDb.on('value', (snapshot) => {
+  const data = snapshot.val();
+  issuesList = data ? Object.values(data).sort((a,b) => new Date(b.time) - new Date(a.time)) : [];
+  
+  if (currentRole === 'admin') {
+    const newCount = issuesList.filter(i => i.status === 'nowe').length;
+    const badge = document.getElementById('issuesBadgeMenu');
+    if (badge) {
+      if (newCount > 0) {
+        badge.textContent = newCount;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+    renderIssuesTab();
+    
+    // Jeśli modal szczegółów zgłoszenia jest otwarty, odśwież jego zawartość
+    const detailModal = document.getElementById('issueDetailModal');
+    if (detailModal && detailModal.classList.contains('show') && window.activeIssueId) {
+      openIssueDetails(window.activeIssueId);
+    }
+  }
 });
 
 if (currentRole && currentUserName && currentUserLogin && currentSessionToken) {
@@ -1447,6 +1549,10 @@ function applyRoleUI() {
         ⚙️ Zarządzanie ▾ <span class="tab-badge" id="logsBadge">0</span>
       </button>
       <div class="dropdown-menu" id="adminDropdownMenu">
+        <button class="dropdown-item" id="dropItemIssues" onclick="switchTab('tabIssuesList', this); renderIssuesTab();">
+          <span>🐛 Zgłoszone błędy</span>
+          <span class="tab-badge" id="issuesBadgeMenu">0</span>
+        </button>
         <button class="dropdown-item" id="dropItemLogs" onclick="switchTab('tabLogs', this); renderLogs(); clearLogBadge();">
           <span>📋 Dziennik zdarzeń</span>
           <span class="tab-badge" id="logsBadgeMenu">0</span>
@@ -1499,6 +1605,7 @@ function switchTab(tabId, btn) {
 
   if(tabId === 'tabMap') renderMapSlots();
   if(tabId === 'tabStats') renderAdminStats();
+  if(tabId === 'tabIssuesList') renderIssuesTab();
 }
 
 db.on('value', (snapshot) => {
@@ -1541,6 +1648,177 @@ logsDb.on('value', (snapshot) => {
     if (document.getElementById('tabStats').classList.contains('active')) renderAdminStats();
   }
 });
+
+function submitIssue(e) {
+  e.preventDefault();
+  const type = document.getElementById('issueType').value;
+  const title = document.getElementById('issueTitle').value.trim();
+  const description = document.getElementById('issueDescription').value.trim();
+
+  if (!title || !description) {
+    return showCustomAlert('Błąd', 'Proszę wypełnić wszystkie pola formularza.', '⚠️');
+  }
+
+  const newIssueKey = issuesDb.push().key;
+  const issueObj = {
+    id: newIssueKey,
+    type,
+    title,
+    description,
+    user: currentUserName,
+    userLogin: currentUserLogin,
+    status: 'nowe',
+    time: new Date().toISOString()
+  };
+
+  issuesDb.child(newIssueKey).set(issueObj, (err) => {
+    if (!err) {
+      addLog('edit', `zgłosił(a) błąd/problem: "${title}"`);
+      showToast('Zgłoszenie wysłane', 'Dziękujemy! Twoje zgłoszenie zostało przekazane do administratora.', 'success');
+      document.getElementById('issueTitle').value = '';
+      document.getElementById('issueDescription').value = '';
+      switchTab('tabPallets', document.getElementById('tabBtnPallets'));
+    } else {
+      showCustomAlert('Błąd', 'Wystąpił błąd podczas wysyłania zgłoszenia. Spróbuj ponownie.', '⚠️');
+    }
+  });
+}
+
+function renderIssuesTab() {
+  const tbody = document.getElementById('issuesTableBody');
+  if (!tbody) return;
+
+  if (!issuesList.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--muted); padding:24px;">Brak zgłoszonych błędów</td></tr>';
+    return;
+  }
+
+  const categoryNames = {
+    'błąd_systemu': '⚠️ Błąd systemu',
+    'błąd_stanu': '📦 Błąd stanu',
+    'propozycja': '💡 Propozycja',
+    'inne': '💬 Inne'
+  };
+
+  tbody.innerHTML = issuesList.map(issue => {
+    let statusClass = 'status-new';
+    let statusText = 'Nowe';
+    if (issue.status === 'w_trakcie') { statusClass = 'status-progress'; statusText = 'W trakcie'; }
+    if (issue.status === 'rozwiazane') { statusClass = 'status-resolved'; statusText = 'Rozwiązane'; }
+
+    return `
+      <tr>
+        <td style="font-size:12px; color:var(--muted); white-space:nowrap;">${new Date(issue.time).toLocaleString('pl-PL')}</td>
+        <td><strong>${esc(issue.user)}</strong></td>
+        <td><span style="font-size:12px; font-weight:700;">${categoryNames[issue.type] || issue.type}</span></td>
+        <td><strong style="color:var(--text);">${esc(issue.title)}</strong></td>
+        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+        <td style="text-align:right; white-space:nowrap;">
+          <button class="secondary" style="padding:5px 10px; font-size:12px; margin-right:6px;" onclick="openIssueDetails('${issue.id}')">👁️ Szczegóły</button>
+          <button class="danger" style="padding:5px 10px; font-size:12px;" onclick="deleteIssue('${issue.id}')">Usuń</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function openIssueDetails(issueId) {
+  window.activeIssueId = issueId;
+  const issue = issuesList.find(i => i.id === issueId);
+  if (!issue) return;
+
+  const categoryNames = {
+    'błąd_systemu': '⚠️ Błąd w działaniu strony / systemu',
+    'błąd_stanu': '📦 Błąd w stanach palet / towaru',
+    'propozycja': '💡 Propozycja ulepszenia / nowa funkcja',
+    'inne': '💬 Inne'
+  };
+
+  let statusClass = 'status-new';
+  let statusText = 'Nowe';
+  if (issue.status === 'w_trakcie') { statusClass = 'status-progress'; statusText = 'W trakcie'; }
+  if (issue.status === 'rozwiazane') { statusClass = 'status-resolved'; statusText = 'Rozwiązane'; }
+
+  document.getElementById('issueDetailContent').innerHTML = `
+    <div class="modal-head">
+      <div>
+        <h2 style="margin:0; font-size:20px; font-weight:800;">Szczegóły zgłoszenia</h2>
+        <div style="font-size:12px; color:var(--muted); margin-top:2px;">ID: ${issue.id}</div>
+      </div>
+      <button class="close" onclick="closeModal('issueDetailModal')">×</button>
+    </div>
+    
+    <div style="padding:20px 24px;">
+      <div class="detail-cards" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+        <div class="detail-card">
+          <div class="detail-card-label">Zgłaszający</div>
+          <div class="detail-card-value">${esc(issue.user)} <span style="font-size:11px; color:var(--muted);">(${esc(issue.userLogin)})</span></div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-card-label">Data zgłoszenia</div>
+          <div class="detail-card-value" style="font-size:13px;">${new Date(issue.time).toLocaleString('pl-PL')}</div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-card-label">Kategoria</div>
+          <div class="detail-card-value" style="font-size:13px;">${categoryNames[issue.type] || issue.type}</div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Tytuł zgłoszenia</label>
+        <div style="font-size:16px; font-weight:800; color:var(--text); background:var(--bg); padding:12px 16px; border-radius:10px; border:1px solid var(--line);">
+          ${esc(issue.title)}
+        </div>
+      </div>
+
+      <div style="margin-top:16px;">
+        <label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:6px;">Opis problemu</label>
+        <div style="font-size:14px; color:var(--text); background:var(--bg); padding:16px; border-radius:10px; border:1px solid var(--line); white-space: pre-wrap; line-height: 1.5;">
+          ${esc(issue.description)}
+        </div>
+      </div>
+
+      <div style="margin-top:16px; display:flex; align-items:center; justify-content:space-between; background:var(--bg); padding:14px 16px; border-radius:10px; border:1px solid var(--line); flex-wrap:wrap; gap:12px;">
+        <div>
+          <label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Aktualny status</label>
+          <span class="status-badge ${statusClass}" style="font-size:13px; padding:6px 12px;">${statusText}</span>
+        </div>
+        <div>
+          <label style="font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px; display:block; margin-bottom:4px;">Zmień status zgłoszenia</label>
+          <select style="padding:8px 12px; font-size:13px; border-radius:8px; border:1.5px solid var(--line); background:var(--panel); color:var(--text);" onchange="updateIssueStatusFromModal('${issue.id}', this.value)">
+            <option value="nowe" ${issue.status === 'nowe' ? 'selected' : ''}>Nowe</option>
+            <option value="w_trakcie" ${issue.status === 'w_trakcie' ? 'selected' : ''}>W trakcie</option>
+            <option value="rozwiazane" ${issue.status === 'rozwiazane' ? 'selected' : ''}>Rozwiązane</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:24px; padding-top:16px; border-top:1px solid var(--line); display:flex; justify-content:flex-end; gap:10px;">
+        <button class="danger" onclick="closeModal('issueDetailModal'); deleteIssue('${issue.id}')">Usuń zgłoszenie</button>
+        <button class="secondary" onclick="closeModal('issueDetailModal')">Zamknij</button>
+      </div>
+    </div>
+  `;
+  openModal('issueDetailModal');
+}
+
+function updateIssueStatusFromModal(issueId, newStatus) {
+  issuesDb.child(issueId).update({ status: newStatus }, (err) => {
+    if (!err) {
+      showToast('Zaktualizowano', 'Status zgłoszenia został zmieniony.', 'success');
+      openIssueDetails(issueId);
+    }
+  });
+}
+
+function deleteIssue(issueId) {
+  showCustomConfirm('Usuwanie zgłoszenia', 'Czy na pewno chcesz usunąć to zgłoszenie?', () => {
+    issuesDb.child(issueId).remove(() => {
+      closeModal('issueDetailModal');
+      showToast('Usunięto', 'Zgłoszenie zostało usunięte.', 'info');
+    });
+  });
+}
 
 function renderAdminStats() {
   if (currentRole !== 'admin') return;
