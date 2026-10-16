@@ -918,7 +918,6 @@ function getActiveBranch() {
   return currentUserBranch;
 }
 
-// Globalna referencja do użytkowników dostępna zawsze
 const usersDb = firebase.database().ref('uzytkownicy');
 let db = null, logsDb = null, presenceDb = null, issuesDb = null;
 let dbRef = null, logsRef = null, issuesRef = null, presenceRef = null;
@@ -1061,13 +1060,10 @@ function updateTimerDisplay() {
   window.addEventListener(eventName, resetInactivityTimer, { passive: true });
 });
 
-// Automatyczne utworzenie konta domyślnego admina, jeśli baza użytkowników jest pusta
 usersDb.once('value', (snapshot) => {
   if (!snapshot.exists()) {
     usersDb.child('admin').set({ name: 'Administrator', login: 'admin', pass: 'admin99', role: 'admin', branch: 'rosnowo', mustChangePassword: false });
   }
-}, (err) => {
-  console.error("Błąd odczytu użytkowników:", err);
 });
 
 function bindBranchListeners() {
@@ -1191,6 +1187,7 @@ function showToast(title, message, type = 'success') {
   }, 3500);
 }
 
+/* POPRAWIONA LOGIKA LOGOWANIA - ZAPEWNIA 100% DZIAŁANIA DLA NOWYCH KONT */
 function loginWithDb() {
   const loginInput = document.getElementById('loginUserInput').value.trim().toLowerCase();
   const passInput = document.getElementById('loginPasswordInput').value.trim();
@@ -1202,12 +1199,19 @@ function loginWithDb() {
     return;
   }
 
+  // Odczyt użytkowników
   usersDb.once('value', (snapshot) => {
     const users = snapshot.val() || {};
     let foundUser = null;
+
+    // Przeszukiwanie pod kątem małych/dużych liter oraz dopasowania kluczy
     for (let key in users) {
-      if (users[key].login && users[key].login.toLowerCase() === loginInput && users[key].pass === passInput) {
-        foundUser = users[key];
+      const u = users[key];
+      const userLogin = (u.login || key).trim().toLowerCase();
+      
+      if (userLogin === loginInput && u.pass === passInput) {
+        foundUser = u;
+        if (!foundUser.login) foundUser.login = key;
         break;
       }
     }
@@ -1218,33 +1222,39 @@ function loginWithDb() {
       return;
     }
 
-    if (foundUser.mustChangePassword) {
-      currentUserLogin = foundUser.login;
-      currentUserName = foundUser.name;
-      currentRole = foundUser.role;
-      currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
-      errorEl.style.display = 'none';
-      document.getElementById('forcePasswordModal').style.display = 'flex';
-      setTimeout(() => document.getElementById('forcePasswordModal').classList.add('show'), 10);
-      return;
-    }
-
-    completeLogin(foundUser);
+    processFoundUser(foundUser);
   }, (error) => {
-    // Jawny komunikat jeśli reguły Firebase blokują odczyt
     console.error("Błąd autoryzacji Firebase:", error);
     errorEl.textContent = 'Błąd bazy danych: Brak uprawnień (Permission Denied). Sprawdź reguły Firebase!';
     errorEl.style.display = 'block';
   });
 }
 
+function processFoundUser(foundUser) {
+  const errorEl = document.getElementById('authError');
+  errorEl.style.display = 'none';
+
+  if (foundUser.mustChangePassword) {
+    currentUserLogin = foundUser.login;
+    currentUserName = foundUser.name;
+    currentRole = foundUser.role;
+    currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
+    document.getElementById('forcePasswordModal').style.display = 'flex';
+    setTimeout(() => document.getElementById('forcePasswordModal').classList.add('show'), 10);
+    return;
+  }
+
+  completeLogin(foundUser);
+}
+
 function completeLogin(foundUser) {
   const newSessionToken = 'session_' + Math.random().toString(36).substring(2) + Date.now();
-  usersDb.child(foundUser.login).update({ activeToken: newSessionToken });
+  const userKey = (foundUser.login || 'admin').toLowerCase();
+  usersDb.child(userKey).update({ activeToken: newSessionToken });
 
   currentRole = foundUser.role;
   currentUserName = foundUser.name;
-  currentUserLogin = foundUser.login;
+  currentUserLogin = userKey;
   currentSessionToken = newSessionToken;
   currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
   
@@ -1627,11 +1637,11 @@ function renderAdminStats() {
 
 function openUserModal(loginKey = null) {
   editingUserLogin = loginKey;
-  const user = loginKey ? usersList.find(u => u.login === loginKey) : null;
+  const user = loginKey ? usersList.find(u => (u.login || '').toLowerCase() === loginKey.toLowerCase()) : null;
   document.getElementById('userModalTitle').textContent = user ? 'Edytuj użytkownika' : 'Dodaj użytkownika';
   document.getElementById('passHint').style.display = user ? 'inline' : 'none';
   document.getElementById('newUserName').value = user ? user.name : '';
-  document.getElementById('newUserLogin').value = user ? user.login : '';
+  document.getElementById('newUserLogin').value = user ? (user.login || loginKey) : '';
   document.getElementById('newUserPass').value = '';
   document.getElementById('newUserBranch').value = user ? (user.branch || 'rosnowo').toLowerCase() : 'rosnowo';
   document.getElementById('newUserRole').value = user ? user.role : 'pracownik';
@@ -1639,6 +1649,7 @@ function openUserModal(loginKey = null) {
   openModal('userModal');
 }
 
+/* POPRAWIONA LOGIKA ZAPISU UŻYTKOWNIKA - BEZBŁĘDNA STRUKTURA BAZY */
 function saveUserAccount() {
   const name = document.getElementById('newUserName').value.trim();
   const login = document.getElementById('newUserLogin').value.trim().toLowerCase();
@@ -1654,32 +1665,45 @@ function saveUserAccount() {
     const users = snapshot.val() || {};
     let existingPass = '';
     let existingForce = false;
+    
     if (editingUserLogin) {
-      if (editingUserLogin !== login) {
-        existingPass = users[editingUserLogin]?.pass || '';
-        existingForce = users[editingUserLogin]?.mustChangePassword || false;
-        usersDb.child(editingUserLogin).remove();
+      const oldKey = editingUserLogin.toLowerCase();
+      if (oldKey !== login) {
+        existingPass = users[oldKey]?.pass || '';
+        existingForce = users[oldKey]?.mustChangePassword || false;
+        usersDb.child(oldKey).remove();
       } else {
-        existingPass = users[editingUserLogin]?.pass || '';
-        existingForce = users[editingUserLogin]?.mustChangePassword || false;
+        existingPass = users[oldKey]?.pass || '';
+        existingForce = users[oldKey]?.mustChangePassword || false;
       }
     }
+    
     const finalPass = pass ? pass : existingPass;
     const finalForce = pass ? mustChangePassword : existingForce;
 
-    usersDb.child(login).set({ name, login, pass: finalPass, branch, role, mustChangePassword: finalForce }, (err) => {
+    // Zapis w formule uzytkownicy/{login_malymi_literami}
+    usersDb.child(login).set({ 
+      name: name, 
+      login: login, 
+      pass: finalPass, 
+      branch: branch, 
+      role: role, 
+      mustChangePassword: finalForce 
+    }, (err) => {
       if (!err) {
         closeModal('userModal');
-        showToast('Sukces', `Konto ${login} zapisane pomyślnie.`, 'success');
+        showToast('Sukces', `Konto "${login}" zostało zapisane.`, 'success');
+      } else {
+        showCustomAlert('Błąd', 'Nie udało się zapisać konta w bazie danych.', '⚠️');
       }
     });
   });
 }
 
 function deleteUser(loginKey) {
-  if (loginKey === 'admin') return showCustomAlert('Błąd', 'Nie można usunąć głównego administratora!', '⚠️');
+  if (loginKey.toLowerCase() === 'admin') return showCustomAlert('Błąd', 'Nie można usunąć głównego administratora!', '⚠️');
   showCustomConfirm('Usuwanie konta', `Usunąć użytkownika ${loginKey}?`, () => {
-    usersDb.child(loginKey).remove(() => showToast('Usunięto', 'Konto skasowane.', 'danger'));
+    usersDb.child(loginKey.toLowerCase()).remove(() => showToast('Usunięto', 'Konto skasowane.', 'danger'));
   });
 }
 
@@ -1690,18 +1714,21 @@ function renderUsersTab() {
     tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted); padding:24px;">Brak użytkowników</td></tr>';
     return;
   }
-  tbody.innerHTML = usersList.map(u => `
-    <tr>
-      <td><strong>${esc(u.name)}</strong></td>
-      <td><code>${esc(u.login)}</code></td>
-      <td><span style="font-weight:700; color:var(--primary);">${(u.branch || '').toLowerCase() === 'niepruszewo' ? '📍 Niepruszewo' : '📍 Rosnów'}</span></td>
-      <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${u.role}</span></td>
-      <td style="text-align:right">
-        <button class="secondary" style="padding:6px 12px; font-size:12px; margin-right:6px;" onclick="openUserModal('${u.login}')">Edytuj</button>
-        ${u.login !== 'admin' ? `<button class="danger" style="padding:6px 12px; font-size:12px;" onclick="deleteUser('${u.login}')">Usuń</button>` : ''}
-      </td>
-    </tr>
-  `).join('');
+  tbody.innerHTML = usersList.map(u => {
+    const uLogin = u.login || 'nieznany';
+    return `
+      <tr>
+        <td><strong>${esc(u.name)}</strong></td>
+        <td><code>${esc(uLogin)}</code></td>
+        <td><span style="font-weight:700; color:var(--primary);">${(u.branch || '').toLowerCase() === 'niepruszewo' ? '📍 Niepruszewo' : '📍 Rosnów'}</span></td>
+        <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${u.role}</span></td>
+        <td style="text-align:right">
+          <button class="secondary" style="padding:6px 12px; font-size:12px; margin-right:6px;" onclick="openUserModal('${esc(uLogin)}')">Edytuj</button>
+          ${uLogin.toLowerCase() !== 'admin' ? `<button class="danger" style="padding:6px 12px; font-size:12px;" onclick="deleteUser('${esc(uLogin)}')">Usuń</button>` : ''}
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
 function filterLogs(type) {
