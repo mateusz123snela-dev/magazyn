@@ -910,15 +910,17 @@ let currentRole = localStorage.getItem('magazyn_role') || null;
 let currentUserName = localStorage.getItem('magazyn_user_name') || null;
 let currentUserLogin = localStorage.getItem('magazyn_user_login') || null;
 let currentSessionToken = localStorage.getItem('magazyn_session_token') || null;
-let currentUserBranch = localStorage.getItem('magazyn_user_branch') || 'rosnowo';
-let activeAdminBranch = localStorage.getItem('magazyn_admin_branch') || 'rosnowo';
+let currentUserBranch = (localStorage.getItem('magazyn_user_branch') || 'rosnowo').toLowerCase();
+let activeAdminBranch = (localStorage.getItem('magazyn_admin_branch') || 'rosnowo').toLowerCase();
 
 function getActiveBranch() {
   if (currentRole === 'admin') return activeAdminBranch;
   return currentUserBranch;
 }
 
-let db = null, logsDb = null, presenceDb = null, usersDb = null, issuesDb = null;
+// Globalna referencja do użytkowników dostępna zawsze
+const usersDb = firebase.database().ref('uzytkownicy');
+let db = null, logsDb = null, presenceDb = null, issuesDb = null;
 let dbRef = null, logsRef = null, issuesRef = null, presenceRef = null;
 
 function initBranchDatabase() {
@@ -933,7 +935,6 @@ function initBranchDatabase() {
   logsRef = firebase.database().ref(`branches/${branch}/dziennik`);
   presenceRef = firebase.database().ref(`branches/${branch}/obecni`);
   issuesRef = firebase.database().ref(`branches/${branch}/zgloszenia`);
-  usersDb = firebase.database().ref('uzytkownicy');
   
   db = dbRef;
   logsDb = logsRef;
@@ -1060,10 +1061,13 @@ function updateTimerDisplay() {
   window.addEventListener(eventName, resetInactivityTimer, { passive: true });
 });
 
+// Automatyczne utworzenie konta domyślnego admina, jeśli baza użytkowników jest pusta
 usersDb.once('value', (snapshot) => {
   if (!snapshot.exists()) {
     usersDb.child('admin').set({ name: 'Administrator', login: 'admin', pass: 'admin99', role: 'admin', branch: 'rosnowo', mustChangePassword: false });
   }
+}, (err) => {
+  console.error("Błąd odczytu użytkowników:", err);
 });
 
 function bindBranchListeners() {
@@ -1123,10 +1127,10 @@ if (currentRole && currentUserName && currentUserLogin && currentSessionToken) {
 
 function switchBranch(branchKey) {
   if (currentRole !== 'admin') return;
-  activeAdminBranch = branchKey;
-  localStorage.setItem('magazyn_admin_branch', branchKey);
+  activeAdminBranch = branchKey.toLowerCase();
+  localStorage.setItem('magazyn_admin_branch', activeAdminBranch);
   
-  const label = branchKey === 'rosnowo' ? 'Rosnów' : 'Niepruszewo';
+  const label = activeAdminBranch === 'rosnowo' ? 'Rosnów' : 'Niepruszewo';
   document.getElementById('activeBranchLabel').textContent = label;
   document.getElementById('branchIndicatorBadge').textContent = `Oddział: ${label}`;
   document.getElementById('mainHeaderTitle').textContent = `Magazyn Tulejek - ${label}`;
@@ -1137,7 +1141,7 @@ function switchBranch(branchKey) {
   initBranchDatabase();
   bindBranchListeners();
   setupPresence();
-  showToast('Oddział', branchKey === 'rosnowo' ? 'Przełączono na Rosnów' : 'Przełączono na Niepruszewo', 'info');
+  showToast('Oddział', activeAdminBranch === 'rosnowo' ? 'Przełączono na Rosnów' : 'Przełączono na Niepruszewo', 'info');
 }
 
 function toggleBranchSwitch(e) {
@@ -1202,7 +1206,7 @@ function loginWithDb() {
     const users = snapshot.val() || {};
     let foundUser = null;
     for (let key in users) {
-      if (users[key].login.toLowerCase() === loginInput && users[key].pass === passInput) {
+      if (users[key].login && users[key].login.toLowerCase() === loginInput && users[key].pass === passInput) {
         foundUser = users[key];
         break;
       }
@@ -1218,7 +1222,7 @@ function loginWithDb() {
       currentUserLogin = foundUser.login;
       currentUserName = foundUser.name;
       currentRole = foundUser.role;
-      currentUserBranch = foundUser.branch || 'rosnowo';
+      currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
       errorEl.style.display = 'none';
       document.getElementById('forcePasswordModal').style.display = 'flex';
       setTimeout(() => document.getElementById('forcePasswordModal').classList.add('show'), 10);
@@ -1226,6 +1230,11 @@ function loginWithDb() {
     }
 
     completeLogin(foundUser);
+  }, (error) => {
+    // Jawny komunikat jeśli reguły Firebase blokują odczyt
+    console.error("Błąd autoryzacji Firebase:", error);
+    errorEl.textContent = 'Błąd bazy danych: Brak uprawnień (Permission Denied). Sprawdź reguły Firebase!';
+    errorEl.style.display = 'block';
   });
 }
 
@@ -1237,10 +1246,10 @@ function completeLogin(foundUser) {
   currentUserName = foundUser.name;
   currentUserLogin = foundUser.login;
   currentSessionToken = newSessionToken;
-  currentUserBranch = foundUser.branch || 'rosnowo';
+  currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
   
   if (currentRole === 'admin') {
-    activeAdminBranch = localStorage.getItem('magazyn_admin_branch') || currentUserBranch;
+    activeAdminBranch = (localStorage.getItem('magazyn_admin_branch') || currentUserBranch).toLowerCase();
   } else {
     activeAdminBranch = currentUserBranch;
   }
@@ -1260,7 +1269,7 @@ function completeLogin(foundUser) {
   initBranchDatabase();
   bindBranchListeners();
 
-  addLog('login', `zalogował(a) się do systemu (${activeAdminBranch.toUpperCase()})`);
+  addLog('login', `zalogował(a) się do systemu (${getActiveBranch().toUpperCase()})`);
   showToast('Zalogowano', `Witaj w systemie, ${currentUserName}!`, 'success');
 
   applyRoleUI();
@@ -1624,7 +1633,7 @@ function openUserModal(loginKey = null) {
   document.getElementById('newUserName').value = user ? user.name : '';
   document.getElementById('newUserLogin').value = user ? user.login : '';
   document.getElementById('newUserPass').value = '';
-  document.getElementById('newUserBranch').value = user ? (user.branch || 'rosnowo') : 'rosnowo';
+  document.getElementById('newUserBranch').value = user ? (user.branch || 'rosnowo').toLowerCase() : 'rosnowo';
   document.getElementById('newUserRole').value = user ? user.role : 'pracownik';
   document.getElementById('newUserForceChange').checked = user ? !!user.mustChangePassword : true;
   openModal('userModal');
@@ -1634,7 +1643,7 @@ function saveUserAccount() {
   const name = document.getElementById('newUserName').value.trim();
   const login = document.getElementById('newUserLogin').value.trim().toLowerCase();
   const pass = document.getElementById('newUserPass').value.trim();
-  const branch = document.getElementById('newUserBranch').value;
+  const branch = document.getElementById('newUserBranch').value.toLowerCase();
   const role = document.getElementById('newUserRole').value;
   const mustChangePassword = document.getElementById('newUserForceChange').checked;
 
@@ -1685,7 +1694,7 @@ function renderUsersTab() {
     <tr>
       <td><strong>${esc(u.name)}</strong></td>
       <td><code>${esc(u.login)}</code></td>
-      <td><span style="font-weight:700; color:var(--primary);">${u.branch === 'niepruszewo' ? '📍 Niepruszewo' : '📍 Rosnów'}</span></td>
+      <td><span style="font-weight:700; color:var(--primary);">${(u.branch || '').toLowerCase() === 'niepruszewo' ? '📍 Niepruszewo' : '📍 Rosnów'}</span></td>
       <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${u.role}</span></td>
       <td style="text-align:right">
         <button class="secondary" style="padding:6px 12px; font-size:12px; margin-right:6px;" onclick="openUserModal('${u.login}')">Edytuj</button>
