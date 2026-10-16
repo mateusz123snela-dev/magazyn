@@ -351,7 +351,6 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
 .modal-backdrop.show { display: flex; opacity: 1; }
 
 #quickAddModal { z-index: 600; }
-#forcePasswordModal { z-index: 99999; }
 #customAlertModal { z-index: 999999; }
 #customConfirmModal { z-index: 999999; }
 
@@ -431,31 +430,39 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
   </div>
 </div>
 
-<!-- Ekran Logowania -->
+<!-- Ekran Logowania oraz Zmiany Hasła na Dóle -->
 <div class="auth-screen" id="authScreen">
   <div class="auth-box">
-    <div class="icon-wrap">⚡</div>
-    <h2>Magazyn Tulejek</h2>
-    <p>Podaj login oraz hasło dostępu do systemu</p>
-    <input type="text" id="loginUserInput" placeholder="Login użytkownika">
-    <input type="password" id="loginPasswordInput" placeholder="Hasło (••••)" onkeydown="if(event.key==='Enter') loginWithDb()">
-    <button class="primary" onclick="loginWithDb()">Zaloguj się</button>
+    <div class="icon-wrap" id="authIcon">⚡</div>
+    <h2 id="authTitle">Magazyn Tulejek</h2>
+    <p id="authSubtitle">Podaj login oraz hasło dostępu do systemu</p>
+    
+    <!-- Standardowe pola logowania -->
+    <div id="loginFormFields">
+      <input type="text" id="loginUserInput" placeholder="Login użytkownika">
+      <input type="password" id="loginPasswordInput" placeholder="Hasło (••••)" onkeydown="if(event.key==='Enter') loginWithDb()">
+      <button class="primary" onclick="loginWithDb()">Zaloguj się</button>
+    </div>
+
+    <!-- Sekcja Zmiany Hasła przy pierwszym logowaniu (pokazywana poniżej / zamiennie) -->
+    <div id="forcePasswordFields" style="display: none; text-align: left;">
+      <div class="field" style="margin-bottom: 12px;">
+        <label>Stare / Tymczasowe hasło *</label>
+        <input type="password" id="forceOldPass" placeholder="••••">
+      </div>
+      <div class="field" style="margin-bottom: 12px;">
+        <label>Nowe hasło *</label>
+        <input type="password" id="forceNewPass" placeholder="••••">
+      </div>
+      <div class="field" style="margin-bottom: 20px;">
+        <label>Potwierdź nowe hasło *</label>
+        <input type="password" id="forceConfirmPass" placeholder="••••" onkeydown="if(event.key==='Enter') saveInlineForcedPassword()">
+      </div>
+      <button class="primary" onclick="saveInlineForcedPassword()">Zapisz nowe hasło i zaloguj</button>
+    </div>
+
     <div class="auth-error" id="authError">Nieprawidłowy login lub hasło!</div>
   </div>
-</div>
-
-<!-- Modal Wymuszenia Zmiany Hasła -->
-<div class="modal-backdrop" id="forcePasswordModal" style="display:none;">
- <div class="modal" style="width:min(420px, 100%)" onclick="event.stopPropagation()">
-  <div class="modal-head"><h2>Zmiana hasła wymagana</h2></div>
-  <div class="modal-body">
-   <p style="font-size:13px; color:var(--muted); margin-top:0; margin-bottom:16px;">Logujesz się po raz pierwszy lub administrator wymusił zmianę hasła. Podaj stare oraz nowe hasło.</p>
-   <div class="field" style="margin-bottom:14px;"><label>Stare hasło *</label><input id="forceOldPass" type="password" placeholder="••••"></div>
-   <div class="field" style="margin-bottom:14px;"><label>Nowe hasło *</label><input id="forceNewPass" type="password" placeholder="••••"></div>
-   <div class="field"><label>Potwierdź nowe hasło *</label><input id="forceConfirmPass" type="password" placeholder="••••" onkeydown="if(event.key==='Enter') saveForcedPasswordChange()"></div>
-  </div>
-  <div class="modal-foot"><button class="primary" style="width:100%;" onclick="saveForcedPasswordChange()">Zmień hasło i kontynuuj</button></div>
- </div>
 </div>
 
 <div class="app">
@@ -839,7 +846,7 @@ h1 { font-size: 28px; font-weight: 800; margin: 0 0 6px; letter-spacing: -0.5px;
  </div>
 </div>
 
-<!-- Modal Zmiany Hasła -->
+<!-- Modal Zmiany Hasła (w menu) -->
 <div class="modal-backdrop" id="changePasswordModal" onclick="closeModal('changePasswordModal')">
  <div class="modal" style="width:min(420px, 100%)" onclick="event.stopPropagation()">
   <div class="modal-head"><h2>Zmiana hasła</h2><button class="close" onclick="closeModal('changePasswordModal')" style="background:none; border:none; color:var(--muted); font-size:24px;">×</button></div>
@@ -912,6 +919,8 @@ let currentUserLogin = localStorage.getItem('magazyn_user_login') || null;
 let currentSessionToken = localStorage.getItem('magazyn_session_token') || null;
 let currentUserBranch = (localStorage.getItem('magazyn_user_branch') || 'rosnowo').toLowerCase();
 let activeAdminBranch = (localStorage.getItem('magazyn_admin_branch') || 'rosnowo').toLowerCase();
+
+let pendingUserObj = null; // Tymczasowe przechowywanie użytkownika wymuszającego zmianę hasła
 
 function getActiveBranch() {
   if (currentRole === 'admin') return activeAdminBranch;
@@ -1187,7 +1196,6 @@ function showToast(title, message, type = 'success') {
   }, 3500);
 }
 
-/* POPRAWIONA LOGIKA LOGOWANIA - ZAPEWNIA 100% DZIAŁANIA DLA NOWYCH KONT */
 function loginWithDb() {
   const loginInput = document.getElementById('loginUserInput').value.trim().toLowerCase();
   const passInput = document.getElementById('loginPasswordInput').value.trim();
@@ -1199,33 +1207,44 @@ function loginWithDb() {
     return;
   }
 
-  // Odczyt użytkowników
-  usersDb.once('value', (snapshot) => {
-    const users = snapshot.val() || {};
-    let foundUser = null;
-
-    // Przeszukiwanie pod kątem małych/dużych liter oraz dopasowania kluczy
-    for (let key in users) {
-      const u = users[key];
-      const userLogin = (u.login || key).trim().toLowerCase();
-      
-      if (userLogin === loginInput && u.pass === passInput) {
-        foundUser = u;
-        if (!foundUser.login) foundUser.login = key;
-        break;
-      }
-    }
+  usersDb.child(loginInput).once('value', (snapshot) => {
+    let foundUser = snapshot.val();
 
     if (!foundUser) {
+      usersDb.once('value', (allSnap) => {
+        const users = allSnap.val() || {};
+        for (let key in users) {
+          const u = users[key];
+          const userLogin = (u.login || key).trim().toLowerCase();
+          if (userLogin === loginInput && u.pass === passInput) {
+            foundUser = u;
+            if (!foundUser.login) foundUser.login = key;
+            break;
+          }
+        }
+
+        if (!foundUser) {
+          errorEl.textContent = 'Nieprawidłowy login lub hasło!';
+          errorEl.style.display = 'block';
+          return;
+        }
+
+        processFoundUser(foundUser);
+      });
+      return;
+    }
+
+    if (foundUser.pass !== passInput) {
       errorEl.textContent = 'Nieprawidłowy login lub hasło!';
       errorEl.style.display = 'block';
       return;
     }
 
+    if (!foundUser.login) foundUser.login = loginInput;
     processFoundUser(foundUser);
   }, (error) => {
     console.error("Błąd autoryzacji Firebase:", error);
-    errorEl.textContent = 'Błąd bazy danych: Brak uprawnień (Permission Denied). Sprawdź reguły Firebase!';
+    errorEl.textContent = 'Błąd bazy danych: Brak uprawnień!';
     errorEl.style.display = 'block';
   });
 }
@@ -1234,29 +1253,91 @@ function processFoundUser(foundUser) {
   const errorEl = document.getElementById('authError');
   errorEl.style.display = 'none';
 
+  // Wygeneruj unikalny token sesji dla tego konta
+  const newSessionToken = 'session_' + Math.random().toString(36).substring(2) + Date.now();
+  const userKey = (foundUser.login || 'admin').toLowerCase();
+  
+  usersDb.child(userKey).update({ activeToken: newSessionToken });
+
+  currentUserLogin = userKey;
+  currentUserName = foundUser.name;
+  currentRole = foundUser.role;
+  currentSessionToken = newSessionToken;
+  currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
+
+  // Wymuszenie zmiany hasła bezpośrednio na karcie logowania
   if (foundUser.mustChangePassword) {
-    currentUserLogin = foundUser.login;
-    currentUserName = foundUser.name;
-    currentRole = foundUser.role;
-    currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
-    document.getElementById('forcePasswordModal').style.display = 'flex';
-    setTimeout(() => document.getElementById('forcePasswordModal').classList.add('show'), 10);
+    pendingUserObj = foundUser;
+    
+    // Zmień nagłówki oraz ukryj zwykły formularz logowania
+    document.getElementById('authTitle').textContent = 'Wymagana zmiana hasła';
+    document.getElementById('authSubtitle').textContent = `Witaj ${foundUser.name}! Zmień swoje tymczasowe hasło, aby kontynuować.`;
+    document.getElementById('loginFormFields').style.display = 'none';
+    
+    // Pokaż pola ustalania nowego hasła
+    document.getElementById('forcePasswordFields').style.display = 'block';
+    document.getElementById('forceOldPass').value = document.getElementById('loginPasswordInput').value;
     return;
   }
 
   completeLogin(foundUser);
 }
 
-function completeLogin(foundUser) {
-  const newSessionToken = 'session_' + Math.random().toString(36).substring(2) + Date.now();
-  const userKey = (foundUser.login || 'admin').toLowerCase();
-  usersDb.child(userKey).update({ activeToken: newSessionToken });
+function saveInlineForcedPassword() {
+  const errorEl = document.getElementById('authError');
+  const oldPass = document.getElementById('forceOldPass').value.trim();
+  const newPass = document.getElementById('forceNewPass').value.trim();
+  const confirmPass = document.getElementById('forceConfirmPass').value.trim();
 
-  currentRole = foundUser.role;
-  currentUserName = foundUser.name;
-  currentUserLogin = userKey;
-  currentSessionToken = newSessionToken;
-  currentUserBranch = (foundUser.branch || 'rosnowo').toLowerCase();
+  if (!oldPass || !newPass || !confirmPass) {
+    errorEl.textContent = 'Wszystkie pola są wymagane!';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (newPass !== confirmPass) {
+    errorEl.textContent = 'Hasła nie są identyczne!';
+    errorEl.style.display = 'block';
+    return;
+  }
+  if (newPass.length < 4) {
+    errorEl.textContent = 'Hasło musi mieć co najmniej 4 znaki!';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  usersDb.child(currentUserLogin).once('value', (snap) => {
+    const user = snap.val();
+    if (!user || user.pass !== oldPass) {
+      errorEl.textContent = 'Stare / tymczasowe hasło jest nieprawidłowe!';
+      errorEl.style.display = 'block';
+      return;
+    }
+
+    // Aktualizuj nowe hasło oraz wyłącz flagę mustChangePassword
+    usersDb.child(currentUserLogin).update({ pass: newPass, mustChangePassword: false }, (err) => {
+      if (!err) {
+        errorEl.style.display = 'none';
+        user.pass = newPass; 
+        user.mustChangePassword = false;
+        
+        // Zresetuj formularz logowania na przyszłość
+        document.getElementById('loginFormFields').style.display = 'block';
+        document.getElementById('forcePasswordFields').style.display = 'none';
+        document.getElementById('authTitle').textContent = 'Magazyn Tulejek';
+        document.getElementById('authSubtitle').textContent = 'Podaj login oraz hasło dostępu do systemu';
+
+        showToast('Sukces', 'Hasło zostało pomyślnie zmienione!', 'success');
+        completeLogin(user);
+      } else {
+        errorEl.textContent = 'Nie udało się zapisać nowego hasła w bazie danych.';
+        errorEl.style.display = 'block';
+      }
+    });
+  });
+}
+
+function completeLogin(foundUser) {
+  const userKey = (foundUser.login || 'admin').toLowerCase();
   
   if (currentRole === 'admin') {
     activeAdminBranch = (localStorage.getItem('magazyn_admin_branch') || currentUserBranch).toLowerCase();
@@ -1272,9 +1353,6 @@ function completeLogin(foundUser) {
   localStorage.setItem('magazyn_admin_branch', activeAdminBranch);
 
   document.getElementById('authScreen').style.display = 'none';
-  const forceModal = document.getElementById('forcePasswordModal');
-  forceModal.classList.remove('show');
-  setTimeout(() => forceModal.style.display = 'none', 250);
 
   initBranchDatabase();
   bindBranchListeners();
@@ -1287,29 +1365,6 @@ function completeLogin(foundUser) {
   startSessionMonitoring();
   resetInactivityTimer();
   startInactivityCountdown();
-}
-
-function saveForcedPasswordChange() {
-  const oldPass = document.getElementById('forceOldPass').value.trim();
-  const newPass = document.getElementById('forceNewPass').value.trim();
-  const confirmPass = document.getElementById('forceConfirmPass').value.trim();
-
-  if (!oldPass || !newPass || !confirmPass) return showCustomAlert('Błędne dane', 'Wszystkie pola są wymagane!', '⚠️');
-  if (newPass !== confirmPass) return showCustomAlert('Błąd', 'Nowe hasło i potwierdzenie muszą być takie same!', '⚠️');
-  if (newPass.length < 4) return showCustomAlert('Za krótkie hasło', 'Hasło musi mieć co najmniej 4 znaki!', '⚠️');
-
-  usersDb.child(currentUserLogin).once('value', (snap) => {
-    const user = snap.val();
-    if (!user || user.pass !== oldPass) return showCustomAlert('Błąd', 'Stare hasło jest nieprawidłowe!', '⚠️');
-
-    usersDb.child(currentUserLogin).update({ pass: newPass, mustChangePassword: false }, (err) => {
-      if (!err) {
-        showToast('Sukces', 'Hasło zostało zmienione!', 'success');
-        user.pass = newPass; user.mustChangePassword = false;
-        completeLogin(user);
-      }
-    });
-  });
 }
 
 function openChangePasswordModal() {
@@ -1366,6 +1421,13 @@ function logout() {
   localStorage.removeItem('magazyn_user_branch');
 
   currentRole = null; currentUserName = null; currentUserLogin = null; currentSessionToken = null;
+  
+  // Zresetuj układ formularza logowania
+  document.getElementById('loginFormFields').style.display = 'block';
+  document.getElementById('forcePasswordFields').style.display = 'none';
+  document.getElementById('authTitle').textContent = 'Magazyn Tulejek';
+  document.getElementById('authSubtitle').textContent = 'Podaj login oraz hasło dostępu do systemu';
+  
   document.getElementById('authScreen').style.display = 'flex';
 }
 
@@ -1422,11 +1484,12 @@ function applyRoleUI() {
 
   if (currentRole === 'admin') {
     badge.textContent = 'Admin'; badge.className = 'role-badge role-admin';
-    btnClear.style.display = 'inline-block'; btnBackupRestore.style.display = 'inline-block';
-    if(btnAddPalletHero) btnAddPalletHero.style.display = 'inline-block';
-    if(onlineCounterBox) onlineCounterBox.style.display = 'flex';
-    if(adminBranchSelector) adminBranchSelector.style.display = 'block';
-    if(mapSub) mapSub.textContent = 'Kliknij w wolny kafelek na regale, aby przypisać paletę.';
+    if (btnClear) btnClear.style.display = 'inline-block'; 
+    if (btnBackupRestore) btnBackupRestore.style.display = 'inline-block';
+    if (btnAddPalletHero) btnAddPalletHero.style.display = 'inline-block';
+    if (onlineCounterBox) onlineCounterBox.style.display = 'flex';
+    if (adminBranchSelector) adminBranchSelector.style.display = 'block';
+    if (mapSub) mapSub.textContent = 'Kliknij w wolny kafelek na regale, aby przypisać paletę.';
 
     const dropdownWrap = document.createElement('div');
     dropdownWrap.className = 'nav-dropdown admin-nav-item';
@@ -1443,16 +1506,20 @@ function applyRoleUI() {
     navTabs.appendChild(dropdownWrap);
   } else if (currentRole === 'tulejarka') {
     badge.textContent = 'Tulejarka'; badge.className = 'role-badge role-tulejarka';
-    btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
-    if(btnAddPalletHero) btnAddPalletHero.style.display = 'inline-block';
-    if(adminBranchSelector) adminBranchSelector.style.display = 'none';
-    if(mapSub) mapSub.textContent = 'Kliknij w slot na mapie, aby umieścić paletę.';
+    if (btnClear) btnClear.style.display = 'none'; 
+    if (btnBackupRestore) btnBackupRestore.style.display = 'none';
+    if (btnAddPalletHero) btnAddPalletHero.style.display = 'inline-block';
+    if (adminBranchSelector) adminBranchSelector.style.display = 'none';
+    if (mapSub) mapSub.textContent = 'Kliknij w slot na mapie, aby umieścić paletę.';
   } else {
     badge.textContent = 'Pracownik'; badge.className = 'role-badge role-pracownik';
-    btnClear.style.display = 'none'; btnBackupRestore.style.display = 'none';
-    if(btnAddPalletHero) btnAddPalletHero.style.display = 'none';
-    if(adminBranchSelector) adminBranchSelector.style.display = 'none';
+    if (btnClear) btnClear.style.display = 'none'; 
+    if (btnBackupRestore) btnBackupRestore.style.display = 'none';
+    if (btnAddPalletHero) btnAddPalletHero.style.display = 'none';
+    if (adminBranchSelector) adminBranchSelector.style.display = 'none';
   }
+
+  switchTab('tabPallets', document.getElementById('tabBtnPallets'));
 }
 
 function switchTab(tabId, btn) {
@@ -1645,11 +1712,10 @@ function openUserModal(loginKey = null) {
   document.getElementById('newUserPass').value = '';
   document.getElementById('newUserBranch').value = user ? (user.branch || 'rosnowo').toLowerCase() : 'rosnowo';
   document.getElementById('newUserRole').value = user ? user.role : 'pracownik';
-  document.getElementById('newUserForceChange').checked = user ? !!user.mustChangePassword : true;
+  document.getElementById('newUserForceChange').checked = user ? !!user.mustChangePassword : false;
   openModal('userModal');
 }
 
-/* POPRAWIONA LOGIKA ZAPISU UŻYTKOWNIKA - BEZBŁĘDNA STRUKTURA BAZY */
 function saveUserAccount() {
   const name = document.getElementById('newUserName').value.trim();
   const login = document.getElementById('newUserLogin').value.trim().toLowerCase();
@@ -1681,7 +1747,6 @@ function saveUserAccount() {
     const finalPass = pass ? pass : existingPass;
     const finalForce = pass ? mustChangePassword : existingForce;
 
-    // Zapis w formule uzytkownicy/{login_malymi_literami}
     usersDb.child(login).set({ 
       name: name, 
       login: login, 
