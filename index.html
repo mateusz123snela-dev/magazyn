@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Magazyn Tulejek </title>
+<title>Magazyn Tulejek - Rosnowo / Niepruszewo</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -492,7 +492,6 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
   <nav class="nav-tabs" id="navTabs">
     <button class="nav-tab active" id="tabBtnPallets" onclick="switchTab('tabPallets', this)">🗃️ Magazyn</button>
     <button class="nav-tab" id="tabBtnMap" onclick="switchTab('tabMap', this)">📡 Mapa</button>
-    <button class="nav-tab" id="tabBtnReportIssue" onclick="switchTab('tabReportIssue', this)">🛠️ Zgłoś usterkę</button>
   </nav>
 
   <div class="spacer"></div>
@@ -521,6 +520,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
           <span>🟢 Online:</span>
           <strong id="onlineCount">1</strong>
         </div>
+        <button class="dropdown-item" onclick="switchTab('tabReportIssue', this)"><span>🛠️ Zgłoś usterkę</span></button>
         <button class="dropdown-item" onclick="openChangePasswordModal()"><span>🔐 Zmień hasło</span></button>
         <button class="dropdown-item" onclick="logout()" style="color: var(--danger);"><span>🚀 Wyloguj</span></button>
       </div>
@@ -1565,6 +1565,7 @@ function switchTab(tabId, btn) {
     if (btn.classList.contains('dropdown-item')) document.getElementById('adminDropdownBtn')?.classList.add('active');
   }
   document.getElementById('adminDropdownMenu')?.classList.remove('show');
+  document.getElementById('userDropdownMenu')?.classList.remove('show');
 
   if(tabId === 'tabMap') renderMapSlots();
   if(tabId === 'tabStats') renderAdminStats();
