@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Magazyn Tulejek - Rosnowo / Niepruszewo</title>
+<title>Magazyn Tulejek </title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -546,7 +546,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
     </section>
 
     <div class="toolbar">
-      <div class="search"><span>🔍</span><input id="search" placeholder="Szukaj palety, lokalizacji, rozmiaru lub nazwy..." oninput="render()"></div>
+      <div class="search"><span>🔍</span><input id="search" placeholder="Szukaj palety, lokalizacji, rozmiaru lub nazwy..." oninput="debouncedRender()"></div>
       <button class="secondary" onclick="exportData()">💾 Eksport JSON</button>
       <button class="secondary" id="btnBackupRestore" onclick="triggerRestoreFile()" style="display:none;">🔄 Przywróć kopię</button>
       <input type="file" id="backupFileInput" style="display:none" accept=".json" onchange="restoreBackup(event)">
@@ -627,7 +627,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
     </section>
     <section class="panel-section">
       <div class="toolbar" style="margin-bottom:16px;">
-        <div class="search"><span>🔍</span><input id="logSearchInput" placeholder="Szukaj w historii..." oninput="renderLogs()"></div>
+        <div class="search"><span>🔍</span><input id="logSearchInput" placeholder="Szukaj w historii..." oninput="debouncedRenderLogs()"></div>
       </div>
       <div class="log-filters">
         <button class="log-filter-btn active" id="log-filter-all" onclick="filterLogs('all')">Wszystkie</button>
@@ -976,6 +976,22 @@ let selectedLogFilter = 'all';
 let userPresenceRef = null;
 let sessionMonitorRef = null;
 
+/* Debounce helper dla poprawy płynności wpisywania danych */
+function debounce(func, wait = 150) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+const debouncedRender = debounce(() => render(), 150);
+const debouncedRenderLogs = debounce(() => renderLogs(), 150);
+
 const INACTIVITY_LIMIT = 5 * 60 * 1000;
 let timeRemaining = INACTIVITY_LIMIT;
 let inactivityInterval = null;
@@ -1048,7 +1064,6 @@ const MAP_SLOTS_ROSNOWO = [
 
 // Mapa Rządków dla NIEPRUSZEWA
 const MAP_ROWS_NIEPRUSZEWO = [
-  // Sektor Górny
   { id: 'row_a', name: 'RZĄD A', x: 440, y: 150, w: 75, h: 220, sector: 'Górne Rzędy' },
   { id: 'row_b', name: 'RZĄD B', x: 520, y: 150, w: 75, h: 220, sector: 'Górne Rzędy' },
   { id: 'row_c', name: 'RZĄD C', x: 600, y: 150, w: 75, h: 220, sector: 'Górne Rzędy' },
@@ -1064,7 +1079,6 @@ const MAP_ROWS_NIEPRUSZEWO = [
   { id: 'row_m', name: 'RZĄD M', x: 1430, y: 150, w: 75, h: 220, sector: 'Górne Rzędy' },
   { id: 'row_n', name: 'RZĄD N', x: 1510, y: 150, w: 75, h: 220, sector: 'Górne Rzędy' },
 
-  // Sektor Dolny
   { id: 'row_1', name: 'RZĄD 1', x: 440, y: 600, w: 90, h: 220, sector: 'Dolne Rzędy' },
   { id: 'row_2', name: 'RZĄD 2', x: 535, y: 600, w: 90, h: 220, sector: 'Dolne Rzędy' },
   { id: 'row_3', name: 'RZĄD 3', x: 630, y: 600, w: 90, h: 220, sector: 'Dolne Rzędy' },
@@ -1124,9 +1138,11 @@ function bindBranchListeners() {
     const data = snapshot.val();
     pallets = data ? Object.values(data) : [];
     render();
-    renderMapSlots();
+    if (document.getElementById('tabMap').classList.contains('active')) {
+      renderMapSlots();
+    }
     if (currentRole === 'admin') { 
-      renderSizesTab(); 
+      if (document.getElementById('tabSizes').classList.contains('active')) renderSizesTab(); 
       if (document.getElementById('tabStats').classList.contains('active')) renderAdminStats();
     }
     if (editingId && document.getElementById('detailModal').classList.contains('show')) {
@@ -1140,19 +1156,18 @@ function bindBranchListeners() {
   logsDb.on('value', (snapshot) => {
     const data = snapshot.val();
     logs = data ? Object.values(data).sort((a,b) => new Date(b.time) - new Date(a.time)) : [];
-    renderLogs();
-    if (currentRole === 'admin') {
-      if (document.getElementById('tabStats').classList.contains('active')) renderAdminStats();
+    if (document.getElementById('tabLogs').classList.contains('active')) {
+      renderLogs();
     }
-    if (editingId && document.getElementById('detailModal').classList.contains('show')) {
-      openDetails(editingId);
+    if (currentRole === 'admin' && document.getElementById('tabStats').classList.contains('active')) {
+      renderAdminStats();
     }
   });
 
   issuesDb.on('value', (snapshot) => {
     const data = snapshot.val();
     issuesList = data ? Object.values(data).sort((a,b) => new Date(b.time) - new Date(a.time)) : [];
-    if (currentRole === 'admin') {
+    if (currentRole === 'admin' && document.getElementById('tabIssuesList').classList.contains('active')) {
       renderIssuesTab();
     }
   });
@@ -1170,7 +1185,7 @@ function bindBranchListeners() {
 usersDb.on('value', (snapshot) => {
   const data = snapshot.val();
   usersList = data ? Object.values(data) : [];
-  if (currentRole === 'admin') renderUsersTab();
+  if (currentRole === 'admin' && document.getElementById('tabUsers').classList.contains('active')) renderUsersTab();
 });
 
 if (currentRole && currentUserName && currentUserLogin && currentSessionToken) {
@@ -1554,6 +1569,8 @@ function switchTab(tabId, btn) {
   if(tabId === 'tabMap') renderMapSlots();
   if(tabId === 'tabStats') renderAdminStats();
   if(tabId === 'tabIssuesList') renderIssuesTab();
+  if(tabId === 'tabLogs') renderLogs();
+  if(tabId === 'tabSizes') renderSizesTab();
 }
 
 function submitIssue(e) {
