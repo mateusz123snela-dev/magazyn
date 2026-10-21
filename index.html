@@ -106,7 +106,7 @@ button:active { transform: scale(0.96); }
 /* Topbar */
 .topbar {
   background: var(--panel); color: var(--text); display: flex; align-items: center;
-  padding: 12px 28px; gap: 16px; position: sticky; top: 0; z-index: 20;
+  padding: 12px 28px; gap: 16px; position: sticky; top: 0; z-index: 200;
   border-bottom: 1px solid var(--panel-border); flex-wrap: wrap; box-shadow: var(--shadow-sm);
 }
 .logo { font-weight: 700; font-size: 17px; display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px; }
@@ -127,8 +127,9 @@ button:active { transform: scale(0.96); }
 .dropdown-menu {
   display: none; position: absolute; top: calc(100% + 8px); left: 0;
   background: var(--panel); border: 1px solid var(--panel-border); border-radius: var(--radius);
-  box-shadow: var(--shadow-lg); padding: 6px; min-width: 220px; z-index: 1000;
+  box-shadow: var(--shadow-lg); padding: 6px; min-width: 220px; z-index: 10000;
   flex-direction: column; gap: 4px; animation: modalPop 0.2s ease-out;
+  max-height: 80vh; overflow-y: auto;
 }
 .dropdown-menu.show { display: flex; }
 .dropdown-item {
@@ -223,14 +224,14 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
 .pallet-actions { display: flex; gap: 8px; margin-top: 14px; }
 .pallet-actions button { flex: 1; padding: 7px; font-size: 12px; border-radius: var(--radius-sm); }
 
-.size-filters, .log-filters { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
-.size-filter-btn, .log-filter-btn {
+.size-filters, .log-filters, .user-filters { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.size-filter-btn, .log-filter-btn, .user-filter-btn {
   background: var(--panel); border: 1px solid var(--panel-border); color: var(--muted);
   padding: 7px 14px; border-radius: var(--radius-sm); font-weight: 600; font-size: 12px;
   box-shadow: var(--shadow-sm);
 }
-.size-filter-btn:hover, .log-filter-btn:hover { color: var(--text); border-color: var(--muted); }
-.size-filter-btn.active, .log-filter-btn.active {
+.size-filter-btn:hover, .log-filter-btn:hover, .user-filter-btn:hover { color: var(--text); border-color: var(--muted); }
+.size-filter-btn.active, .log-filter-btn.active, .user-filter-btn.active {
   background: var(--primary-light); color: var(--primary); border-color: rgba(37, 99, 235, 0.4); font-weight: 700;
 }
 
@@ -398,9 +399,10 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
 .remove-item:hover { background: var(--danger); color: #fff; }
 
 @media (max-width: 640px) {
-  .topbar { padding: 14px 16px; flex-direction: column; align-items: stretch; gap: 12px; }
-  .user-info { justify-content: space-between; width: 100%; }
-  .nav-tabs { width: 100%; justify-content: flex-start; overflow-x: auto; padding-bottom: 4px; }
+  .topbar { padding: 10px 14px; flex-direction: row; align-items: center; gap: 8px; justify-content: space-between; }
+  .user-info { justify-content: flex-end; width: auto; gap: 6px; }
+  .nav-tabs { width: auto; flex: 1; justify-content: flex-start; overflow-x: visible; padding-bottom: 0; }
+  .dropdown-menu { position: fixed; top: 60px; right: 10px; left: 10px; width: auto; min-width: auto; }
   .container { padding: 18px 14px; }
   .hero { flex-direction: column; align-items: stretch; gap: 12px; }
   .hero button { width: 100%; }
@@ -454,23 +456,23 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
     <p id="authSubtitle">Zaloguj się do panelu magazynowego</p>
     
     <div id="loginFormFields">
-      <input type="text" id="loginUserInput" placeholder="Login">
-      <input type="password" id="loginPasswordInput" placeholder="Hasło" onkeydown="if(event.key==='Enter') loginWithDb()">
+      <input type="text" id="loginUserInput" placeholder="Login" autocomplete="off" autocapitalize="none">
+      <input type="password" id="loginPasswordInput" placeholder="Hasło" autocomplete="new-password" onkeydown="if(event.key==='Enter') loginWithDb()">
       <button class="primary" onclick="loginWithDb()">Zaloguj się 🚀</button>
     </div>
 
     <div id="forcePasswordFields" style="display: none; text-align: left;">
       <div class="field" style="margin-bottom: 12px;">
         <label>Tymczasowe hasło *</label>
-        <input type="password" id="forceOldPass" placeholder="••••">
+        <input type="password" id="forceOldPass" placeholder="••••" autocomplete="new-password">
       </div>
       <div class="field" style="margin-bottom: 12px;">
         <label>Nowe hasło *</label>
-        <input type="password" id="forceNewPass" placeholder="••••">
+        <input type="password" id="forceNewPass" placeholder="••••" autocomplete="new-password">
       </div>
       <div class="field" style="margin-bottom: 18px;">
         <label>Potwierdź nowe hasło *</label>
-        <input type="password" id="forceConfirmPass" placeholder="••••" onkeydown="if(event.key==='Enter') saveInlineForcedPassword()">
+        <input type="password" id="forceConfirmPass" placeholder="••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') saveInlineForcedPassword()">
       </div>
       <button class="primary" onclick="saveInlineForcedPassword()">Zapisz i zaloguj 🔐</button>
     </div>
@@ -758,6 +760,11 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
       <button class="primary" onclick="openUserModal()">＋ Dodaj użytkownika</button>
     </section>
     <section class="panel-section">
+      <div class="user-filters">
+        <button class="user-filter-btn active" id="user-filter-all" onclick="filterUsersByBranch('all')">Wszystkie</button>
+        <button class="user-filter-btn" id="user-filter-rosnowo" onclick="filterUsersByBranch('rosnowo')">📍 Rosnowo</button>
+        <button class="user-filter-btn" id="user-filter-niepruszewo" onclick="filterUsersByBranch('niepruszewo')">📍 Niepruszewo</button>
+      </div>
       <div class="styled-table-container">
         <table class="table">
           <thead><tr><th>Imię / Nazwa</th><th>Login</th><th>Oddział</th><th>Rola</th><th style="text-align:right">Akcje</th></tr></thead>
@@ -929,6 +936,7 @@ let currentUserBranch = (localStorage.getItem('magazyn_user_branch') || 'rosnowo
 let activeAdminBranch = (localStorage.getItem('magazyn_admin_branch') || 'rosnowo').toLowerCase();
 
 let pendingUserObj = null;
+let selectedUserBranchFilter = 'all';
 
 function getActiveBranch() {
   if (currentRole === 'admin') return activeAdminBranch;
@@ -976,7 +984,6 @@ let selectedLogFilter = 'all';
 let userPresenceRef = null;
 let sessionMonitorRef = null;
 
-/* Debounce helper dla poprawy płynności wpisywania danych */
 function debounce(func, wait = 150) {
   let timeout;
   return function executedFunction(...args) {
@@ -1018,7 +1025,6 @@ function showCustomConfirm(title, message, onConfirm) {
   openModal('customConfirmModal');
 }
 
-// Mapa Sloty dla ROSNOWA
 const MAP_SLOTS_ROSNOWO = [
   { id: 'left_1', x: 125, y: 415, sector: 'Sektor Lewy' },
   { id: 'left_2', x: 125, y: 485, sector: 'Sektor Lewy' },
@@ -1062,7 +1068,6 @@ const MAP_SLOTS_ROSNOWO = [
   { id: 'bot_right_c3_5', x: 1495, y: 730, sector: 'Sektor Tulejarki' }
 ];
 
-// Mapa Rządków dla NIEPRUSZEWA
 const MAP_ROWS_NIEPRUSZEWO = [
   { id: 'row_a', name: 'RZĄD A', x: 440, y: 150, w: 75, h: 220, sector: 'Górne Rzędy' },
   { id: 'row_b', name: 'RZĄD B', x: 520, y: 150, w: 75, h: 220, sector: 'Górne Rzędy' },
@@ -1196,6 +1201,9 @@ if (currentRole && currentUserName && currentUserLogin && currentSessionToken) {
   resetInactivityTimer();
   startInactivityCountdown();
   bindBranchListeners();
+} else {
+  document.getElementById('loginUserInput').value = '';
+  document.getElementById('loginPasswordInput').value = '';
 }
 
 function switchBranch(branchKey) {
@@ -1457,6 +1465,10 @@ function logout() {
 
   currentRole = null; currentUserName = null; currentUserLogin = null; currentSessionToken = null;
   
+  document.getElementById('loginUserInput').value = '';
+  document.getElementById('loginPasswordInput').value = '';
+  document.getElementById('authError').style.display = 'none';
+
   document.getElementById('loginFormFields').style.display = 'block';
   document.getElementById('forcePasswordFields').style.display = 'none';
   document.getElementById('authTitle').textContent = 'Magazyn Tulejek';
@@ -1489,8 +1501,19 @@ function openOnlineUsersModal() {
   openModal('onlineUsersModal');
 }
 
-function toggleAdminDropdown(e) { if(e) e.stopPropagation(); document.getElementById('adminDropdownMenu')?.classList.toggle('show'); }
-function toggleUserDropdown(e) { if(e) e.stopPropagation(); document.getElementById('userDropdownMenu')?.classList.toggle('show'); }
+function toggleAdminDropdown(e) { 
+  if(e) e.stopPropagation(); 
+  document.getElementById('userDropdownMenu')?.classList.remove('show');
+  document.getElementById('branchDropdownMenu')?.classList.remove('show');
+  document.getElementById('adminDropdownMenu')?.classList.toggle('show'); 
+}
+
+function toggleUserDropdown(e) { 
+  if(e) e.stopPropagation(); 
+  document.getElementById('adminDropdownMenu')?.classList.remove('show');
+  document.getElementById('branchDropdownMenu')?.classList.remove('show');
+  document.getElementById('userDropdownMenu')?.classList.toggle('show'); 
+}
 
 window.addEventListener('click', () => {
   document.getElementById('adminDropdownMenu')?.classList.remove('show');
@@ -1572,6 +1595,7 @@ function switchTab(tabId, btn) {
   if(tabId === 'tabIssuesList') renderIssuesTab();
   if(tabId === 'tabLogs') renderLogs();
   if(tabId === 'tabSizes') renderSizesTab();
+  if(tabId === 'tabUsers') renderUsersTab();
 }
 
 function submitIssue(e) {
@@ -1810,14 +1834,28 @@ function deleteUser(loginKey) {
   });
 }
 
+function filterUsersByBranch(branchKey) {
+  selectedUserBranchFilter = branchKey;
+  document.querySelectorAll('.user-filter-btn').forEach(btn => btn.classList.remove('active'));
+  document.getElementById(`user-filter-${branchKey}`).classList.add('active');
+  renderUsersTab();
+}
+
 function renderUsersTab() {
   const tbody = document.getElementById('usersTableBody');
   if (!tbody) return;
-  if (!usersList.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted); padding:20px;">Brak użytkowników</td></tr>';
+
+  let filtered = usersList;
+  if (selectedUserBranchFilter !== 'all') {
+    filtered = filtered.filter(u => (u.branch || 'rosnowo').toLowerCase() === selectedUserBranchFilter);
+  }
+
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted); padding:20px;">Brak użytkowników dla wybranego oddziału</td></tr>';
     return;
   }
-  tbody.innerHTML = usersList.map(u => {
+
+  tbody.innerHTML = filtered.map(u => {
     const uLogin = u.login || 'nieznany';
     return `
       <tr>
