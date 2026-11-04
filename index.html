@@ -2,36 +2,41 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Magazyn Tulejek - Rosnowo / Niepruszewo</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#FFFFFF">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
 <style>
 :root {
-  --bg: #e2e8f0;
+  --bg: #F2F4F9;
   --panel: #ffffff;
-  --panel-border: #cbd5e1;
-  --panel-hover: #f1f5f9;
-  --text: #0f172a;
-  --muted: #64748b;
-  --line: #cbd5e1;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --primary-light: rgba(37, 99, 235, 0.1);
-  --danger: #ef4444;
+  --panel-border: #D9DEE8;
+  --panel-hover: #EEF1F7;
+  --text: #172036;
+  --muted: #6B7490;
+  --line: #D9DEE8;
+  --primary: #2F5BEA;
+  --primary-hover: #2447C4;
+  --primary-light: rgba(47, 91, 234, 0.1);
+  --danger: #E5484D;
   --danger-bg: rgba(239, 68, 68, 0.1);
-  --success: #10b981;
+  --success: #16A36A;
   --warning: #f59e0b;
   --radius: 12px;
   --radius-sm: 8px;
   --font-mono: 'JetBrains Mono', monospace;
   --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 6px 16px rgba(15, 23, 42, 0.08);
-  --shadow-lg: 0 16px 32px rgba(15, 23, 42, 0.15);
+  --shadow-sm: 0 2px 4px rgba(23, 32, 54, 0.05);
+  --shadow-md: 0 6px 16px rgba(23, 32, 54, 0.08);
+  --shadow-lg: 0 16px 32px rgba(23, 32, 54, 0.15);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -84,28 +89,49 @@ mark.hl {
 .timeline-content { background: var(--panel); border: 1px solid var(--panel-border); padding: 10px 14px; border-radius: var(--radius-sm); font-size: 12px; box-shadow: var(--shadow-sm); }
 
 .auth-screen {
-  position: fixed; inset: 0; background: linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 100%);
+  position: fixed; inset: 0; background: linear-gradient(135deg, #D9DEE8 0%, #F2F4F9 100%);
   display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 100000;
 }
 .auth-box {
-  background: var(--panel); border: 1px solid var(--panel-border); border-radius: var(--radius); padding: 40px 32px; width: min(400px, 100%);
+  background: var(--panel); border: 1px solid var(--panel-border); border-radius: var(--radius); padding: 36px 28px; width: min(380px, 100%);
   text-align: center; color: var(--text); box-shadow: var(--shadow-lg);
   animation: modalPop 0.3s ease-out;
 }
 .auth-box .icon-wrap {
-  width: 56px; height: 56px; background: var(--primary-light); color: var(--primary);
-  border-radius: var(--radius); display: grid; place-items: center; font-size: 28px; margin: 0 auto 18px;
-  border: 1px solid rgba(37, 99, 235, 0.2); animation: pulseSlow 2s infinite;
+  width: 52px; height: 52px; background: var(--primary-light); color: var(--primary);
+  border-radius: var(--radius); display: grid; place-items: center; font-size: 26px; margin: 0 auto 14px;
+  border: 1px solid rgba(47, 91, 234, 0.2); animation: pulseSlow 2s infinite;
 }
-.auth-box h2 { margin: 0 0 6px; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }
-.auth-box p { margin: 0 0 24px; color: var(--muted); font-size: 13px; }
+.auth-box h2 { margin: 0 0 4px; font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+.auth-box p { margin: 0 0 20px; color: var(--muted); font-size: 12px; }
+
+.auth-tabs { display: flex; gap: 6px; background: var(--bg); padding: 4px; border-radius: var(--radius-sm); margin-bottom: 20px; border: 1px solid var(--panel-border); }
+.auth-tab-btn { flex: 1; padding: 8px; font-size: 12px; font-weight: 600; border-radius: 6px; color: var(--muted); }
+.auth-tab-btn.active { background: var(--panel); color: var(--primary); box-shadow: var(--shadow-sm); font-weight: 700; }
+
+.pin-display { display: flex; justify-content: center; gap: 12px; margin-bottom: 20px; }
+.pin-dot {
+  width: 16px; height: 16px; border-radius: 50%; border: 2px solid var(--panel-border);
+  background: var(--bg); transition: var(--transition);
+}
+.pin-dot.filled { background: var(--primary); border-color: var(--primary); transform: scale(1.15); box-shadow: 0 0 8px rgba(47, 91, 234, 0.4); }
+
+.numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 260px; margin: 0 auto 10px; }
+.num-btn {
+  background: var(--bg); border: 1px solid var(--panel-border); border-radius: var(--radius-sm);
+  padding: 14px 0; font-size: 18px; font-weight: 700; color: var(--text);
+  font-family: var(--font-mono); transition: var(--transition);
+}
+.num-btn:hover { background: var(--panel-border); border-color: var(--muted); }
+.num-btn:active { background: var(--primary-light); color: var(--primary); transform: scale(0.92); }
+
 .auth-box input {
   width: 100%; padding: 11px 16px; border: 1px solid var(--panel-border); border-radius: var(--radius-sm);
   outline: none; text-align: center; font-size: 14px; margin-bottom: 12px; background: var(--bg); color: var(--text);
   transition: var(--transition);
 }
 .auth-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-.auth-box button { width: 100%; padding: 12px; font-size: 14px; margin-top: 6px; font-weight: 600; }
+.auth-box button.btn-submit { width: 100%; padding: 12px; font-size: 14px; margin-top: 4px; font-weight: 600; }
 .auth-error { color: var(--danger); font-size: 12px; font-weight: 600; margin-top: 12px; display: none; }
 
 .topbar {
@@ -116,7 +142,7 @@ mark.hl {
 .logo { font-weight: 700; font-size: 17px; display: flex; align-items: center; gap: 10px; letter-spacing: -0.3px; }
 .logo-icon {
   width: 36px; height: 36px; border-radius: var(--radius-sm); background: var(--primary);
-  display: grid; place-items: center; font-size: 18px; color: #fff; box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  display: grid; place-items: center; font-size: 18px; color: #fff; box-shadow: 0 4px 10px rgba(47, 91, 234, 0.3);
 }
 
 .nav-tabs { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
@@ -125,7 +151,7 @@ mark.hl {
   font-weight: 600; font-size: 13px; border: 1px solid transparent; display: flex; align-items: center; gap: 8px;
 }
 .nav-tab:hover { color: var(--text); background: var(--bg); }
-.nav-tab.active { background: var(--primary-light); color: var(--primary); border-color: rgba(37, 99, 235, 0.25); }
+.nav-tab.active { background: var(--primary-light); color: var(--primary); border-color: rgba(47, 91, 234, 0.25); }
 
 .nav-dropdown { position: relative; display: inline-block; }
 .dropdown-menu {
@@ -156,12 +182,12 @@ mark.hl {
 
 .role-badge { padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
 .role-admin { background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3); }
-.role-tulejarka { background: rgba(37, 99, 235, 0.15); color: #2563eb; border: 1px solid rgba(37, 99, 235, 0.3); }
+.role-tulejarka { background: rgba(47, 91, 234, 0.15); color: #2F5BEA; border: 1px solid rgba(47, 91, 234, 0.3); }
 .role-pracownik { background: rgba(239, 68, 68, 0.15); color: #dc2626; border: 1px solid rgba(239, 68, 68, 0.3); }
 
 .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 700; }
 .status-new { background: rgba(245, 158, 11, 0.15); color: #d97706; }
-.status-progress { background: rgba(37, 99, 235, 0.15); color: #2563eb; }
+.status-progress { background: rgba(47, 91, 234, 0.15); color: #2F5BEA; }
 .status-resolved { background: rgba(16, 185, 129, 0.15); color: #059669; }
 
 .user-menu-btn {
@@ -182,9 +208,9 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
 
 .primary {
   background: var(--primary); color: #fff; padding: 10px 18px; border-radius: var(--radius-sm); font-weight: 600; font-size: 13px;
-  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 2px 6px rgba(47, 91, 234, 0.3);
 }
-.primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4); }
+.primary:hover { background: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(47, 91, 234, 0.4); }
 
 .secondary {
   background: var(--panel); color: var(--text); border: 1px solid var(--panel-border); padding: 9px 16px; border-radius: var(--radius-sm); font-weight: 600; font-size: 13px;
@@ -203,7 +229,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
   box-shadow: var(--shadow-sm); transition: var(--transition);
 }
 .stat:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); border-color: var(--primary); }
-.stat-icon { width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--primary-light); border: 1px solid rgba(37, 99, 235, 0.2); color: var(--primary); display: grid; place-items: center; font-size: 22px; flex-shrink: 0; }
+.stat-icon { width: 48px; height: 48px; border-radius: var(--radius-sm); background: var(--primary-light); border: 1px solid rgba(47, 91, 234, 0.2); color: var(--primary); display: grid; place-items: center; font-size: 22px; flex-shrink: 0; }
 .stat-label { font-size: 11px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
 .stat-value { font-size: 24px; font-weight: 700; margin-top: 2px; font-family: var(--font-mono); color: var(--text); }
 
@@ -236,7 +262,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
 }
 .size-filter-btn:hover, .log-filter-btn:hover, .user-filter-btn:hover { color: var(--text); border-color: var(--muted); }
 .size-filter-btn.active, .log-filter-btn.active, .user-filter-btn.active {
-  background: var(--primary-light); color: var(--primary); border-color: rgba(37, 99, 235, 0.4); font-weight: 700;
+  background: var(--primary-light); color: var(--primary); border-color: rgba(47, 91, 234, 0.4); font-weight: 700;
 }
 
 .map-container {
@@ -263,7 +289,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
 .map-slot.occupied {
   background: var(--primary); color: #fff; border: 1px solid var(--primary-hover); font-size: clamp(8px, 0.75vw, 11px); font-weight: 700;
   padding: 0.4em 0.7em; border-radius: 6px; font-family: var(--font-mono);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 10px rgba(47, 91, 234, 0.3);
 }
 .map-slot.occupied:hover { background: var(--primary-hover); }
 .map-slot.highlighted-slot {
@@ -366,7 +392,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
 .progress-bar-fill { height: 100%; background: var(--primary); transition: width 0.4s ease; }
 
 .modal-backdrop { 
-  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);
+  position: fixed; inset: 0; background: rgba(23, 32, 54, 0.4); backdrop-filter: blur(4px);
   display: none; align-items: center; justify-content: center; padding: 16px; z-index: 500;
   opacity: 0; transition: opacity 0.2s ease;
 }
@@ -416,6 +442,145 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
   .map-wrapper { min-width: 750px; }
   .item-row { grid-template-columns: 80px 1fr 70px 34px; gap: 6px; }
 }
+
+/* ===== Nowa szata: jasny, miękki interfejs ===== */
+:root {
+  --bg: #F2F4F9; --panel: #FFFFFF; --panel-border: #E3E7EF; --panel-hover: #F7F8FC; --line: #EAEDF4;
+  --text: #172036; --muted: #6B7490;
+  --primary: #2F5BEA; --primary-hover: #2447C4; --primary-light: rgba(47, 91, 234, 0.1);
+  --danger: #E5484D; --danger-bg: rgba(229, 72, 77, 0.1); --success: #16A36A; --warning: #F59E0B;
+  --radius: 16px; --radius-sm: 10px;
+  --font-mono: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --shadow-sm: 0 1px 2px rgba(23, 32, 54, 0.06); --shadow-md: 0 8px 24px rgba(23, 32, 54, 0.1); --shadow-lg: 0 24px 48px rgba(23, 32, 54, 0.2);
+}
+body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; font-size: 14px; font-variant-numeric: tabular-nums; }
+h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
+.stat-label, .detail-card-label, .field label, .table th, .role-badge { text-transform: none; letter-spacing: 0; }
+.stat-label, .detail-card-label, .field label, .table th { font-size: 12px; font-weight: 600; }
+:is(button, input, select, textarea):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+.topbar { background: #fff; color: var(--text); border-bottom: 1px solid var(--panel-border); box-shadow: var(--shadow-sm); padding: 12px 28px; }
+.topbar::after { display: none; }
+.logo { font-size: 18px; font-weight: 800; }
+.logo-icon { background: linear-gradient(135deg, #2F5BEA, #7C5CFF); color: #fff; border-radius: 12px; box-shadow: 0 6px 14px rgba(47, 91, 234, 0.35); }
+#branchIndicatorBadge { background: var(--primary-light) !important; color: var(--primary) !important; border: 0 !important; border-radius: 999px !important; padding: 4px 12px !important; }
+.nav-tab { color: var(--muted); border: 0; border-radius: 999px; padding: 9px 16px; font-weight: 600; }
+.nav-tab:hover { color: var(--text); background: var(--bg); }
+.nav-tab.active { color: var(--primary); background: var(--primary-light); }
+.branch-selector-pill, .user-menu-btn { background: var(--bg); color: var(--text); border: 1px solid var(--panel-border); border-radius: 999px; }
+.branch-selector-pill:hover, .user-menu-btn:hover { background: var(--panel-border); color: var(--text); }
+.dropdown-menu { border-radius: 14px; }
+.container { padding-top: 32px; }
+
+.primary { background: var(--primary); border-radius: 10px; box-shadow: 0 4px 12px rgba(47, 91, 234, 0.3); font-weight: 700; }
+.primary:hover { background: var(--primary-hover); }
+.secondary { background: #fff; color: var(--text); border: 1px solid var(--panel-border); border-radius: 10px; box-shadow: var(--shadow-sm); }
+.secondary:hover { background: var(--panel-hover); border-color: #C9D0DF; }
+.danger { border-radius: 10px; }
+
+.stat { border-radius: 16px; padding: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--panel-border); }
+.stat:hover { transform: none; box-shadow: var(--shadow-md); border-color: var(--panel-border); }
+.stat-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--primary-light); border: 0; font-size: 24px; }
+.stat:nth-child(2) .stat-icon { background: rgba(124, 92, 255, 0.12); }
+.stat:nth-child(3) .stat-icon { background: rgba(22, 163, 106, 0.12); }
+.stat-value { font-size: 30px; font-weight: 800; line-height: 1.1; }
+
+.pallet { border-radius: 16px; border: 1px solid var(--panel-border); padding: 18px; box-shadow: var(--shadow-sm); }
+.pallet:hover { transform: translateY(-2px); border-color: var(--primary); box-shadow: var(--shadow-md); }
+.pallet-code { font-size: 19px; font-weight: 800; }
+.pallet-meta strong { font-size: 16px; font-weight: 800; color: var(--primary); }
+.badge { border-radius: 999px; padding: 3px 10px; background: var(--bg); }
+.size-filter-btn, .log-filter-btn, .user-filter-btn { border-radius: 999px; padding: 7px 16px; box-shadow: none; }
+.size-filter-btn.active, .log-filter-btn.active, .user-filter-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+.search input { border-radius: 12px; padding-top: 12px; padding-bottom: 12px; }
+.panel-section { border-radius: 16px; }
+.styled-table-container { border-radius: 12px; }
+.table th { background: var(--panel-hover); }
+.log-item { border-radius: 12px; }
+.progress-bar-wrap { border-radius: 999px; height: 10px; }
+.progress-bar-fill { border-radius: 999px; }
+
+.role-badge, .status-badge { border-radius: 999px; padding: 4px 12px; font-size: 12px; }
+.role-admin, .status-new { background: rgba(245, 158, 11, 0.15); color: #B45309; border-color: rgba(245, 158, 11, 0.3); }
+.role-tulejarka, .status-progress { background: var(--primary-light); color: var(--primary); border-color: rgba(47, 91, 234, 0.25); }
+.role-pracownik { background: rgba(22, 163, 106, 0.12); color: #0E7A4E; border-color: rgba(22, 163, 106, 0.3); }
+
+.map-container { border-radius: 16px; box-shadow: var(--shadow-sm); }
+.map-slot, .map-slot.occupied { border-radius: 8px; }
+.map-row-slot { border-radius: 10px; }
+.map-row-slot.has-pallets .row-count { background: var(--primary); }
+.pin-popover { border-radius: 12px; }
+
+.modal-backdrop { background: rgba(23, 32, 54, 0.5); backdrop-filter: blur(4px); }
+.modal { border-radius: 20px; border: 0; }
+.modal-head { padding: 20px 26px; }
+.modal-head h2 { font-size: 20px; font-weight: 800; }
+.detail-card { border-radius: 12px; }
+.detail-card-value { font-size: 18px; font-weight: 800; }
+.toast { border-radius: 12px; }
+
+.auth-screen { background: linear-gradient(135deg, #2F5BEA 0%, #7C5CFF 100%); }
+.auth-box { border: 0; border-radius: 24px; padding: 40px 30px 32px; }
+.auth-box h2 { font-size: 24px; font-weight: 800; }
+.auth-box .icon-wrap { background: linear-gradient(135deg, #2F5BEA, #7C5CFF); color: #fff; border: 0; border-radius: 18px; animation: none; box-shadow: 0 8px 20px rgba(47, 91, 234, 0.4); }
+.auth-tabs { border-radius: 12px; }
+.auth-tab-btn { border-radius: 9px; }
+.num-btn { border-radius: 14px; font-size: 22px; padding: 14px 0; background: var(--bg); border: 0; }
+.num-btn:hover { background: #E3E7F0; }
+.pin-dot { width: 14px; height: 14px; }
+
+/* okno zmiany stanu */
+#adjustModal { z-index: 600; }
+.adj-toggle { display: flex; gap: 10px; margin-bottom: 18px; }
+.adj-toggle button { flex: 1; padding: 14px; border-radius: 14px; border: 2px solid var(--panel-border); background: #fff; font-weight: 700; font-size: 15px; color: var(--muted); }
+.adj-toggle button.on.in { border-color: var(--success); background: rgba(22, 163, 106, 0.1); color: var(--success); }
+.adj-toggle button.on.out { border-color: var(--danger); background: var(--danger-bg); color: var(--danger); }
+#adjQty { font-size: 30px; font-weight: 800; text-align: center; padding: 12px; }
+.adj-chips { display: flex; gap: 8px; margin: 8px 0 16px; flex-wrap: wrap; }
+.adj-chips button { padding: 7px 14px; border-radius: 999px; background: var(--bg); border: 1px solid var(--panel-border); font-weight: 600; font-size: 12px; }
+.adj-chips button:hover { background: var(--primary-light); border-color: var(--primary); color: var(--primary); }
+#adjPreview { background: var(--bg); border-radius: 12px; padding: 12px 14px; font-weight: 700; margin-bottom: 16px; }
+#adjPreview small { display: block; color: var(--danger); font-weight: 600; margin-top: 2px; }
+.btn-adjust { padding: 8px 14px; border-radius: 10px; font-weight: 700; font-size: 13px; }
+.btn-adjust.btn-minus { background: var(--danger-bg); border-color: transparent; }
+.btn-adjust.btn-plus { background: rgba(22, 163, 106, 0.12); border-color: transparent; }
+
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+@media (max-width: 640px) { h1 { font-size: 24px; } .topbar { padding: 10px 14px; } }
+.low-banner { background: #FFF4D6; border: 1px solid #E6C45A; border-left: 6px solid var(--danger); border-radius: 4px; padding: 12px 16px; margin-bottom: 18px; font-size: 14px; }
+.badge.low { background: var(--danger); color: #fff; border-color: var(--danger); }
+.min-input { width: 100px; padding: 6px 8px; border: 1px solid var(--panel-border); border-radius: 4px; background: var(--bg); font: inherit; color: var(--text); }
+@media (pointer: coarse) {
+  button, .dropdown-item, .nav-tab { min-height: 46px; }
+  input, select, textarea { font-size: 16px !important; min-height: 44px; }
+  .primary, .secondary, .danger { padding: 12px 18px; font-size: 15px; }
+  .btn-adjust { min-width: 48px; min-height: 48px; font-size: 20px; }
+  .quick-adjust-input { width: 90px; min-height: 48px; }
+  .pallet-actions button { padding: 12px 8px; font-size: 14px; }
+  .num-btn { padding: 18px 0; }
+  .map-slot { padding: 0.7em 0.9em; }
+  .item-row { grid-template-columns: 90px 1fr 80px 44px; }
+}
+.logout-btn { display: inline-flex; align-items: center; gap: 6px; background: var(--danger); color: #fff; border: 0; border-radius: 999px; padding: 9px 18px; font-weight: 700; font-size: 13px; cursor: pointer; box-shadow: 0 4px 12px rgba(229, 72, 77, 0.3); }
+.logout-btn:hover { background: #C93B40; }
+.alert-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: var(--danger); margin-left: 6px; vertical-align: middle; }
+.log-badge-icon { font-size: 16px; }
+#transferModal { z-index: 600; }
+.quick-adjust-group { flex-wrap: wrap; justify-content: flex-end; }
+#printArea { display: none; }
+@media print {
+  body > *:not(#printArea) { display: none !important; }
+  body { background: #fff !important; }
+  #printArea { display: block !important; color: #000; font-family: 'Plus Jakarta Sans', Arial, sans-serif; font-size: 11px; }
+  #printArea h1 { font-size: 20px; margin: 0 0 4px; }
+  #printArea h2 { font-size: 14px; margin: 18px 0 6px; border-bottom: 2px solid #000; padding-bottom: 3px; }
+  #printArea table { width: 100%; border-collapse: collapse; }
+  #printArea th, #printArea td { border: 1px solid #999; padding: 4px 6px; text-align: left; vertical-align: top; }
+  #printArea th { background: #eee; }
+  #printArea tr { break-inside: avoid; }
+  @page { margin: 14mm; }
+}
 </style>
 </head>
 <body>
@@ -456,14 +621,46 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
   <div class="auth-box">
     <div class="icon-wrap" id="authIcon">⚡</div>
     <h2 id="authTitle">Magazyn Tulejek</h2>
-    <p id="authSubtitle">Zaloguj się do panelu magazynowego</p>
+    <p id="authSubtitle">Wybierz metodę logowania</p>
+
+    <!-- Zakładki wyboru metody logowania -->
+    <div class="auth-tabs" id="authTabGroup">
+      <button class="auth-tab-btn active" id="btnTabPin" onclick="switchAuthMethod('pin')">🔢 KOD PIN</button>
+      <button class="auth-tab-btn" id="btnTabPassword" onclick="switchAuthMethod('password')">🔑 LOGIN I HASŁO</button>
+    </div>
     
-    <div id="loginFormFields">
-      <input type="text" id="loginUserInput" placeholder="Login" autocomplete="off" autocapitalize="none">
-      <input type="password" id="loginPasswordInput" placeholder="Hasło" autocomplete="new-password" onkeydown="if(event.key==='Enter') loginWithDb()">
-      <button class="primary" onclick="loginWithDb()">Zaloguj się 🚀</button>
+    <!-- Logowanie Kodem PIN -->
+    <div id="pinFormFields">
+      <div class="pin-display">
+        <div class="pin-dot" id="pinDot0"></div>
+        <div class="pin-dot" id="pinDot1"></div>
+        <div class="pin-dot" id="pinDot2"></div>
+        <div class="pin-dot" id="pinDot3"></div>
+      </div>
+      <div class="numpad">
+        <button class="num-btn" onclick="pressPinNum('1')">1</button>
+        <button class="num-btn" onclick="pressPinNum('2')">2</button>
+        <button class="num-btn" onclick="pressPinNum('3')">3</button>
+        <button class="num-btn" onclick="pressPinNum('4')">4</button>
+        <button class="num-btn" onclick="pressPinNum('5')">5</button>
+        <button class="num-btn" onclick="pressPinNum('6')">6</button>
+        <button class="num-btn" onclick="pressPinNum('7')">7</button>
+        <button class="num-btn" onclick="pressPinNum('8')">8</button>
+        <button class="num-btn" onclick="pressPinNum('9')">9</button>
+        <button class="num-btn" onclick="clearPin()" style="font-size: 14px; color: var(--danger);">C</button>
+        <button class="num-btn" onclick="pressPinNum('0')">0</button>
+        <button class="num-btn" onclick="backspacePin()" style="font-size: 14px;">⌫</button>
+      </div>
     </div>
 
+    <!-- Standardowe logowanie loginem i hasłem -->
+    <div id="loginFormFields" style="display: none;">
+      <input type="text" id="loginUserInput" placeholder="Login" autocomplete="off" autocapitalize="none">
+      <input type="password" id="loginPasswordInput" placeholder="Hasło" autocomplete="new-password" onkeydown="if(event.key==='Enter') loginWithDb()">
+      <button class="primary btn-submit" onclick="loginWithDb()">Zaloguj się 🚀</button>
+    </div>
+
+    <!-- Wymuszona zmiana hasła -->
     <div id="forcePasswordFields" style="display: none; text-align: left;">
       <div class="field" style="margin-bottom: 12px;">
         <label>Tymczasowe hasło *</label>
@@ -477,10 +674,10 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
         <label>Potwierdź nowe hasło *</label>
         <input type="password" id="forceConfirmPass" placeholder="••••" autocomplete="new-password" onkeydown="if(event.key==='Enter') saveInlineForcedPassword()">
       </div>
-      <button class="primary" onclick="saveInlineForcedPassword()">Zapisz i zaloguj 🔐</button>
+      <button class="primary btn-submit" onclick="saveInlineForcedPassword()">Zapisz i zaloguj 🔐</button>
     </div>
 
-    <div class="auth-error" id="authError">Nieprawidłowy login lub hasło!</div>
+    <div class="auth-error" id="authError">Nieprawidłowe dane logowania!</div>
   </div>
 </div>
 
@@ -526,10 +723,11 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
           <strong id="onlineCount">1</strong>
         </div>
         <button class="dropdown-item" onclick="switchTab('tabReportIssue', this)"><span>🛠️ Zgłoś usterkę</span></button>
+        <button class="dropdown-item" id="btnInstallApp" onclick="installApp()" style="display:none;"><span>📲 Zainstaluj aplikację</span></button>
         <button class="dropdown-item" onclick="openChangePasswordModal()"><span>🔐 Zmień hasło</span></button>
-        <button class="dropdown-item" onclick="logout()" style="color: var(--danger);"><span>🚀 Wyloguj</span></button>
       </div>
     </div>
+    <button class="logout-btn" onclick="logout()">🚪 Wyloguj</button>
   </div>
 </header>
 
@@ -552,6 +750,8 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
 
     <div class="toolbar">
       <div class="search"><span>🔍</span><input id="search" placeholder="Szukaj palety, lokalizacji, rozmiaru lub nazwy..." oninput="debouncedRender()"></div>
+      <button class="secondary" id="btnStocktake" onclick="openStocktake()">📋 Inwentaryzacja</button>
+      <button class="secondary" id="btnReport" onclick="printReport('stock')">🖨️ Raport</button>
       <button class="secondary" onclick="exportData()">💾 Eksport JSON</button>
       <button class="secondary" id="btnBackupRestore" onclick="triggerRestoreFile()" style="display:none;">🔄 Przywróć kopię</button>
       <input type="file" id="backupFileInput" style="display:none" accept=".json" onchange="restoreBackup(event)">
@@ -661,10 +861,53 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
       </div>
       <div class="styled-table-container">
         <table class="table">
-          <thead><tr><th>Rozmiar i nazwa</th><th>Ilość całkowita</th><th>Liczba palet</th></tr></thead>
+          <thead><tr><th>Rozmiar i nazwa</th><th>Ilość całkowita</th><th>Liczba palet</th><th>Minimum (szt.)</th></tr></thead>
           <tbody id="sizesTableBody"></tbody>
         </table>
       </div>
+    </section>
+  </div>
+
+  <div class="tab-content" id="tabLowStock">
+    <section class="hero">
+      <div>
+        <h1>Niski stan magazynowy</h1>
+        <p class="subtitle">Produkty poniżej ustawionego minimum w wybranym oddziale. Progi dla pojedynczych produktów ustawisz w zakładce Rozmiary.</p>
+      </div>
+    </section>
+    <section class="panel-section" style="margin-bottom:18px;">
+      <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap;">
+        <div class="field" style="margin:0;"><label>Domyślne minimum dla nowych produktów (szt., 0 = wyłączone)</label><input id="defaultMinInput" type="number" min="0" style="width:200px;"></div>
+        <button class="primary" onclick="saveDefaultMin()">💾 Zapisz</button>
+        <button class="secondary" onclick="applyDefaultMinToAll()">🎯 Ustaw dla produktów bez progu</button>
+      </div>
+    </section>
+    <section class="panel-section">
+      <div class="styled-table-container"><table class="table">
+        <thead><tr><th>Produkt</th><th>Stan</th><th>Minimum</th><th>Status</th></tr></thead>
+        <tbody id="lowStockBody"></tbody>
+      </table></div>
+    </section>
+  </div>
+
+  <div class="tab-content" id="tabMoves">
+    <section class="hero">
+      <div><h1>Ruchy i raporty</h1><p class="subtitle">Wszystkie przyjęcia, wydania, przesunięcia i korekty z powodem. Dotyczy aktualnie wybranego oddziału.</p></div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap;"><button class="secondary" onclick="exportMovesCSV()">💾 CSV</button><button class="primary" onclick="printReport('moves')">🖨️ Drukuj / PDF</button></div>
+    </section>
+    <section class="panel-section" style="margin-bottom:18px;">
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:flex-end;">
+        <div class="field" style="margin:0;"><label>Od</label><input type="date" id="mvFrom" onchange="renderMoves()"></div>
+        <div class="field" style="margin:0;"><label>Do</label><input type="date" id="mvTo" onchange="renderMoves()"></div>
+        <div class="field" style="margin:0;"><label>Rodzaj</label><select id="mvType" onchange="renderMoves()"><option value="">Wszystkie</option><option value="in">Przyjęcia</option><option value="out">Wydania</option><option value="move_in">Przesunięcia (przyjęto)</option><option value="move_out">Przesunięcia (wydano)</option><option value="count">Inwentaryzacja</option></select></div>
+        <button class="secondary" onclick="loadMoves()">🔄 Odśwież</button>
+      </div>
+    </section>
+    <div class="stats" id="movesSummary"></div>
+    <section class="panel-section" style="margin-bottom:18px;"><h3 style="margin:0 0 10px 0; font-size:15px;">Wydania na maszyny</h3>
+      <div class="styled-table-container"><table class="table"><thead><tr><th>Maszyna / uwagi</th><th>Wydano (szt.)</th></tr></thead><tbody id="movesByMachine"></tbody></table></div></section>
+    <section class="panel-section">
+      <div class="styled-table-container"><table class="table"><thead><tr><th>Data</th><th>Rodzaj</th><th>Produkt</th><th>Ilość</th><th>Paleta</th><th>Powód</th><th>Maszyna / uwagi</th><th>Kto</th></tr></thead><tbody id="movesBody"></tbody></table></div>
     </section>
   </div>
 
@@ -770,7 +1013,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
       </div>
       <div class="styled-table-container">
         <table class="table">
-          <thead><tr><th>Imię / Nazwa</th><th>Login</th><th>Oddział</th><th>Rola</th><th style="text-align:right">Akcje</th></tr></thead>
+          <thead><tr><th>Imię / Nazwa</th><th>Login</th><th>PIN</th><th>Oddział</th><th>Rola</th><th style="text-align:right">Akcje</th></tr></thead>
           <tbody id="usersTableBody"></tbody>
         </table>
       </div>
@@ -814,6 +1057,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
   <div class="modal-body">
    <div class="field" style="margin-bottom:14px;"><label>Imię / Nazwisko *</label><input id="newUserName" placeholder="np. Jan Kowalski"></div>
    <div class="field" style="margin-bottom:14px;"><label>Login *</label><input id="newUserLogin" placeholder="np. jan"></div>
+   <div class="field" style="margin-bottom:14px;"><label>Kod PIN (4 cyfry) *</label><input id="newUserPin" type="text" maxlength="4" placeholder="np. 1234"></div>
    <div class="field" style="margin-bottom:14px;"><label>Hasło <span id="passHint" style="font-size:10px; color:var(--muted);">(opcjonalnie)</span> *</label><input id="newUserPass" type="password" placeholder="••••"></div>
    <div class="field" style="margin-bottom:14px;">
      <label>Oddział *</label>
@@ -845,15 +1089,16 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
 <!-- Modal Zmiany Hasła -->
 <div class="modal-backdrop" id="changePasswordModal" onclick="closeModal('changePasswordModal')">
  <div class="modal" style="width:min(400px, 100%)" onclick="event.stopPropagation()">
-  <div class="modal-head"><h2>Zmiana hasła</h2><button class="close" onclick="closeModal('changePasswordModal')" style="background:none; border:none; color:var(--muted); font-size:22px;">×</button></div>
+  <div class="modal-head"><h2>Zmiana hasła i PIN</h2><button class="close" onclick="closeModal('changePasswordModal')" style="background:none; border:none; color:var(--muted); font-size:22px;">×</button></div>
   <div class="modal-body">
+   <div class="field" style="margin-bottom:14px;"><label>Nowy kod PIN (4 cyfry)</label><input id="changeNewPin" type="text" maxlength="4" placeholder="np. 1234"></div>
    <div class="field" style="margin-bottom:14px;"><label>Stare hasło *</label><input id="changeOldPass" type="password" placeholder="••••"></div>
-   <div class="field" style="margin-bottom:14px;"><label>Nowe hasło *</label><input id="changeNewPass" type="password" placeholder="••••"></div>
-   <div class="field"><label>Potwierdź nowe hasło *</label><input id="changeConfirmPass" type="password" placeholder="••••" onkeydown="if(event.key==='Enter') saveUserPasswordChange()"></div>
+   <div class="field" style="margin-bottom:14px;"><label>Nowe hasło</label><input id="changeNewPass" type="password" placeholder="••••"></div>
+   <div class="field"><label>Potwierdź nowe hasło</label><input id="changeConfirmPass" type="password" placeholder="••••" onkeydown="if(event.key==='Enter') saveUserPasswordChange()"></div>
   </div>
   <div class="modal-foot">
     <button class="secondary" onclick="closeModal('changePasswordModal')">Anuluj</button>
-    <button class="primary" onclick="saveUserPasswordChange()">Zmień hasło 🔐</button>
+    <button class="primary" onclick="saveUserPasswordChange()">Zapisz zmiany 🔐</button>
   </div>
  </div>
 </div>
@@ -866,7 +1111,7 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
    <div class="field" style="margin-bottom:14px;"><label>Rozmiar *</label><input id="quickItemSize" placeholder="np. 50"></div>
    <div class="field" style="margin-bottom:14px;"><label>Nazwa / Klient *</label><input id="quickItemName" placeholder="np. DALPO SOMA"></div>
    <div class="field" style="margin-bottom:6px;"><label>Ilość sztuk *</label><input id="quickItemQty" type="number" min="1" placeholder="np. 400" onkeydown="if(event.key==='Enter') saveQuickItem()"></div>
-   <div style="font-size:11px; color:var(--primary); font-weight:600; margin-top:4px; background:var(--primary-light); padding:8px; border-radius:6px; border:1px solid rgba(37,99,235,0.2);">💡 <strong>Adnotacja:</strong> 1 kosz = 400 sztuk, 1 paleta = 4000 sztuk.</div>
+   <div style="font-size:11px; color:var(--primary); font-weight:600; margin-top:4px; background:var(--primary-light); padding:8px; border-radius:6px; border:1px solid rgba(47, 91, 234,0.2);">💡 <strong>Adnotacja:</strong> 1 kosz = 400 sztuk, 1 paleta = 4000 sztuk.</div>
   </div>
   <div class="modal-foot"><button class="secondary" onclick="closeModal('quickAddModal')">Anuluj</button><button class="primary" onclick="saveQuickItem()">Dodaj ＋</button></div>
  </div>
@@ -914,6 +1159,46 @@ h1 { font-size: 24px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.3px;
  </div>
 </div>
 
+<div class="modal-backdrop" id="transferModal" onclick="closeModal('transferModal')">
+ <div class="modal" style="width:min(460px, 100%)" onclick="event.stopPropagation()">
+  <div class="modal-head"><div><h2>🔀 Przenieś na inną paletę</h2><div id="trProduct" class="subtitle"></div></div><button class="close" onclick="closeModal('transferModal')" style="background:none; border:none; color:var(--muted); font-size:22px;">×</button></div>
+  <div class="modal-body">
+   <div class="field" style="margin-bottom:14px;"><label>Paleta docelowa *</label><select id="trTarget"></select></div>
+   <div class="field" style="margin-bottom:14px;"><label>Ilość (szt.)</label><input id="trQty" type="number" min="1"></div>
+   <div class="field"><label>Maszyna / uwagi (opcjonalnie)</label><input id="trNote" maxlength="80"></div>
+  </div>
+  <div class="modal-foot"><button class="secondary" onclick="closeModal('transferModal')">Anuluj</button><button class="primary" onclick="confirmTransfer()">Przenieś</button></div>
+ </div>
+</div>
+<div class="modal-backdrop" id="adjustModal" onclick="closeModal('adjustModal')">
+ <div class="modal" style="width:min(460px, 100%)" onclick="event.stopPropagation()">
+  <div class="modal-head"><div><h2 id="adjTitle">Zmiana stanu</h2><div id="adjProduct" class="subtitle"></div></div><button class="close" onclick="closeModal('adjustModal')" style="background:none; border:none; color:var(--muted); font-size:22px;">×</button></div>
+  <div class="modal-body">
+   <div class="adj-toggle"><button id="adjIn" class="in" onclick="setAdjDir(1)">📥 Przyjęcie</button><button id="adjOut" class="out" onclick="setAdjDir(-1)">📤 Wydanie</button></div>
+   <div class="field"><label>Ilość (szt.)</label><input id="adjQty" type="number" min="1" oninput="updateAdjPreview()"></div>
+   <div class="adj-chips"><button onclick="adjChip(400)">1 kosz = 400</button><button onclick="adjChip(800)">2 kosze</button><button onclick="adjChip(4000)">1 paleta = 4000</button></div>
+   <div id="adjPreview"></div>
+   <div class="field" style="margin-bottom:14px;"><label>Powód *</label><select id="adjReasonSel"></select></div>
+   <div class="field"><label>Maszyna / uwagi (opcjonalnie)</label><input id="adjNote" maxlength="80" placeholder="np. maszyna 5, uwagi"></div>
+  </div>
+  <div class="modal-foot"><button class="secondary" onclick="closeModal('adjustModal')">Anuluj</button><button class="primary" onclick="confirmAdjust()">Zatwierdź</button></div>
+ </div>
+</div>
+<div class="modal-backdrop" id="stocktakeModal" onclick="closeModal('stocktakeModal')">
+ <div class="modal" style="width:min(900px, 100%)" onclick="event.stopPropagation()">
+  <div class="modal-head"><h2>Inwentaryzacja</h2><button class="close" onclick="closeModal('stocktakeModal')" style="background:none; border:none; color:var(--muted); font-size:22px;">×</button></div>
+  <div class="modal-body">
+   <p class="subtitle" style="margin-bottom:12px;">Wpisz policzoną ilość przy pozycjach. Puste pola zostaną pominięte. Po zatwierdzeniu stan zostanie poprawiony, a różnice trafią do dziennika.</p>
+   <div style="display:flex; gap:12px; margin-bottom:14px; flex-wrap:wrap; align-items:center;">
+    <select id="stPallet" onchange="renderStocktake()" style="padding:9px 12px; border:1px solid var(--panel-border); border-radius:4px; background:var(--bg);"></select>
+    <span id="stSummary" style="color:var(--muted); font-size:13px;"></span>
+   </div>
+   <div class="styled-table-container"><table class="table"><thead><tr><th>Paleta</th><th>Produkt</th><th>W systemie</th><th>Policzono</th><th>Różnica</th></tr></thead><tbody id="stBody"></tbody></table></div>
+  </div>
+  <div class="modal-foot"><button class="secondary" onclick="closeModal('stocktakeModal')">Anuluj</button><button class="primary" onclick="applyStocktake()">Zatwierdź korekty</button></div>
+ </div>
+</div>
+<div id="printArea"></div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
@@ -938,6 +1223,9 @@ let currentSessionToken = localStorage.getItem('magazyn_session_token') || null;
 let currentUserBranch = (localStorage.getItem('magazyn_user_branch') || 'rosnowo').toLowerCase();
 let activeAdminBranch = (localStorage.getItem('magazyn_admin_branch') || 'rosnowo').toLowerCase();
 
+let currentPinInput = "";
+let currentAuthMethod = "pin"; 
+
 let pendingUserObj = null;
 let selectedUserBranchFilter = 'all';
 
@@ -949,14 +1237,18 @@ function getActiveBranch() {
 const usersDb = firebase.database().ref('uzytkownicy');
 let db = null, logsDb = null, presenceDb = null, issuesDb = null;
 let dbRef = null, logsRef = null, issuesRef = null, presenceRef = null;
+let minRef = null, minLevels = {}, settingsRef = null, minLoaded = false, settingsLoaded = false, defaultMin = 100;
 
 function resetAppState() {
   if (dbRef) dbRef.off();
   if (logsRef) logsRef.off();
   if (issuesRef) issuesRef.off();
   if (presenceRef) presenceRef.off();
+  if (minRef) minRef.off();
+  if (settingsRef) settingsRef.off();
   if (userPresenceRef) userPresenceRef.remove();
   if (sessionMonitorRef) sessionMonitorRef.off();
+  unbindUsersListener();
 
   pallets = [];
   logs = [];
@@ -979,10 +1271,14 @@ function initBranchDatabase() {
   if (logsRef) logsRef.off();
   if (issuesRef) issuesRef.off();
   if (presenceRef) presenceRef.off();
+  if (minRef) minRef.off();
+  if (settingsRef) settingsRef.off();
 
   dbRef = firebase.database().ref(`branches/${branch}/palety`);
   logsRef = firebase.database().ref(`branches/${branch}/dziennik`);
   presenceRef = firebase.database().ref(`branches/${branch}/obecni`);
+  minRef = firebase.database().ref(`branches/${branch}/progi`);
+  settingsRef = firebase.database().ref(`branches/${branch}/ustawienia/domyslneMin`);
   issuesRef = firebase.database().ref(`branches/${branch}/zgloszenia`);
   
   db = dbRef;
@@ -1159,7 +1455,7 @@ function updateTimerDisplay() {
 
 usersDb.once('value', (snapshot) => {
   if (!snapshot.exists()) {
-    usersDb.child('admin').set({ name: 'Administrator', login: 'admin', pass: 'admin99', role: 'admin', branch: 'rosnowo', mustChangePassword: false });
+    usersDb.child('admin').set({ name: 'Administrator', login: 'admin', pass: 'admin99', pin: '1234', role: 'admin', branch: 'rosnowo', mustChangePassword: true });
   }
 });
 
@@ -1176,7 +1472,7 @@ function bindBranchListeners() {
       if (document.getElementById('tabStats').classList.contains('active')) renderAdminStats();
     }
     if (editingId && document.getElementById('detailModal').classList.contains('show')) {
-      openDetails(editingId);
+      refreshOpenDetails();
     }
     if (selectedSlotId && document.getElementById('rowManageModal').classList.contains('show')) {
       renderRowPalletsList(selectedSlotId);
@@ -1206,6 +1502,20 @@ function bindBranchListeners() {
     }
   });
 
+  minRef.on('value', (snapshot) => {
+    minLevels = snapshot.val() || {};
+    minLoaded = true;
+    renderLowStock();
+    if (currentRole === 'admin' && document.getElementById('tabSizes').classList.contains('active')) renderSizesTab();
+  });
+
+  settingsRef.on('value', (snapshot) => {
+    const v = snapshot.val();
+    defaultMin = v === null ? 100 : (Number(v) || 0);
+    settingsLoaded = true;
+    if (currentRole === 'admin' && document.getElementById('tabLowStock').classList.contains('active')) renderLowStockTab();
+  });
+
   presenceDb.on('value', (snapshot) => {
     const data = snapshot.val();
     onlineUsersData = data || {};
@@ -1216,11 +1526,22 @@ function bindBranchListeners() {
   });
 }
 
-usersDb.on('value', (snapshot) => {
-  const data = snapshot.val();
-  usersList = data ? Object.values(data) : [];
-  if (currentRole === 'admin' && document.getElementById('tabUsers').classList.contains('active')) renderUsersTab();
-});
+let usersListenerBound = false;
+function bindUsersListener() {
+  // Lista użytkowników (z hasłami) jest pobierana tylko dla zalogowanego admina,
+  // a nie dla każdego, kto otworzy stronę logowania.
+  if (usersListenerBound || currentRole !== 'admin') return;
+  usersListenerBound = true;
+  usersDb.on('value', (snapshot) => {
+    const data = snapshot.val();
+    usersList = data ? Object.values(data) : [];
+    if (currentRole === 'admin' && document.getElementById('tabUsers').classList.contains('active')) renderUsersTab();
+  });
+}
+function unbindUsersListener() {
+  usersDb.off('value');
+  usersListenerBound = false;
+}
 
 if (currentRole && currentUserName && currentUserLogin && currentSessionToken) {
   document.getElementById('authScreen').style.display = 'none';
@@ -1230,9 +1551,110 @@ if (currentRole && currentUserName && currentUserLogin && currentSessionToken) {
   resetInactivityTimer();
   startInactivityCountdown();
   bindBranchListeners();
+  bindUsersListener();
 } else {
   document.getElementById('loginUserInput').value = '';
   document.getElementById('loginPasswordInput').value = '';
+}
+
+function switchAuthMethod(method) {
+  currentAuthMethod = method;
+  document.getElementById('authError').style.display = 'none';
+  
+  const btnPin = document.getElementById('btnTabPin');
+  const btnPass = document.getElementById('btnTabPassword');
+  const pinFields = document.getElementById('pinFormFields');
+  const passFields = document.getElementById('loginFormFields');
+
+  if (method === 'pin') {
+    btnPin.classList.add('active');
+    btnPass.classList.remove('active');
+    pinFields.style.display = 'block';
+    passFields.style.display = 'none';
+    clearPin();
+  } else {
+    btnPass.classList.add('active');
+    btnPin.classList.remove('active');
+    passFields.style.display = 'block';
+    pinFields.style.display = 'none';
+  }
+}
+
+function updatePinDisplay() {
+  for (let i = 0; i < 4; i++) {
+    const dot = document.getElementById(`pinDot${i}`);
+    if (dot) {
+      if (i < currentPinInput.length) {
+        dot.classList.add('filled');
+      } else {
+        dot.classList.remove('filled');
+      }
+    }
+  }
+}
+
+function pressPinNum(num) {
+  if (currentPinInput.length < 4) {
+    currentPinInput += num;
+    updatePinDisplay();
+    if (currentPinInput.length === 4) {
+      setTimeout(loginWithPin, 100);
+    }
+  }
+}
+
+function clearPin() {
+  currentPinInput = "";
+  updatePinDisplay();
+}
+
+function backspacePin() {
+  if (currentPinInput.length > 0) {
+    currentPinInput = currentPinInput.slice(0, -1);
+    updatePinDisplay();
+  }
+}
+
+window.addEventListener('keydown', (e) => {
+  const tag = (e.target && e.target.tagName) || '';
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return;
+  if (document.getElementById('authScreen').style.display !== 'none' && currentAuthMethod === 'pin') {
+    if (e.key >= '0' && e.key <= '9') {
+      pressPinNum(e.key);
+    } else if (e.key === 'Backspace') {
+      backspacePin();
+    } else if (e.key === 'Escape' || e.key === 'Delete') {
+      clearPin();
+    }
+  }
+});
+
+function loginWithPin() {
+  const errorEl = document.getElementById('authError');
+  if (currentPinInput.length !== 4) return;
+
+  usersDb.once('value', (snapshot) => {
+    const users = snapshot.val() || {};
+    let foundUser = null;
+
+    for (let key in users) {
+      const u = users[key];
+      if (u.pin === currentPinInput) {
+        foundUser = u;
+        if (!foundUser.login) foundUser.login = key;
+        break;
+      }
+    }
+
+    if (!foundUser) {
+      errorEl.textContent = 'Nieprawidłowy kod PIN!';
+      errorEl.style.display = 'block';
+      clearPin();
+      return;
+    }
+
+    processFoundUser(foundUser);
+  });
 }
 
 function switchBranch(branchKey) {
@@ -1248,9 +1670,17 @@ function switchBranch(branchKey) {
   const menu = document.getElementById('branchDropdownMenu');
   if (menu) menu.classList.remove('show');
 
+  pallets = []; logs = []; issuesList = []; onlineUsersData = {}; minLevels = {}; minLoaded = false; settingsLoaded = false; defaultMin = 100;
+  editingId = null; selectedSlotId = null; highlightedMapSlotId = null;
+  closePopover();
+  ['detailModal', 'rowManageModal', 'assignMapModal', 'formModal', 'quickAddModal'].forEach(id => closeModal(id));
+  const mapSubEl = document.getElementById('mapSubtitle');
+  if (mapSubEl) mapSubEl.textContent = activeAdminBranch === 'niepruszewo' ? 'Kliknij w rząd, aby zobaczyć palety lub przypisać nowe.' : 'Kliknij w wolne miejsce na mapie, aby umieścić paletę.';
+
   initBranchDatabase();
   bindBranchListeners();
   setupPresence();
+  render();
   showToast('Oddział', activeAdminBranch === 'rosnowo' ? 'Przełączono na Rosnowo' : 'Przełączono na Niepruszewo', 'info');
 }
 
@@ -1282,6 +1712,12 @@ function loginWithDb() {
   
   if (!loginInput || !passInput) {
     errorEl.textContent = 'Podaj login oraz hasło!';
+    errorEl.style.display = 'block';
+    return;
+  }
+
+  if (/[.#$\[\]\/]/.test(loginInput)) {
+    errorEl.textContent = 'Nieprawidłowy login lub hasło!';
     errorEl.style.display = 'block';
     return;
   }
@@ -1330,6 +1766,7 @@ function loginWithDb() {
 function processFoundUser(foundUser) {
   const errorEl = document.getElementById('authError');
   errorEl.style.display = 'none';
+  clearPin();
 
   const newSessionToken = 'session_' + Math.random().toString(36).substring(2) + Date.now();
   const userKey = (foundUser.login || 'admin').toLowerCase();
@@ -1350,9 +1787,11 @@ function processFoundUser(foundUser) {
     document.getElementById('authTitle').textContent = 'Zmiana hasła';
     document.getElementById('authSubtitle').textContent = `Witaj ${foundUser.name}! Zmień hasło, aby przejść dalej.`;
     document.getElementById('loginFormFields').style.display = 'none';
-    
+    document.getElementById('pinFormFields').style.display = 'none';
+    document.getElementById('authTabGroup').style.display = 'none';
+
     document.getElementById('forcePasswordFields').style.display = 'block';
-    document.getElementById('forceOldPass').value = document.getElementById('loginPasswordInput').value;
+    document.getElementById('forceOldPass').value = document.getElementById('loginPasswordInput').value || foundUser.pass;
     return;
   }
 
@@ -1395,7 +1834,7 @@ function saveInlineForcedPassword() {
         user.pass = newPass; 
         user.mustChangePassword = false;
         
-        document.getElementById('loginFormFields').style.display = 'block';
+        document.getElementById('authTabGroup').style.display = 'flex';
         document.getElementById('forcePasswordFields').style.display = 'none';
         document.getElementById('authTitle').textContent = 'Magazyn Tulejek';
         document.getElementById('authSubtitle').textContent = 'Zaloguj się do panelu magazynowego';
@@ -1430,6 +1869,7 @@ function completeLogin(foundUser) {
 
   initBranchDatabase();
   bindBranchListeners();
+  bindUsersListener();
 
   addLog('login', `zalogował(a) się do systemu (${getActiveBranch().toUpperCase()})`);
   showToast('Zalogowano', `Witaj, ${currentUserName}!`, 'success');
@@ -1448,6 +1888,7 @@ function completeLogin(foundUser) {
 }
 
 function openChangePasswordModal() {
+  document.getElementById('changeNewPin').value = '';
   document.getElementById('changeOldPass').value = '';
   document.getElementById('changeNewPass').value = '';
   document.getElementById('changeConfirmPass').value = '';
@@ -1458,19 +1899,40 @@ function saveUserPasswordChange() {
   const oldPass = document.getElementById('changeOldPass').value.trim();
   const newPass = document.getElementById('changeNewPass').value.trim();
   const confirmPass = document.getElementById('changeConfirmPass').value.trim();
+  const newPin = document.getElementById('changeNewPin').value.trim();
 
-  if (!oldPass || !newPass || !confirmPass) return showCustomAlert('Błąd', 'Wszystkie pola są wymagane!', '⚠️');
-  if (newPass !== confirmPass) return showCustomAlert('Błąd', 'Hasła się różnią!', '⚠️');
+  if (!oldPass) return showCustomAlert('Błąd', 'Podaj stare hasło do autoryzacji!', '⚠️');
 
-  usersDb.child(currentUserLogin).once('value', (snap) => {
-    const user = snap.val();
+  usersDb.once('value', (allSnap) => {
+    const users = allSnap.val() || {};
+    const user = users[currentUserLogin];
     if (!user || user.pass !== oldPass) return showCustomAlert('Błąd', 'Stare hasło jest nieprawidłowe!', '⚠️');
 
-    usersDb.child(currentUserLogin).update({ pass: newPass }, (err) => {
+    const updateObj = {};
+    if (newPass || confirmPass) {
+      if (newPass !== confirmPass) return showCustomAlert('Błąd', 'Hasła się różnią!', '⚠️');
+      if (newPass.length < 4) return showCustomAlert('Błąd', 'Hasło musi mieć min. 4 znaki!', '⚠️');
+      updateObj.pass = newPass;
+    }
+    if (newPin) {
+      if (!/^\d{4}$/.test(newPin)) return showCustomAlert('Błąd', 'PIN musi składać się z dokładnie 4 cyfr!', '⚠️');
+      if (Object.keys(users).some(k => k !== currentUserLogin && users[k].pin === newPin)) {
+        return showCustomAlert('Błąd', 'Ten PIN jest już przypisany do innego użytkownika!', '⚠️');
+      }
+      updateObj.pin = newPin;
+    }
+
+    if (Object.keys(updateObj).length === 0) {
+      return showCustomAlert('Informacja', 'Nie wprowadzono żadnych zmian.', 'ℹ️');
+    }
+
+    usersDb.child(currentUserLogin).update(updateObj, (err) => {
       if (!err) {
         closeModal('changePasswordModal');
-        addLog('edit', `zmienił(a) swoje hasło`);
-        showToast('Sukces', 'Hasło pomyślnie zmienione.', 'success');
+        addLog('edit', `zmienił(a) dane dostępowo-autoryzacyjne`);
+        showToast('Sukces', 'Dane pomyślnie zmienione.', 'success');
+      } else {
+        showCustomAlert('Błąd', 'Nie udało się zapisać zmian.', '⚠️');
       }
     });
   });
@@ -1481,10 +1943,18 @@ function startSessionMonitoring() {
   if (!currentUserLogin) return;
   sessionMonitorRef = usersDb.child(currentUserLogin).child('activeToken');
   sessionMonitorRef.on('value', (snapshot) => {
+    if (!currentRole) return;
     const tokenInDb = snapshot.val();
     if (tokenInDb && tokenInDb !== currentSessionToken) {
       showCustomAlert('Wylogowanie', 'Konto zostało zalogowane na innym urządzeniu!', '⚠️');
       logout();
+    } else if (!tokenInDb) {
+      snapshot.ref.parent.once('value', (userSnap) => {
+        if (!userSnap.exists() && currentRole) {
+          showCustomAlert('Wylogowanie', 'To konto zostało usunięte przez administratora.', '⚠️');
+          logout();
+        }
+      });
     }
   });
 }
@@ -1506,11 +1976,12 @@ function logout() {
   document.getElementById('loginPasswordInput').value = '';
   document.getElementById('authError').style.display = 'none';
 
-  document.getElementById('loginFormFields').style.display = 'block';
+  document.getElementById('authTabGroup').style.display = 'flex';
   document.getElementById('forcePasswordFields').style.display = 'none';
   document.getElementById('authTitle').textContent = 'Magazyn Tulejek';
   document.getElementById('authSubtitle').textContent = 'Zaloguj się do panelu magazynowego';
   
+  switchAuthMethod('pin');
   document.getElementById('authScreen').style.display = 'flex';
 }
 
@@ -1531,7 +2002,7 @@ function openOnlineUsersModal() {
     listEl.innerHTML = users.map(u => `
       <li style="display:flex; justify-content:space-between; align-items:center; padding:10px 14px; background:var(--bg); border:1px solid var(--panel-border); border-radius:var(--radius-sm);">
         <strong>${esc(u.name)}</strong>
-        <span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${u.role}</span>
+        <span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${esc(u.role)}</span>
       </li>
     `).join('');
   }
@@ -1569,9 +2040,13 @@ function applyRoleUI() {
   const adminBranchSelector = document.getElementById('adminBranchSelectorContainer');
   
   document.getElementById('userNameDisplay').textContent = currentUserName;
+  const stBtn = document.getElementById('btnStocktake');
+  if (stBtn) stBtn.style.display = currentRole === 'pracownik' ? 'none' : '';
+  const rpBtn = document.getElementById('btnReport');
+  if (rpBtn) rpBtn.style.display = currentRole === 'pracownik' ? 'none' : '';
   document.querySelectorAll('.admin-nav-item').forEach(e => e.remove());
 
-  const branchLabelName = activeAdminBranch === 'rosnowo' ? 'Rosnowo' : 'Niepruszewo';
+  const branchLabelName = getActiveBranch() === 'rosnowo' ? 'Rosnowo' : 'Niepruszewo';
   document.getElementById('activeBranchLabel').textContent = branchLabelName;
   document.getElementById('branchIndicatorBadge').textContent = `Oddział: ${branchLabelName}`;
   document.getElementById('mainHeaderTitle').textContent = `Magazyn Tulejek - ${branchLabelName}`;
@@ -1588,9 +2063,11 @@ function applyRoleUI() {
     const dropdownWrap = document.createElement('div');
     dropdownWrap.className = 'nav-dropdown admin-nav-item';
     dropdownWrap.innerHTML = `
-      <button class="nav-tab" id="adminDropdownBtn" onclick="toggleAdminDropdown(event)">⚙️ Zarządzanie ▾</button>
+      <button class="nav-tab" id="adminDropdownBtn" onclick="toggleAdminDropdown(event)">⚙️ Zarządzanie ▾<span class="alert-dot" id="lowStockDot" style="display:none;"></span></button>
       <div class="dropdown-menu" id="adminDropdownMenu">
         <button class="dropdown-item" onclick="switchTab('tabIssuesList', this); renderIssuesTab();"><span>🛠️ Zgłoszenia</span></button>
+        <button class="dropdown-item" onclick="switchTab('tabLowStock', this); renderLowStockTab();"><span>⚠️ Niski stan</span><strong id="lowStockCount" class="badge low" style="display:none;"></strong></button>
+        <button class="dropdown-item" onclick="switchTab('tabMoves', this);"><span>📈 Ruchy i raporty</span></button>
         <button class="dropdown-item" onclick="switchTab('tabLogs', this); renderLogs();"><span>📋 Dziennik zdarzeń</span></button>
         <button class="dropdown-item" onclick="switchTab('tabSizes', this); renderSizesTab();"><span>📏 Rozmiary</span></button>
         <button class="dropdown-item" onclick="switchTab('tabStats', this); renderAdminStats();"><span>📊 Statystyki</span></button>
@@ -1598,6 +2075,7 @@ function applyRoleUI() {
       </div>
     `;
     navTabs.appendChild(dropdownWrap);
+    renderLowStock();
   } else if (currentRole === 'tulejarka') {
     badge.textContent = 'Tulejarka'; badge.className = 'role-badge role-tulejarka';
     if (btnClear) btnClear.style.display = 'none'; 
@@ -1630,6 +2108,8 @@ function switchTab(tabId, btn) {
 
   if(tabId === 'tabMap') renderMapSlots();
   if(tabId === 'tabStats') renderAdminStats();
+  if(tabId === 'tabLowStock') renderLowStockTab();
+  if(tabId === 'tabMoves') { initMovesDefaults(); loadMoves(); }
   if(tabId === 'tabIssuesList') renderIssuesTab();
   if(tabId === 'tabLogs') renderLogs();
   if(tabId === 'tabSizes') renderSizesTab();
@@ -1671,9 +2151,9 @@ function renderIssuesTab() {
       <tr>
         <td style="font-size:11px; color:var(--muted); font-family:var(--font-mono);">${new Date(issue.time).toLocaleString('pl-PL')}</td>
         <td><strong>${esc(issue.user)}</strong></td>
-        <td>${categoryNames[issue.type] || issue.type}</td>
+        <td>${categoryNames[issue.type] || esc(issue.type)}</td>
         <td><strong>${esc(issue.title)}</strong></td>
-        <td><span class="status-badge ${statusClass}">${issue.status}</span></td>
+        <td><span class="status-badge ${statusClass}">${esc(issue.status)}</span></td>
         <td style="text-align:right;">
           <button class="secondary" style="padding:4px 8px; font-size:11px; margin-right:4px;" onclick="openIssueDetails('${issue.id}')">Szczegóły</button>
           <button class="danger" style="padding:4px 8px; font-size:11px;" onclick="deleteIssue('${issue.id}')">Usuń</button>
@@ -1710,7 +2190,8 @@ function renderAdminStats() {
   if (currentRole !== 'admin') return;
   const slotsList = getCurrentSlots();
   const totalSlots = slotsList.filter(s => !s.isRack).length;
-  const occupiedSlots = pallets.filter(p => p.mapSlot).length;
+  const countableIds = new Set(slotsList.filter(s => !s.isRack).map(s => s.id));
+  const occupiedSlots = new Set(pallets.map(p => p.mapSlot).filter(id => countableIds.has(id))).size;
   const freeSlots = Math.max(0, totalSlots - occupiedSlots);
   const usagePercent = totalSlots > 0 ? Math.round((occupiedSlots / totalSlots) * 100) : 0;
   const totalQtyVal = pallets.reduce((a,p) => a + totalQty(p), 0);
@@ -1743,15 +2224,15 @@ function renderAdminStats() {
   const sortedSizeCats = Object.entries(sizeCategoryMap).sort((a,b) => b[1] - a[1]);
   
   const ctx = document.getElementById('sizeChartCanvas');
-  if (ctx) {
+  if (ctx && typeof Chart !== 'undefined') {
     if (mySizeChart) mySizeChart.destroy();
     mySizeChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: sortedSizeCats.map(item => `Rozmiar ${item[0]}`),
-        datasets: [{ data: sortedSizeCats.map(item => item[1]), backgroundColor: ['#2563eb', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'], borderWidth: 2, borderColor: '#ffffff' }]
+        datasets: [{ data: sortedSizeCats.map(item => item[1]), backgroundColor: ['#2F5BEA', '#F2B705', '#E5484D', '#16A36A', '#7A5C99', '#9AA3BA'], borderWidth: 2, borderColor: '#ffffff' }]
       },
-      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, color: '#64748b', font: { size: 11 } } } } }
+      options: { responsive: true, plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, color: '#6B7490', font: { size: 11 } } } } }
     });
   }
 
@@ -1787,7 +2268,7 @@ function renderAdminStats() {
   }).join('') || '<div style="color:var(--muted)">Brak palet</div>';
 
   document.getElementById('statTotalLogs').textContent = logs.length;
-  document.getElementById('statLoginsCount').textContent = logs.filter(l => l.text.includes('zalogował')).length;
+  document.getElementById('statLoginsCount').textContent = logs.filter(l => (l.text || '').includes('zalogował')).length;
   document.getElementById('statLastActivity').textContent = logs.length ? new Date(logs[0].time).toLocaleString('pl-PL') : 'Brak';
   
   const sectorCounts = {};
@@ -1798,7 +2279,7 @@ function renderAdminStats() {
   });
   document.getElementById('sectorUsageBars').innerHTML = Object.entries(sectorCounts).map(([sec, dat]) => {
     const pct = dat.total > 0 ? Math.round((dat.occupied / dat.total) * 100) : 0;
-    return `<div><div style="display:flex; justify-content:space-between; font-size:11px; font-weight:600; margin-bottom:2px;"><span>${sec}</span><span>${dat.occupied}/${dat.total} (${pct}%)</span></div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: ${pct}%; background: var(--success);"></div></div></div>`;
+    return `<div><div style="display:flex; justify-content:space-between; font-size:11px; font-weight:600; margin-bottom:2px;"><span>${esc(sec)}</span><span>${dat.occupied}/${dat.total} (${pct}%)</span></div><div class="progress-bar-wrap"><div class="progress-bar-fill" style="width: ${pct}%; background: var(--success);"></div></div></div>`;
   }).join('');
 }
 
@@ -1809,6 +2290,7 @@ function openUserModal(loginKey = null) {
   document.getElementById('passHint').style.display = user ? 'inline' : 'none';
   document.getElementById('newUserName').value = user ? user.name : '';
   document.getElementById('newUserLogin').value = user ? (user.login || loginKey) : '';
+  document.getElementById('newUserPin').value = user ? (user.pin || '') : '';
   document.getElementById('newUserPass').value = '';
   document.getElementById('newUserBranch').value = user ? (user.branch || 'rosnowo').toLowerCase() : 'rosnowo';
   document.getElementById('newUserRole').value = user ? user.role : 'pracownik';
@@ -1819,49 +2301,67 @@ function openUserModal(loginKey = null) {
 function saveUserAccount() {
   const name = document.getElementById('newUserName').value.trim();
   const login = document.getElementById('newUserLogin').value.trim().toLowerCase();
+  const pin = document.getElementById('newUserPin').value.trim();
   const pass = document.getElementById('newUserPass').value.trim();
   const branch = document.getElementById('newUserBranch').value.toLowerCase();
   const role = document.getElementById('newUserRole').value;
   const mustChangePassword = document.getElementById('newUserForceChange').checked;
 
   if (!name || !login) return showCustomAlert('Błąd', 'Imię oraz login są wymagane!', '⚠️');
+  if (pin && !/^\d{4}$/.test(pin)) return showCustomAlert('Błąd', 'Kod PIN musi składać się z 4 cyfr!', '⚠️');
   if (!editingUserLogin && !pass) return showCustomAlert('Błąd', 'Hasło jest wymagane!', '⚠️');
+
+  const oldKey = (editingUserLogin || '').toLowerCase();
+  const isNew = !editingUserLogin;
+  const isRename = !isNew && oldKey !== login;
+
+  if ((isNew || isRename) && !/^[a-z0-9_-]{1,30}$/.test(login)) {
+    return showCustomAlert('Błąd', 'Login może zawierać tylko małe litery, cyfry oraz znaki _ i - (maks. 30 znaków).', '⚠️');
+  }
 
   usersDb.once('value', (snapshot) => {
     const users = snapshot.val() || {};
-    let existingPass = '';
-    let existingForce = false;
-    
-    if (editingUserLogin) {
-      const oldKey = editingUserLogin.toLowerCase();
-      if (oldKey !== login) {
-        existingPass = users[oldKey]?.pass || '';
-        existingForce = users[oldKey]?.mustChangePassword || false;
-        usersDb.child(oldKey).remove();
-      } else {
-        existingPass = users[oldKey]?.pass || '';
-        existingForce = users[oldKey]?.mustChangePassword || false;
+
+    for (let key in users) {
+      if (key !== oldKey && pin !== '' && users[key].pin === pin) {
+        return showCustomAlert('Błąd', 'Ten PIN jest już przypisany do innego użytkownika!', '⚠️');
       }
     }
-    
-    const finalPass = pass ? pass : existingPass;
-    const finalForce = pass ? mustChangePassword : existingForce;
+    if ((isNew || isRename) && users[login]) {
+      return showCustomAlert('Błąd', 'Użytkownik o takim loginie już istnieje!', '⚠️');
+    }
 
-    usersDb.child(login).set({ 
-      name: name, 
-      login: login, 
-      pass: finalPass, 
-      branch: branch, 
-      role: role, 
-      mustChangePassword: finalForce 
-    }, (err) => {
+    const existing = isNew ? {} : (users[oldKey] || {});
+    const payload = {
+      name: name,
+      login: login,
+      pin: pin,
+      pass: pass ? pass : (existing.pass || ''),
+      branch: branch,
+      role: role,
+      mustChangePassword: mustChangePassword
+    };
+
+    const onDone = (err) => {
       if (!err) {
         closeModal('userModal');
         showToast('Sukces', `Konto "${login}" zapisane.`, 'success');
       } else {
         showCustomAlert('Błąd', 'Nie udało się zapisać w bazie.', '⚠️');
       }
-    });
+    };
+
+    if (isRename) {
+      usersDb.child(login).set(payload, (err) => {
+        if (!err) usersDb.child(oldKey).remove();
+        onDone(err);
+      });
+    } else if (isNew) {
+      usersDb.child(login).set(payload, onDone);
+    } else {
+      // update zamiast set: zachowuje m.in. activeToken (sesję) edytowanego użytkownika
+      usersDb.child(login).update(payload, onDone);
+    }
   });
 }
 
@@ -1889,7 +2389,7 @@ function renderUsersTab() {
   }
 
   if (!filtered.length) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:var(--muted); padding:20px;">Brak użytkowników dla wybranego oddziału</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; color:var(--muted); padding:20px;">Brak użytkowników dla wybranego oddziału</td></tr>';
     return;
   }
 
@@ -1899,8 +2399,9 @@ function renderUsersTab() {
       <tr>
         <td><strong>${esc(u.name)}</strong></td>
         <td><code>${esc(uLogin)}</code></td>
+        <td><strong style="font-family:var(--font-mono); color:var(--primary);">${esc(u.pin || '—')}</strong></td>
         <td><span style="font-weight:600; color:var(--primary);">${(u.branch || '').toLowerCase() === 'niepruszewo' ? '📍 Niepruszewo' : '📍 Rosnowo'}</span></td>
-        <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${u.role}</span></td>
+        <td><span class="role-badge ${u.role === 'admin' ? 'role-admin' : u.role === 'tulejarka' ? 'role-tulejarka' : 'role-pracownik'}">${esc(u.role)}</span></td>
         <td style="text-align:right">
           <button class="secondary" style="padding:4px 8px; font-size:11px; margin-right:4px;" onclick="openUserModal('${esc(uLogin)}')">Edytuj</button>
           ${uLogin.toLowerCase() !== 'admin' ? `<button class="danger" style="padding:4px 8px; font-size:11px;" onclick="deleteUser('${esc(uLogin)}')">Usuń</button>` : ''}
@@ -1917,15 +2418,33 @@ function filterLogs(type) {
   renderLogs();
 }
 
+function logIcon(text) {
+  const t = (text || '').toLowerCase();
+  if (t.includes('zalogował')) return ['🔑', '#E8EEFF'];
+  if (t.includes('inwentaryzacja')) return ['📋', '#EFE9FF'];
+  if (t.includes('przeniósł')) return ['🔀', '#E8EEFF'];
+  if (t.includes('odjął')) return ['📤', '#FDE8E9'];
+  if (t.includes('dodał') && t.includes('szt.')) return ['📥', '#DDF6EA'];
+  if (t.includes('dodał')) return ['📦', '#DDF6EA'];
+  if (t.includes('usunął')) return ['🗑️', '#FDE8E9'];
+  if (t.includes('zdjął')) return ['↩️', '#FFF1D6'];
+  if (t.includes('przypisał')) return ['📍', '#E8EEFF'];
+  if (t.includes('zgłosił')) return ['🛠️', '#FFF1D6'];
+  if (t.includes('hasł') || t.includes('dostępowo')) return ['🔐', '#EFE9FF'];
+  if (t.includes('przywrócił')) return ['♻️', '#DDF6EA'];
+  if (t.includes('zaktualizował') || t.includes('zmienił')) return ['✏️', '#EEF1F7'];
+  return ['🔔', '#EEF1F7'];
+}
+
 function renderLogs() {
   const container = document.getElementById('logsList');
   if (!container) return;
   const searchQuery = document.getElementById('logSearchInput')?.value.toLowerCase().trim() || '';
   let filtered = logs;
-  if (selectedLogFilter === 'login') filtered = filtered.filter(l => l.text.includes('zalogował'));
-  if (selectedLogFilter === 'add') filtered = filtered.filter(l => l.text.includes('dodał') || l.text.includes('przypisał') || l.text.includes('zmienił') || l.text.includes('odjął'));
-  if (selectedLogFilter === 'delete') filtered = filtered.filter(l => l.text.includes('usunął') || l.text.includes('zdjął'));
-  if (searchQuery) filtered = filtered.filter(l => l.text.toLowerCase().includes(searchQuery));
+  if (selectedLogFilter === 'login') filtered = filtered.filter(l => (l.text || '').includes('zalogował'));
+  if (selectedLogFilter === 'add') filtered = filtered.filter(l => (l.text || '').includes('dodał') || (l.text || '').includes('przypisał') || (l.text || '').includes('zmienił') || (l.text || '').includes('odjął') || (l.text || '').includes('przeniósł'));
+  if (selectedLogFilter === 'delete') filtered = filtered.filter(l => (l.text || '').includes('usunął') || (l.text || '').includes('zdjął'));
+  if (searchQuery) filtered = filtered.filter(l => (l.text || '').toLowerCase().includes(searchQuery));
 
   if (!filtered.length) {
     container.innerHTML = '<li class="log-item" style="justify-content:center; color:var(--muted);">Brak zdarzeń.</li>';
@@ -1933,7 +2452,7 @@ function renderLogs() {
   }
   container.innerHTML = filtered.map(l => `
     <li class="log-item">
-      <div class="log-content"><div class="log-badge-icon">⚡</div><div>${esc(l.text)}</div></div>
+      <div class="log-content"><div class="log-badge-icon" style="background:${logIcon(l.text)[1]}">${logIcon(l.text)[0]}</div><div>${esc(l.text)}</div></div>
       <div style="display:flex; align-items:center; gap:8px;"><div class="log-time">${new Date(l.time).toLocaleString('pl-PL')}</div>${currentRole === 'admin' ? `<button class="btn-delete-log" onclick="deleteSingleLog('${l.id}')">×</button>` : ''}</div>
     </li>
   `).join('');
@@ -1942,7 +2461,7 @@ function renderLogs() {
 function exportLogsCSV() {
   if (!logs.length) return showToast('Brak danych', 'Dziennik jest pusty.', 'info');
   let csv = "Data;Treść\n";
-  logs.forEach(l => csv += `"${new Date(l.time).toLocaleString('pl-PL')}";"${l.text.replace(/"/g, '""')}"\n`);
+  logs.forEach(l => csv += `"${new Date(l.time).toLocaleString('pl-PL')}";"${(l.text || '').replace(/"/g, '""')}"\n`);
   downloadCSV(csv, `dziennik_${getActiveBranch()}.csv`);
 }
 
@@ -1969,25 +2488,36 @@ function renderSizesTab() {
     (p.items || []).forEach(item => {
       const fullName = ((item.size ? item.size + ' ' : '') + (item.name || '')).trim();
       if (!fullName) return;
-      if (!sizes[fullName]) sizes[fullName] = { qty: 0, pallets: new Set() };
+      if (!sizes[fullName]) sizes[fullName] = { qty: 0, pallets: new Set(), size: (item.size || '').trim() };
       sizes[fullName].qty += Number(item.qty) || 0;
       sizes[fullName].pallets.add(p.id);
     });
   });
+  Object.values(minLevels || {}).forEach(v => { if (v && v.label && !sizes[v.label]) sizes[v.label] = { qty: 0, pallets: new Set(), size: v.label.split(' ')[0] }; });
   let keys = Object.keys(sizes).sort();
-  if (selectedSizeFilter !== 'all') keys = keys.filter(k => k.includes(selectedSizeFilter));
+  if (selectedSizeFilter !== 'all') keys = keys.filter(k => sizes[k].size === selectedSizeFilter);
   if (!keys.length) {
-    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">Brak danych</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--muted); padding:20px;">Brak danych</td></tr>';
     return;
   }
-  tbody.innerHTML = keys.map(k => `<tr><td><strong>${esc(k)}</strong></td><td><strong style="font-family:var(--font-mono);">${sizes[k].qty} szt.</strong></td><td><span class="badge">${sizes[k].pallets.size} palet</span></td></tr>`).join('');
+  const isAdmin = currentRole === 'admin';
+  tbody.innerHTML = keys.map(k => {
+    const m = (minLevels[pk(k)] || {}).min || 0;
+    const low = m > 0 && sizes[k].qty < m;
+    return `<tr><td><strong>${esc(k)}</strong></td><td><strong style="font-family:var(--font-mono);">${sizes[k].qty} szt.</strong>${low ? ' <span class="badge low">niski stan</span>' : ''}</td><td><span class="badge">${sizes[k].pallets.size} ${plPaleta(sizes[k].pallets.size)}</span></td><td>${isAdmin ? `<input type="number" min="0" class="min-input" data-label="${esc(k)}" value="${m || ''}" placeholder="—" onchange="setMinLevel(this)">` : (m || '—')}</td></tr>`;
+  }).join('');
 }
 
 function exportSizesCSV() {
-  let csv = "Rozmiar;Sztuki;Palety\n";
-  pallets.forEach(p => (p.items||[]).forEach(i => csv += `"${i.size} ${i.name}";"${i.qty}";"${p.code}"\n`));
+  let csv = "Rozmiar i nazwa;Sztuki;Paleta\n";
+  pallets.forEach(p => (p.items || []).forEach(i => {
+    const full = `${i.size || ''} ${i.name || ''}`.trim();
+    csv += `${csvCell(full)};${csvCell(i.qty)};${csvCell(p.code)}\n`;
+  }));
   downloadCSV(csv, `rozmiary_${getActiveBranch()}.csv`);
 }
+
+const csvCell = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
 
 function downloadCSV(content, filename) {
   const blob = new Blob(["\ufeff" + content], { type: 'text/csv;charset=utf-8;' });
@@ -1995,6 +2525,7 @@ function downloadCSV(content, filename) {
   link.href = URL.createObjectURL(blob);
   link.download = filename;
   link.click();
+  setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
 
 function exportData() {
@@ -2007,20 +2538,31 @@ function exportData() {
 
 function triggerRestoreFile() { document.getElementById('backupFileInput').click(); }
 function restoreBackup(e) {
-  const file = e.target.files[0];
+  if (currentRole !== 'admin') return;
+  const input = e.target;
+  const file = input.files[0];
   if (!file) return;
   const reader = new FileReader();
   reader.onload = function(evt) {
     try {
       const imported = JSON.parse(evt.target.result);
-      if (Array.isArray(imported)) {
-        showCustomConfirm('Przywracanie', 'Nadpisać dane w tym oddziale?', () => {
-          const updateObj = {};
-          imported.forEach(p => updateObj[p.id] = p);
-          db.set(updateObj, () => showToast('Przywrócono', 'Kopia wgrana pomyślnie!', 'success'));
-        });
+      if (!Array.isArray(imported) || !imported.length || imported.some(p => !p || !p.id || !p.code)) {
+        return showCustomAlert('Błąd', 'Plik nie wygląda na kopię zapasową palet (brak pustej listy, id lub numeru palety).', '⚠️');
       }
-    } catch(err) { showCustomAlert('Błąd', 'Nieprawidłowy plik.', '⚠️'); }
+      showCustomConfirm('Przywracanie', `Nadpisać dane w tym oddziale (${imported.length} palet)? Obecne palety zostaną zastąpione.`, () => {
+        const updateObj = {};
+        imported.forEach(p => updateObj[p.id] = p);
+        db.set(updateObj, (err) => {
+          if (err) return showToast('Błąd', 'Nie udało się wgrać kopii.', 'danger');
+          addLog('edit', `przywrócił(a) kopię zapasową (${imported.length} palet)`);
+          showToast('Przywrócono', 'Kopia wgrana pomyślnie!', 'success');
+        });
+      });
+    } catch (err) {
+      showCustomAlert('Błąd', 'Nieprawidłowy plik.', '⚠️');
+    } finally {
+      input.value = '';
+    }
   };
   reader.readAsText(file);
 }
@@ -2038,8 +2580,8 @@ function showPalletOnMap(palletId) {
 function copyPalletSummary(palletId) {
   const p = pallets.find(x => x.id === palletId);
   if (!p) return;
-  const itemsTxt = (p.items || []).map(i => `${i.size} ${i.name}: ${i.qty} szt.`).join('\n');
-  navigator.clipboard.writeText(`PALETA: ${p.code}\nODDZIAŁ: ${getActiveBranch().toUpperCase()}\nSUMA: ${totalQty(p)} szt.\n${itemsTxt}`).then(() => showToast('Skopiowano', 'Kopia w schowku.', 'success'));
+  const itemsTxt = (p.items || []).map(i => `${`${i.size || ''} ${i.name || ''}`.trim()}: ${i.qty} szt.`).join('\n');
+  Promise.resolve().then(() => navigator.clipboard.writeText(`PALETA: ${p.code}\nODDZIAŁ: ${getActiveBranch().toUpperCase()}\nSUMA: ${totalQty(p)} szt.\n${itemsTxt}`)).then(() => showToast('Skopiowano', 'Kopia w schowku.', 'success')).catch(() => showToast('Błąd', 'Nie udało się skopiować do schowka.', 'danger'));
 }
 
 function handleSlotClick(slotId) {
@@ -2061,7 +2603,7 @@ function handleSlotClick(slotId) {
       selectedSlotId = slotId;
       const select = document.getElementById('mapPalletSelect');
       const available = pallets.filter(p => !p.mapSlot || p.mapSlot === slotId);
-      select.innerHTML = '<option value="">-- Wybierz paletę --</option>' + available.map(p => `<option value="${p.id}">${p.code} - ${p.name || 'Brak'}</option>`).join('');
+      select.innerHTML = '<option value="">-- Wybierz paletę --</option>' + available.map(p => `<option value="${esc(p.id)}">${esc(p.code)} - ${esc(p.name || 'Brak')}</option>`).join('');
       openModal('assignMapModal');
     }
   }
@@ -2096,7 +2638,7 @@ function renderRowPalletsList(rowId) {
 
   if (select) {
     const available = pallets.filter(p => !p.mapSlot);
-    select.innerHTML = '<option value="">-- Wybierz wolną paletę --</option>' + available.map(p => `<option value="${p.id}">${p.code} - ${p.name || 'Brak'} (${totalQty(p)} szt.)</option>`).join('');
+    select.innerHTML = '<option value="">-- Wybierz wolną paletę --</option>' + available.map(p => `<option value="${esc(p.id)}">${esc(p.code)} - ${esc(p.name || 'Brak')} (${totalQty(p)} szt.)</option>`).join('');
   }
 }
 
@@ -2111,7 +2653,6 @@ function addPalletToRow() {
   if (!p) return;
 
   p.mapSlot = selectedSlotId;
-  p.location = rowObj ? rowObj.name : selectedSlotId;
   db.child(palletId).set(p, () => {
     addLog('edit', `przypisał(a) paletę ${p.code} do rzędu ${rowObj ? rowObj.name : selectedSlotId}`);
     showToast('Sukces', 'Dodano paletę do rzędu.', 'success');
@@ -2125,6 +2666,7 @@ function removePalletFromRow(palletId) {
   const p = pallets.find(x => x.id === palletId);
   if (!p) return;
   
+  clearAutoLocation(p);
   p.mapSlot = null;
   db.child(palletId).set(p, () => {
     addLog('edit', `zdjął(ęła) paletę ${p.code} z rzędu`);
@@ -2140,11 +2682,9 @@ function saveMapSlotAssignment() {
   if (!palletId) return;
   const p = pallets.find(x => x.id === palletId);
   if (!p) return;
-  pallets.forEach(item => { if (item.mapSlot === selectedSlotId) { item.mapSlot = null; db.child(item.id).set(item); } });
+  pallets.forEach(item => { if (item.mapSlot === selectedSlotId) { clearAutoLocation(item); item.mapSlot = null; db.child(item.id).set(item); } });
   
-  const slotObj = MAP_SLOTS_ROSNOWO.find(s => s.id === selectedSlotId);
   p.mapSlot = selectedSlotId;
-  if(slotObj) p.location = slotObj.sector;
 
   db.child(palletId).set(p, () => {
     closeModal('assignMapModal');
@@ -2170,6 +2710,7 @@ function removePalletFromSlot(palletId) {
   if (currentRole === 'pracownik') return;
   const p = pallets.find(x => x.id === palletId);
   if (!p) return;
+  clearAutoLocation(p);
   p.mapSlot = null;
   db.child(palletId).set(p, () => {
     closeModal('detailModal'); closePopover();
@@ -2187,15 +2728,15 @@ function renderMapSlots() {
 
   if (currentBranch === 'niepruszewo') {
     svg.innerHTML = `
-      <rect width="1600" height="800" fill="#f1f5f9"/>
-      <rect x="20" y="20" width="1560" height="760" fill="none" stroke="#cbd5e1" stroke-width="2"/>
+      <rect width="1600" height="800" fill="#EEF1F7"/>
+      <rect x="20" y="20" width="1560" height="760" fill="none" stroke="#D9DEE8" stroke-width="2"/>
       <g transform="translate(60, 250)">
-        <rect x="0" y="0" width="160" height="300" fill="#ffffff" stroke="#2563eb" stroke-width="2" rx="8"/>
-        <text x="80" y="155" fill="#2563eb" font-size="18" font-weight="700" text-anchor="middle" transform="rotate(-90 80 155)">⚙️ TULEJARKA</text>
+        <rect x="0" y="0" width="160" height="300" fill="#ffffff" stroke="#2F5BEA" stroke-width="2" rx="8"/>
+        <text x="80" y="155" fill="#2F5BEA" font-size="18" font-weight="700" text-anchor="middle" transform="rotate(-90 80 155)">⚙️ TULEJARKA</text>
       </g>
       <g transform="translate(400, 390)">
-        <rect x="0" y="0" width="1150" height="80" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,6"/>
-        <text x="575" y="45" fill="#64748b" font-size="16" font-weight="700" text-anchor="middle">GŁÓWNA ALEJA MANEWRU</text>
+        <rect x="0" y="0" width="1150" height="80" fill="none" stroke="#9AA3BA" stroke-width="2" stroke-dasharray="6,6"/>
+        <text x="575" y="45" fill="#6B7490" font-size="16" font-weight="700" text-anchor="middle">GŁÓWNA ALEJA MANEWRU</text>
       </g>
     `;
 
@@ -2214,25 +2755,25 @@ function renderMapSlots() {
              style="left: ${(row.x / 1600) * 100}%; top: ${(row.y / 800) * 100}%; width: ${(row.w / 1600) * 100}%; height: ${(row.h / 800) * 100}%;"
              onclick="handleSlotClick('${row.id}')">
           <div style="font-weight:700;">${row.name}</div>
-          ${hasPallets ? `<div class="row-count">${count} palety</div><div style="display:flex; flex-direction:column; gap:2px; width:100%; margin-top:2px;">${palletTags}${count > 3 ? `<div style="font-size:9px; color:var(--muted);">+${count - 3} więcej</div>` : ''}</div>` : `<div style="font-size:10px; color:var(--muted); margin-top:auto; margin-bottom:auto;">[ wolne ]</div>`}
+          ${hasPallets ? `<div class="row-count">${count} ${plPaleta(count)}</div><div style="display:flex; flex-direction:column; gap:2px; width:100%; margin-top:2px;">${palletTags}${count > 3 ? `<div style="font-size:9px; color:var(--muted);">+${count - 3} więcej</div>` : ''}</div>` : `<div style="font-size:10px; color:var(--muted); margin-top:auto; margin-bottom:auto;">[ wolne ]</div>`}
         </div>
       `;
     }).join('');
 
   } else {
     svg.innerHTML = `
-      <rect width="1600" height="800" fill="#f1f5f9"/>
-      <rect x="20" y="20" width="1560" height="760" fill="none" stroke="#cbd5e1" stroke-width="2"/>
-      <g transform="translate(60, 50)"><rect x="0" y="0" width="180" height="50" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/><text x="90" y="30" fill="#64748b" font-size="16" font-weight="700" text-anchor="middle">🚪 BRAMA</text></g>
-      <g transform="translate(50, 380)"><rect x="0" y="0" width="150" height="210" fill="none" stroke="#cbd5e1" stroke-width="2"/></g>
-      <g transform="translate(260, 50)"><rect x="0" y="0" width="550" height="130" fill="none" stroke="#cbd5e1" stroke-width="2"/></g>
-      <g transform="translate(810, 50)"><rect x="0" y="0" width="90" height="300" fill="rgba(16, 185, 129, 0.08)" stroke="#10b981" stroke-width="1.5"/><text x="45" y="150" fill="#059669" font-size="14" font-weight="700" text-anchor="middle" transform="rotate(-90 45 150)">REGAŁ</text></g>
-      <g transform="translate(900, 50)"><rect x="0" y="0" width="110" height="300" fill="none" stroke="#cbd5e1" stroke-width="2"/></g>
-      <text x="855" y="415" fill="#64748b" font-size="15" font-weight="700" text-anchor="middle">WEJŚCIE NA TULEJKI</text>
-      <g transform="translate(810, 460)"><rect x="0" y="0" width="90" height="300" fill="rgba(16, 185, 129, 0.08)" stroke="#10b981" stroke-width="1.5"/><text x="45" y="150" fill="#059669" font-size="14" font-weight="700" text-anchor="middle" transform="rotate(-90 45 150)">REGAŁ</text></g>
-      <g transform="translate(900, 460)"><rect x="0" y="0" width="220" height="300" fill="none" stroke="#cbd5e1" stroke-width="2"/></g>
-      <g transform="translate(1180, 280)"><rect x="0" y="0" width="370" height="85" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/><text x="185" y="50" fill="#2563eb" font-size="16" font-weight="700" text-anchor="middle">⚙️ TULEJARKA</text></g>
-      <g transform="translate(1220, 460)"><rect x="0" y="0" width="330" height="300" fill="none" stroke="#cbd5e1" stroke-width="2"/></g>
+      <rect width="1600" height="800" fill="#EEF1F7"/>
+      <rect x="20" y="20" width="1560" height="760" fill="none" stroke="#D9DEE8" stroke-width="2"/>
+      <g transform="translate(60, 50)"><rect x="0" y="0" width="180" height="50" fill="none" stroke="#9AA3BA" stroke-width="2" stroke-dasharray="4,4"/><text x="90" y="30" fill="#6B7490" font-size="16" font-weight="700" text-anchor="middle">🚪 BRAMA</text></g>
+      <g transform="translate(50, 380)"><rect x="0" y="0" width="150" height="210" fill="none" stroke="#D9DEE8" stroke-width="2"/></g>
+      <g transform="translate(260, 50)"><rect x="0" y="0" width="550" height="130" fill="none" stroke="#D9DEE8" stroke-width="2"/></g>
+      <g transform="translate(810, 50)"><rect x="0" y="0" width="90" height="300" fill="rgba(16, 185, 129, 0.08)" stroke="#16A36A" stroke-width="1.5"/><text x="45" y="150" fill="#059669" font-size="14" font-weight="700" text-anchor="middle" transform="rotate(-90 45 150)">REGAŁ</text></g>
+      <g transform="translate(900, 50)"><rect x="0" y="0" width="110" height="300" fill="none" stroke="#D9DEE8" stroke-width="2"/></g>
+      <text x="855" y="415" fill="#6B7490" font-size="15" font-weight="700" text-anchor="middle">WEJŚCIE NA TULEJKI</text>
+      <g transform="translate(810, 460)"><rect x="0" y="0" width="90" height="300" fill="rgba(16, 185, 129, 0.08)" stroke="#16A36A" stroke-width="1.5"/><text x="45" y="150" fill="#059669" font-size="14" font-weight="700" text-anchor="middle" transform="rotate(-90 45 150)">REGAŁ</text></g>
+      <g transform="translate(900, 460)"><rect x="0" y="0" width="220" height="300" fill="none" stroke="#D9DEE8" stroke-width="2"/></g>
+      <g transform="translate(1180, 280)"><rect x="0" y="0" width="370" height="85" fill="#ffffff" stroke="#D9DEE8" stroke-width="2"/><text x="185" y="50" fill="#2F5BEA" font-size="16" font-weight="700" text-anchor="middle">⚙️ TULEJARKA</text></g>
+      <g transform="translate(1220, 460)"><rect x="0" y="0" width="330" height="300" fill="none" stroke="#D9DEE8" stroke-width="2"/></g>
     `;
 
     container.innerHTML = MAP_SLOTS_ROSNOWO.map(slot => {
@@ -2252,11 +2793,255 @@ function renderMapSlots() {
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 
 function highlight(str, query) {
-  const safeStr = esc(str);
-  if (!query) return safeStr;
+  const text = String(str ?? '');
+  if (!query) return esc(text);
   const qEsc = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const regex = new RegExp(`(${qEsc})`, 'gi');
-  return safeStr.replace(regex, '<mark class="hl">$1</mark>');
+  const regex = new RegExp(qEsc, 'gi');
+  let out = '', last = 0, m;
+  while ((m = regex.exec(text)) !== null) {
+    if (m[0].length === 0) { regex.lastIndex++; continue; }
+    out += esc(text.slice(last, m.index)) + '<mark class="hl">' + esc(m[0]) + '</mark>';
+    last = m.index + m[0].length;
+  }
+  return out + esc(text.slice(last));
+}
+
+function getLocationLabel(p) {
+  if (p.mapSlot) {
+    if (getActiveBranch() === 'niepruszewo') {
+      const rowObj = MAP_ROWS_NIEPRUSZEWO.find(r => r.id === p.mapSlot);
+      if (rowObj) return `📍 ${rowObj.name}`;
+    } else {
+      const slotObj = MAP_SLOTS_ROSNOWO.find(s => s.id === p.mapSlot);
+      return `📍 ${slotObj ? slotObj.sector : 'Przypisana na mapie'}`;
+    }
+  }
+  return p.location || 'Poza mapą';
+}
+
+// usuwa lokalizację zapisaną automatycznie w starszej wersji (nazwa sektora/rzędu), zostawia ręczne wpisy
+function clearAutoLocation(p) {
+  const r = MAP_ROWS_NIEPRUSZEWO.find(x => x.id === p.mapSlot);
+  const sl = MAP_SLOTS_ROSNOWO.find(x => x.id === p.mapSlot);
+  if ((r && p.location === r.name) || (sl && p.location === sl.sector)) p.location = '';
+}
+
+function plPaleta(n) {
+  n = Math.abs(n);
+  if (n === 1) return 'paleta';
+  const last = n % 10, last2 = n % 100;
+  return (last >= 2 && last <= 4 && !(last2 >= 12 && last2 <= 14)) ? 'palety' : 'palet';
+}
+
+function logMentionsPallet(text, code) {
+  if (!text || !code) return false;
+  const c = String(code).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`(^|[^A-Za-z0-9-])${c}(?![A-Za-z0-9-])`).test(text);
+}
+
+function refreshOpenDetails() {
+  const vals = [...document.querySelectorAll('#detailContent input')].map(i => i.value);
+  const active = document.activeElement;
+  const activeId = (active && active.id && active.closest && active.closest('#detailContent')) ? active.id : null;
+  openDetails(editingId);
+  document.querySelectorAll('#detailContent input').forEach((el, i) => { if (vals[i] !== undefined) el.value = vals[i]; });
+  if (activeId) { const el = document.getElementById(activeId); if (el) el.focus(); }
+}
+
+const pk = (str) => String(str || '').trim().toLowerCase().replace(/[.$#\[\]\/]/g, '_');
+
+function getLowStock() {
+  const tot = {};
+  pallets.forEach(p => (p.items || []).forEach(i => { const k = pk(`${i.size || ''} ${i.name || ''}`); tot[k] = (tot[k] || 0) + (Number(i.qty) || 0); }));
+  return Object.entries(minLevels || {})
+    .filter(([k, v]) => v && v.min > 0 && (tot[k] || 0) < v.min)
+    .map(([k, v]) => ({ label: v.label || k, qty: tot[k] || 0, min: v.min }));
+}
+
+function renderLowStock() {
+  const n = getLowStock().length;
+  const cnt = document.getElementById('lowStockCount'), dot = document.getElementById('lowStockDot');
+  if (cnt) { cnt.textContent = n; cnt.style.display = n ? 'inline-block' : 'none'; }
+  if (dot) dot.style.display = n ? 'inline-block' : 'none';
+  if (currentRole === 'admin' && document.getElementById('tabLowStock')?.classList.contains('active')) renderLowStockTab();
+}
+
+function renderLowStockTab() {
+  if (currentRole !== 'admin') return;
+  const low = getLowStock().sort((a, b) => (a.qty - a.min) - (b.qty - b.min));
+  document.getElementById('lowStockBody').innerHTML = low.length
+    ? low.map(l => `<tr><td><strong>${esc(l.label)}</strong></td><td>${l.qty} szt.</td><td>${l.min} szt.</td><td><span class="badge low">brakuje ${l.min - l.qty}</span></td></tr>`).join('')
+    : '<tr><td colspan="4" style="text-align:center; color:var(--success); padding:24px; font-weight:700;">✅ Wszystkie produkty są powyżej minimum</td></tr>';
+  const inp = document.getElementById('defaultMinInput');
+  if (inp && document.activeElement !== inp) inp.value = defaultMin;
+}
+
+function saveDefaultMin() {
+  if (currentRole !== 'admin') return;
+  const v = Math.max(0, Math.round(Number(document.getElementById('defaultMinInput').value) || 0));
+  settingsRef.set(v, () => showToast('Minimum domyślne', v ? `Nowe produkty dostaną minimum ${v} szt.` : 'Automatyczne minimum wyłączone.', 'success'));
+}
+
+function productLabels() {
+  const map = {};
+  pallets.forEach(p => (p.items || []).forEach(i => { const label = `${i.size || ''} ${i.name || ''}`.trim(); if (label) map[pk(label)] = label; }));
+  return map;
+}
+
+function applyDefaultMinToAll() {
+  if (currentRole !== 'admin') return;
+  if (!(defaultMin > 0)) return showCustomAlert('Brak wartości', 'Najpierw wpisz i zapisz domyślne minimum większe od zera.', '⚠️');
+  const upd = {};
+  Object.entries(productLabels()).forEach(([k, label]) => { if (!minLevels[k]) upd[k] = { min: defaultMin, label }; });
+  const n = Object.keys(upd).length;
+  if (!n) return showToast('Minimum', 'Wszystkie produkty mają już ustawiony próg.', 'info');
+  minRef.update(upd, () => showToast('Minimum', `Ustawiono próg ${defaultMin} szt. dla ${n} produktów.`, 'success'));
+}
+
+// automatyczne minimum dla nowo dodanych produktów (tylko tych, które nie mają jeszcze progu)
+function ensureMinLevels(items) {
+  if (!minRef || !minLoaded || !settingsLoaded || !(defaultMin > 0)) return;
+  const upd = {};
+  (items || []).forEach(i => {
+    const label = `${i.size || ''} ${i.name || ''}`.trim();
+    if (!label) return;
+    const k = pk(label);
+    if (!minLevels[k] && !upd[k]) upd[k] = { min: defaultMin, label };
+  });
+  if (Object.keys(upd).length) minRef.update(upd);
+}
+
+function setMinLevel(el) {
+  if (currentRole !== 'admin') return;
+  const label = el.dataset.label;
+  const v = Math.round(Number(el.value));
+  const ref = minRef.child(pk(label));
+  if (!Number.isFinite(v) || v <= 0) ref.remove(() => showToast('Minimum', `Usunięto próg: ${label}`, 'info'));
+  else ref.set({ min: v, label }, () => showToast('Minimum', `Próg dla ${label}: ${v} szt.`, 'success'));
+}
+
+let adjCtx = null;
+const ADJ_REASONS_LIST = ['Przesunięcie na inną paletę', 'Korekta', 'Wydanie na maszynę', 'Zwrot'];
+const ADJ_REASONS = { 1: ADJ_REASONS_LIST, '-1': ADJ_REASONS_LIST };
+function adjCurrent() {
+  const p = adjCtx && pallets.find(x => x.id === adjCtx.palletId);
+  const it = p && p.items && p.items[adjCtx.idx];
+  return it ? Number(it.qty) || 0 : null;
+}
+function openAdjust(palletId, idx, dir) {
+  const p = pallets.find(x => x.id === palletId);
+  const it = p && p.items && p.items[idx];
+  if (!it) return;
+  adjCtx = { palletId, idx, dir, label: `${it.size || ''} ${it.name || ''}`.trim() };
+  document.getElementById('adjProduct').textContent = `${adjCtx.label} · paleta ${p.code}`;
+  document.getElementById('adjQty').value = 400;
+  document.getElementById('adjNote').value = '';
+  setAdjDir(dir);
+  openModal('adjustModal');
+}
+function setAdjDir(dir) {
+  adjCtx.dir = dir;
+  document.getElementById('adjIn').classList.toggle('on', dir === 1);
+  document.getElementById('adjOut').classList.toggle('on', dir === -1);
+  document.getElementById('adjTitle').textContent = dir === 1 ? 'Przyjęcie towaru' : 'Wydanie towaru';
+  document.getElementById('adjReasonSel').innerHTML = '<option value="">— wybierz powód —</option>' + ADJ_REASONS[dir].map(r => `<option>${esc(r)}</option>`).join('');
+  updateAdjPreview();
+}
+function adjChip(n) { document.getElementById('adjQty').value = n; updateAdjPreview(); }
+function updateAdjPreview() {
+  const cur = adjCurrent(), q = Math.round(Number(document.getElementById('adjQty').value)) || 0;
+  if (cur === null) return;
+  const after = Math.max(0, cur + adjCtx.dir * q);
+  document.getElementById('adjPreview').innerHTML = `Stan: ${cur} → ${after} szt.` + (adjCtx.dir === -1 && q > cur ? '<small>Wydajesz więcej niż jest na palecie, stan spadnie do 0.</small>' : '');
+}
+function confirmAdjust() {
+  const q = Math.round(Number(document.getElementById('adjQty').value));
+  const reason = document.getElementById('adjReasonSel').value;
+  const note = document.getElementById('adjNote').value.trim();
+  if (!Number.isFinite(q) || q <= 0) return showCustomAlert('Błąd', 'Podaj ilość większą od zera.', '⚠️');
+  if (!reason) return showCustomAlert('Brak powodu', 'Wybierz powód zmiany stanu.', '⚠️');
+  quickAdjustItem(adjCtx.palletId, adjCtx.idx, adjCtx.dir * q, note ? `${reason} (${note})` : reason, { reason, note });
+  closeModal('adjustModal');
+}
+
+let stCounts = {}, stLabels = {};
+function openStocktake() {
+  if (currentRole === 'pracownik') return;
+  stCounts = {};
+  const sorted = [...pallets].sort((a, b) => String(a.code).localeCompare(String(b.code)));
+  document.getElementById('stPallet').innerHTML = '<option value="">Wszystkie palety</option>' + sorted.map(p => `<option value="${esc(p.id)}">${esc(p.code)}</option>`).join('');
+  renderStocktake();
+  openModal('stocktakeModal');
+}
+function stDiffHtml(v, sys) {
+  if (v === '' || v === undefined) return '';
+  const d = Math.round(Number(v)) - sys;
+  return `<strong style="color:${d === 0 ? 'var(--success)' : 'var(--danger)'}">${d > 0 ? '+' : ''}${d}</strong>`;
+}
+function renderStocktake() {
+  const only = document.getElementById('stPallet').value;
+  const rows = [];
+  [...pallets].sort((a, b) => String(a.code).localeCompare(String(b.code))).filter(p => !only || p.id === only)
+    .forEach(p => (p.items || []).forEach((it, idx) => rows.push({ p, it, idx })));
+  document.getElementById('stBody').innerHTML = rows.map(({ p, it, idx }) => {
+    const key = `${p.id}:${idx}`, sys = Number(it.qty) || 0, label = `${it.size || ''} ${it.name || ''}`.trim();
+    stLabels[key] = label;
+    const v = stCounts[key] ?? '';
+    return `<tr><td><strong>${esc(p.code)}</strong></td><td>${esc(label)}</td><td>${sys}</td><td><input type="number" min="0" class="min-input" data-key="${esc(key)}" data-sys="${sys}" value="${esc(v)}" oninput="stInput(this)"></td><td>${stDiffHtml(v, sys)}</td></tr>`;
+  }).join('') || '<tr><td colspan="5" style="text-align:center; color:var(--muted); padding:20px;">Brak pozycji</td></tr>';
+  stSummary();
+}
+function stInput(el) {
+  stCounts[el.dataset.key] = el.value;
+  el.closest('tr').lastElementChild.innerHTML = stDiffHtml(el.value, Number(el.dataset.sys));
+  stSummary();
+}
+function stSummary() {
+  const n = Object.values(stCounts).filter(v => v !== '').length;
+  document.getElementById('stSummary').textContent = `Policzono pozycji: ${n}`;
+}
+function applyStocktake() {
+  if (currentRole === 'pracownik') return;
+  const byPallet = {};
+  Object.entries(stCounts).forEach(([key, v]) => {
+    if (v === '') return;
+    const c = Math.round(Number(v));
+    if (!Number.isFinite(c) || c < 0) return;
+    const [pid, idx] = key.split(':');
+    (byPallet[pid] = byPallet[pid] || []).push({ key, idx: Number(idx), c });
+  });
+  let changed = 0, skipped = 0;
+  Object.entries(byPallet).forEach(([pid, list]) => {
+    const p = pallets.find(x => x.id === pid);
+    if (!p || !p.items) return;
+    let touched = false;
+    list.forEach(({ key, idx, c }) => {
+      const it = p.items[idx];
+      if (!it || `${it.size || ''} ${it.name || ''}`.trim() !== stLabels[key]) { skipped++; return; }
+      const old = Number(it.qty) || 0;
+      if (old === c) return;
+      it.qty = c; touched = true; changed++;
+      addLog('edit', `zmienił(a) stan (inwentaryzacja): ${stLabels[key]} na palecie ${p.code}: ${old} → ${c} szt. (${c - old > 0 ? '+' : ''}${c - old})`);
+      logMove({ type: 'count', label: stLabels[key], qty: c - old, pallet: p.code, reason: 'Inwentaryzacja', note: '' });
+    });
+    if (touched) { p.items = p.items.filter(i => (Number(i.qty) || 0) > 0); db.child(pid).set(p); }
+  });
+  closeModal('stocktakeModal');
+  showToast('Inwentaryzacja', changed ? `Poprawiono pozycji: ${changed}${skipped ? ` (pominięto ${skipped} zmienionych w międzyczasie)` : ''}` : 'Brak różnic do zapisania.', changed ? 'success' : 'info');
+}
+
+let deferredInstall = null;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault(); deferredInstall = e;
+  const b = document.getElementById('btnInstallApp'); if (b) b.style.display = 'flex';
+});
+function installApp() {
+  if (!deferredInstall) return;
+  deferredInstall.prompt();
+  deferredInstall.userChoice.finally(() => { deferredInstall = null; const b = document.getElementById('btnInstallApp'); if (b) b.style.display = 'none'; });
+}
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
 }
 
 function totalQty(p){return (p.items||[]).reduce((a,i)=>a+(Number(i.qty)||0),0)}
@@ -2265,19 +3050,10 @@ function render(){
   const q = document.getElementById('search').value.toLowerCase().trim();
   const currentBranch = getActiveBranch();
   
-  const list = pallets.filter(p => !q || [p.code, p.name, p.location, ...(p.items || []).map(i => i.size + ' ' + i.name)].join(' ').toLowerCase().includes(q));
+  const list = pallets.filter(p => !q || [p.code, p.name, p.location, getLocationLabel(p), ...(p.items || []).map(i => `${i.size || ''} ${i.name || ''}`.trim())].join(' ').toLowerCase().includes(q));
   
   document.getElementById('palletGrid').innerHTML = list.length ? list.map(p => {
-    let locLabel = p.location || 'Poza mapą';
-    if (p.mapSlot) {
-      if (currentBranch === 'niepruszewo') {
-        const rowObj = MAP_ROWS_NIEPRUSZEWO.find(r => r.id === p.mapSlot);
-        if (rowObj) locLabel = `📍 ${rowObj.name}`;
-      } else {
-        const slotObj = MAP_SLOTS_ROSNOWO.find(s => s.id === p.mapSlot);
-        locLabel = `📍 ${slotObj ? slotObj.sector : 'Przypisana na mapie'}`;
-      }
-    }
+    const locLabel = getLocationLabel(p);
 
     return `
       <article class="pallet" onclick="openDetails('${p.id}')">
@@ -2285,7 +3061,7 @@ function render(){
          <div><div class="pallet-code">${highlight(p.code, q)}</div><div class="pallet-name">${highlight(p.name || 'Brak opisu', q)}</div></div>
          <span class="badge">${(p.items||[]).length} poz.</span>
        </div>
-       <div class="pallet-items-preview">${(p.items||[]).slice(0,3).map(i => `<div>• ${highlight(i.size + ' ' + i.name, q)} (${i.qty})</div>`).join('')}</div>
+       <div class="pallet-items-preview">${(p.items||[]).slice(0,3).map(i => `<div>• ${highlight(`${i.size || ''} ${i.name || ''}`.trim(), q)} (${i.qty})</div>`).join('')}</div>
        <div class="pallet-meta">
          <span style="font-weight:700; color:var(--primary);">${highlight(locLabel, q)}</span>
          <strong style="font-family:var(--font-mono); color:var(--text);">${totalQty(p)} szt.</strong>
@@ -2302,6 +3078,7 @@ function render(){
   document.getElementById('statPallets').textContent = pallets.length;
   document.getElementById('statItems').textContent = pallets.reduce((a,p) => a + (p.items||[]).length, 0);
   document.getElementById('statQty').textContent = pallets.reduce((a,p) => a + totalQty(p), 0);
+  renderLowStock();
 }
 
 function openPalletForm(id=null){
@@ -2328,6 +3105,9 @@ function addItemRow(data={size:'',name:'',qty:''}){
 function savePallet(){
   const code=document.getElementById('pCode').value.trim();
   if(!code) return showCustomAlert('Błąd', 'Podaj numer palety.', '⚠️');
+  if (pallets.some(x => (x.code || '').toLowerCase() === code.toLowerCase() && x.id !== editingId)) {
+    return showCustomAlert('Błąd', `Paleta o numerze ${code} już istnieje.`, '⚠️');
+  }
   
   if (!editingId && currentRole === 'pracownik') {
     return showCustomAlert('Brak uprawnień', 'Pracownik może edytować i dodawać produkty tylko na istniejących paletach!', '⚠️');
@@ -2336,14 +3116,16 @@ function savePallet(){
   const items=[...document.querySelectorAll('.item-row')].map(r=>({
     size: r.querySelector('.isize').value.trim(),
     name: r.querySelector('.iname').value.trim(),
-    qty: Number(r.querySelector('.iqty').value)||0
+    qty: Math.max(0, Math.round(Number(r.querySelector('.iqty').value) || 0))
   })).filter(i => i.name || i.size);
 
   const id = editingId || db.push().key;
   const existing = pallets.find(x => x.id === id);
   const obj={ id, code, name:document.getElementById('pName').value.trim(), location:document.getElementById('pLocation').value.trim(), items, mapSlot: existing?.mapSlot||null, updatedAt:new Date().toISOString() };
 
+  const before = new Set((existing?.items || []).map(i => pk(`${i.size || ''} ${i.name || ''}`)));
   db.child(id).set(obj, () => {
+    ensureMinLevels(items.filter(i => !before.has(pk(`${i.size || ''} ${i.name || ''}`))));
     addLog('edit', `${editingId ? 'zaktualizował(a)' : 'dodał(a)'} paletę ${code}`);
     closeModal('formModal');
     showToast('Zapisano', `Paleta ${code} zapisana.`, 'success');
@@ -2362,7 +3144,7 @@ function deletePallet(id){
 function renderPalletTimeline(p) {
   const container = document.getElementById('palletTimelineContainer');
   if (!container) return;
-  const palletLogs = logs.filter(l => l.text && l.text.includes(p.code));
+  const palletLogs = logs.filter(l => logMentionsPallet(l.text, p.code));
   container.innerHTML = palletLogs.map(l => `
     <div class="timeline-item">
       <div class="timeline-content">
@@ -2379,16 +3161,7 @@ function openDetails(id){
   if (!p) return;
   
   const currentBranch = getActiveBranch();
-  let locLabel = p.location || 'Poza mapą';
-  if (p.mapSlot) {
-    if (currentBranch === 'niepruszewo') {
-      const rowObj = MAP_ROWS_NIEPRUSZEWO.find(r => r.id === p.mapSlot);
-      if (rowObj) locLabel = `📍 ${rowObj.name}`;
-    } else {
-      const slotObj = MAP_SLOTS_ROSNOWO.find(s => s.id === p.mapSlot);
-      locLabel = `📍 ${slotObj ? slotObj.sector : 'Przypisana na mapie'}`;
-    }
-  }
+  const locLabel = getLocationLabel(p);
 
   document.getElementById('detailContent').innerHTML = `
     <div class="modal-head">
@@ -2401,7 +3174,7 @@ function openDetails(id){
       </div>
     </div>
     <div style="padding:20px 24px;">
-      <div style="font-size:11px; color:var(--primary); font-weight:600; margin-bottom:14px; background:var(--primary-light); padding:8px 12px; border-radius:6px; border:1px solid rgba(37,99,235,0.2);">💡 <strong>Adnotacja magazynowa:</strong> 1 kosz = 400 sztuk | 1 paleta = 4000 sztuk.</div>
+      <div style="font-size:11px; color:var(--primary); font-weight:600; margin-bottom:14px; background:var(--primary-light); padding:8px 12px; border-radius:6px; border:1px solid rgba(47, 91, 234,0.2);">💡 <strong>Adnotacja magazynowa:</strong> 1 kosz = 400 sztuk | 1 paleta = 4000 sztuk.</div>
       <div class="detail-cards">
         <div class="detail-card"><div class="detail-card-label">Lokalizacja na mapie</div><div class="detail-card-value" style="color:var(--primary);">${esc(locLabel)}</div></div>
         <div class="detail-card"><div class="detail-card-label">Pozycje</div><div class="detail-card-value">${(p.items||[]).length}</div></div>
@@ -2409,7 +3182,7 @@ function openDetails(id){
       </div>
       <div class="styled-table-container">
         <table class="table">
-          <thead><tr><th>Produkt</th><th>Ilość</th><th style="text-align:right">Szybka zmiana</th></tr></thead>
+          <thead><tr><th>Produkt</th><th>Ilość</th><th style="text-align:right">Zmiana stanu</th></tr></thead>
           <tbody>
             ${(p.items || []).map((item, index) => `
               <tr>
@@ -2417,9 +3190,9 @@ function openDetails(id){
                 <td><strong style="font-family:var(--font-mono);">${item.qty} szt.</strong></td>
                 <td style="text-align:right">
                   <div class="quick-adjust-group">
-                    <button class="btn-adjust btn-minus" onclick="quickAdjustWithInput('${p.id}', ${index}, -1)">-</button>
-                    <input type="number" class="quick-adjust-input" id="adj_val_${index}" value="400" min="1">
-                    <button class="btn-adjust btn-plus" onclick="quickAdjustWithInput('${p.id}', ${index}, 1)">+</button>
+                    <button class="btn-adjust btn-minus" onclick="openAdjust('${p.id}', ${index}, -1)">📤 Wydaj</button>
+                    <button class="btn-adjust btn-plus" onclick="openAdjust('${p.id}', ${index}, 1)">📥 Przyjmij</button>
+                    <button class="btn-adjust" onclick="openTransfer('${p.id}', ${index})">🔀 Przenieś</button>
                   </div>
                 </td>
               </tr>
@@ -2441,7 +3214,7 @@ function quickAdjustWithInput(palletId, itemIndex, direction) {
   const inputEl = document.getElementById(`adj_val_${itemIndex}`);
   const val = Number(inputEl ? inputEl.value : 400);
   if (isNaN(val) || val <= 0) return showCustomAlert('Błąd', 'Wpisz poprawną wartość ilości!', '⚠️');
-  quickAdjustItem(palletId, itemIndex, direction * val);
+  quickAdjustItem(palletId, itemIndex, direction * val, (window.lastReason || '').trim());
 }
 
 function openQuickAddModal(id) {
@@ -2455,8 +3228,8 @@ function openQuickAddModal(id) {
 function saveQuickItem() {
   const size = document.getElementById('quickItemSize').value.trim();
   const name = document.getElementById('quickItemName').value.trim();
-  const qty = Number(document.getElementById('quickItemQty').value);
-  if (!name || qty <= 0) return showCustomAlert('Błąd', 'Podaj nazwę i ilość.', '⚠️');
+  const qty = Math.round(Number(document.getElementById('quickItemQty').value));
+  if (!name || !Number.isFinite(qty) || qty <= 0) return showCustomAlert('Błąd', 'Podaj nazwę i ilość.', '⚠️');
 
   const p = pallets.find(x => x.id === editingId);
   if (!p) return;
@@ -2464,18 +3237,21 @@ function saveQuickItem() {
   p.items.push({ size, name, qty });
   db.child(editingId).set(p, () => {
     closeModal('quickAddModal');
+    ensureMinLevels([{ size, name }]);
+    logMove({ type: 'in', label: `${size} ${name}`.trim(), qty, pallet: p.code, reason: 'Nowy produkt', note: '' });
     addLog('edit', `dodał(a) ${qty} szt. (${size} ${name}) na palecie ${p.code}`);
     showToast('Dodano', `Dodano ${qty} szt.`, 'success');
     openDetails(editingId);
   });
 }
 
-function quickAdjustItem(palletId, itemIndex, delta) {
+function quickAdjustItem(palletId, itemIndex, delta, reason = '', meta = null) {
   const p = pallets.find(x => x.id === palletId);
   if (!p || !p.items || !p.items[itemIndex]) return;
   
   const item = p.items[itemIndex];
   const itemSizeName = `${item.size || ''} ${item.name || ''}`.trim();
+  const rs = reason ? ` — powód: ${reason}` : '';
   const oldQty = Number(item.qty) || 0;
   const newQty = Math.max(0, oldQty + delta);
   const actualDiff = newQty - oldQty;
@@ -2488,10 +3264,11 @@ function quickAdjustItem(palletId, itemIndex, delta) {
   db.child(palletId).set(p, () => {
     const absDiff = Math.abs(actualDiff);
     const logActionText = actualDiff > 0 
-      ? `dodał(a) ${absDiff} szt. (${itemSizeName}) na palecie ${p.code}`
-      : `odjął(ęła) ${absDiff} szt. (${itemSizeName}) na palecie ${p.code}`;
+      ? `dodał(a) ${absDiff} szt. (${itemSizeName}) na palecie ${p.code}${rs}`
+      : `odjął(ęła) ${absDiff} szt. (${itemSizeName}) na palecie ${p.code}${rs}`;
 
     addLog('edit', logActionText);
+    logMove({ type: actualDiff > 0 ? 'in' : 'out', label: itemSizeName, qty: actualDiff, pallet: p.code, reason: meta ? meta.reason : reason, note: meta ? meta.note : '' });
 
     if (actualDiff > 0) {
       showToast('Dodano', `Dodano ${absDiff} szt.`, 'success');
@@ -2501,8 +3278,137 @@ function quickAdjustItem(palletId, itemIndex, delta) {
   });
 }
 
-function openModal(id) { const m = document.getElementById(id); if (m) { m.style.display = 'flex'; setTimeout(() => m.classList.add('show'), 10); } }
-function closeModal(id) { const m = document.getElementById(id); if (m) { m.classList.remove('show'); setTimeout(() => m.style.display = 'none', 150); } }
+function openModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  const timers = (window.__modalTimers = window.__modalTimers || {});
+  clearTimeout(timers[id]);
+  m.style.display = 'flex';
+  setTimeout(() => m.classList.add('show'), 10);
+}
+function closeModal(id) {
+  const m = document.getElementById(id);
+  if (!m) return;
+  const timers = (window.__modalTimers = window.__modalTimers || {});
+  m.classList.remove('show');
+  clearTimeout(timers[id]);
+  timers[id] = setTimeout(() => { m.style.display = 'none'; }, 150);
+}
+const movesRef = () => firebase.database().ref(`branches/${getActiveBranch()}/ruchy`);
+function logMove(m) {
+  try { movesRef().push({ t: Date.now(), user: currentUserName || '', ...m }); } catch (e) { console.error(e); }
+}
+const MOVE_TYPES = { in: 'Przyjęcie', out: 'Wydanie', move_in: 'Przesunięcie (przyjęto)', move_out: 'Przesunięcie (wydano)', count: 'Inwentaryzacja' };
+
+// ---------- przenoszenie między paletami
+let trCtx = null;
+function openTransfer(palletId, idx) {
+  const p = pallets.find(x => x.id === palletId);
+  const it = p && p.items && p.items[idx];
+  if (!it) return;
+  const others = pallets.filter(x => x.id !== palletId).sort((a, b) => String(a.code).localeCompare(String(b.code)));
+  if (!others.length) return showCustomAlert('Brak palet', 'Nie ma innej palety, na którą można przenieść towar.', '⚠️');
+  trCtx = { palletId, idx, label: `${it.size || ''} ${it.name || ''}`.trim() };
+  document.getElementById('trProduct').textContent = `${trCtx.label} · z palety ${p.code} (stan: ${Number(it.qty) || 0} szt.)`;
+  document.getElementById('trTarget').innerHTML = '<option value="">— wybierz paletę —</option>' + others.map(o => `<option value="${esc(o.id)}">${esc(o.code)}${o.name ? ' · ' + esc(o.name) : ''}</option>`).join('');
+  document.getElementById('trQty').value = Math.min(400, Number(it.qty) || 0);
+  document.getElementById('trNote').value = '';
+  openModal('transferModal');
+}
+function confirmTransfer() {
+  const src = pallets.find(x => x.id === trCtx.palletId);
+  const it = src && src.items && src.items[trCtx.idx];
+  const dst = pallets.find(x => x.id === document.getElementById('trTarget').value);
+  const q = Math.round(Number(document.getElementById('trQty').value));
+  const note = document.getElementById('trNote').value.trim();
+  if (!it || `${it.size || ''} ${it.name || ''}`.trim() !== trCtx.label) return showCustomAlert('Błąd', 'Pozycja zmieniła się w międzyczasie. Otwórz paletę ponownie.', '⚠️');
+  if (!dst) return showCustomAlert('Błąd', 'Wybierz paletę docelową.', '⚠️');
+  if (!Number.isFinite(q) || q <= 0) return showCustomAlert('Błąd', 'Podaj ilość większą od zera.', '⚠️');
+  if (q > (Number(it.qty) || 0)) return showCustomAlert('Błąd', `Na palecie ${src.code} jest tylko ${Number(it.qty) || 0} szt.`, '⚠️');
+  const a = JSON.parse(JSON.stringify(src)), b = JSON.parse(JSON.stringify(dst));
+  a.items[trCtx.idx].qty = (Number(it.qty) || 0) - q;
+  if (a.items[trCtx.idx].qty <= 0) a.items.splice(trCtx.idx, 1);
+  b.items = b.items || [];
+  const same = b.items.find(i => `${i.size || ''} ${i.name || ''}`.trim() === trCtx.label);
+  if (same) same.qty = (Number(same.qty) || 0) + q; else b.items.push({ size: it.size || '', name: it.name || '', qty: q });
+  db.update({ [src.id]: a, [dst.id]: b }, (err) => {
+    if (err) return showToast('Błąd', 'Nie udało się przenieść towaru.', 'danger');
+    addLog('edit', `przeniósł(sła) ${q} szt. (${trCtx.label}) z palety ${src.code} na paletę ${dst.code}${note ? ` (${note})` : ''}`);
+    logMove({ type: 'move_out', label: trCtx.label, qty: -q, pallet: src.code, reason: 'Przesunięcie na inną paletę', note: `→ ${dst.code}${note ? ', ' + note : ''}` });
+    logMove({ type: 'move_in', label: trCtx.label, qty: q, pallet: dst.code, reason: 'Przesunięcie na inną paletę', note: `← ${src.code}${note ? ', ' + note : ''}` });
+    closeModal('transferModal');
+    showToast('Przeniesiono', `${q} szt. z ${src.code} na ${dst.code}`, 'success');
+  });
+}
+
+// ---------- ruchy i raporty
+let movesData = [];
+function initMovesDefaults() {
+  const f = document.getElementById('mvFrom'), t = document.getElementById('mvTo');
+  if (!t.value) t.value = new Date().toISOString().slice(0, 10);
+  if (!f.value) f.value = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+}
+function loadMoves() {
+  if (currentRole !== 'admin') return;
+  movesRef().orderByKey().limitToLast(3000).once('value', (snap) => {
+    movesData = Object.values(snap.val() || {}).sort((a, b) => b.t - a.t);
+    renderMoves();
+  });
+}
+function movesFiltered() {
+  const f = document.getElementById('mvFrom').value, t = document.getElementById('mvTo').value, ty = document.getElementById('mvType').value;
+  const from = f ? new Date(f + 'T00:00:00').getTime() : 0, to = t ? new Date(t + 'T23:59:59').getTime() : Infinity;
+  return movesData.filter(m => m.t >= from && m.t <= to && (!ty || m.type === ty));
+}
+function movesStats(list) {
+  const r = { inSum: 0, outSum: 0, returns: 0, corrections: 0, machines: {} };
+  list.forEach(m => {
+    if (m.type === 'in') { r.inSum += m.qty; if (m.reason === 'Zwrot') r.returns += m.qty; }
+    if (m.type === 'out') {
+      r.outSum -= m.qty;
+      if (m.reason === 'Wydanie na maszynę') { const k = (m.note || '(bez nazwy maszyny)').trim().toLowerCase(); r.machines[k] = (r.machines[k] || 0) - m.qty; }
+    }
+    if (m.reason === 'Korekta' || m.type === 'count') r.corrections++;
+  });
+  return r;
+}
+function renderMoves() {
+  const list = movesFiltered(), st = movesStats(list);
+  const card = (ic, lab, val) => `<div class="stat"><div class="stat-icon">${ic}</div><div><div class="stat-label">${lab}</div><div class="stat-value">${val}</div></div></div>`;
+  document.getElementById('movesSummary').innerHTML = card('📥', 'Przyjęto (szt.)', st.inSum) + card('📤', 'Wydano (szt.)', st.outSum) + card('↩️', 'Zwroty (szt.)', st.returns) + card('✏️', 'Korekty i inwentaryzacje', st.corrections);
+  const mach = Object.entries(st.machines).sort((a, b) => b[1] - a[1]);
+  document.getElementById('movesByMachine').innerHTML = mach.length ? mach.map(([k, v]) => `<tr><td><strong>${esc(k)}</strong></td><td>${v}</td></tr>`).join('') : '<tr><td colspan="2" style="text-align:center; color:var(--muted); padding:16px;">Brak wydań na maszyny w tym okresie</td></tr>';
+  document.getElementById('movesBody').innerHTML = list.length ? list.slice(0, 300).map(m => `<tr><td>${new Date(m.t).toLocaleString('pl-PL')}</td><td>${esc(MOVE_TYPES[m.type] || m.type)}</td><td>${esc(m.label)}</td><td><strong style="color:${m.qty > 0 ? 'var(--success)' : 'var(--danger)'}">${m.qty > 0 ? '+' : ''}${m.qty}</strong></td><td>${esc(m.pallet)}</td><td>${esc(m.reason)}</td><td>${esc(m.note)}</td><td>${esc(m.user)}</td></tr>`).join('') : '<tr><td colspan="8" style="text-align:center; color:var(--muted); padding:20px;">Brak ruchów w wybranym okresie</td></tr>';
+}
+function exportMovesCSV() {
+  let csv = 'Data;Rodzaj;Produkt;Ilość;Paleta;Powód;Maszyna/uwagi;Kto\n';
+  movesFiltered().forEach(m => { csv += [new Date(m.t).toLocaleString('pl-PL'), MOVE_TYPES[m.type] || m.type, m.label, m.qty, m.pallet, m.reason, m.note, m.user].map(csvCell).join(';') + '\n'; });
+  downloadCSV(csv, `ruchy_${getActiveBranch()}.csv`);
+}
+
+// ---------- wydruk / PDF (w oknie drukowania wybierz "Zapisz jako PDF")
+function printReport(kind) {
+  const branch = getActiveBranch() === 'rosnowo' ? 'Rosnowo' : 'Niepruszewo';
+  const tbl = (head, rows) => `<table><thead><tr>${head.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.map(r => `<tr>${r.map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('') || `<tr><td colspan="${head.length}">Brak danych</td></tr>`}</tbody></table>`;
+  let html = `<h1>Magazyn Tulejek: oddział ${branch}</h1><div>Raport wygenerowany: ${new Date().toLocaleString('pl-PL')} (${esc(currentUserName || '')})</div>`;
+  if (kind === 'moves') {
+    const list = movesFiltered(), st = movesStats(list);
+    html += `<h2>Ruchy magazynowe ${esc(document.getElementById('mvFrom').value)} – ${esc(document.getElementById('mvTo').value)}</h2><div>Przyjęto: <b>${st.inSum}</b> szt. | Wydano: <b>${st.outSum}</b> szt. | Zwroty: <b>${st.returns}</b> szt. | Korekty i inwentaryzacje: <b>${st.corrections}</b></div>`;
+    html += '<h2>Wydania na maszyny</h2>' + tbl(['Maszyna / uwagi', 'Wydano (szt.)'], Object.entries(st.machines).sort((a, b) => b[1] - a[1]).map(([k, v]) => [k, v]));
+    html += '<h2>Lista ruchów</h2>' + tbl(['Data', 'Rodzaj', 'Produkt', 'Ilość', 'Paleta', 'Powód', 'Maszyna / uwagi', 'Kto'], list.slice(0, 500).map(m => [new Date(m.t).toLocaleString('pl-PL'), MOVE_TYPES[m.type] || m.type, m.label, (m.qty > 0 ? '+' : '') + m.qty, m.pallet, m.reason, m.note, m.user]));
+  } else {
+    const prod = {};
+    pallets.forEach(p => (p.items || []).forEach(i => { const l = `${i.size || ''} ${i.name || ''}`.trim(); const o = prod[l] = prod[l] || { qty: 0, pal: new Set() }; o.qty += Number(i.qty) || 0; o.pal.add(p.id); }));
+    const total = Object.values(prod).reduce((a, o) => a + o.qty, 0), low = getLowStock();
+    html += `<h2>Podsumowanie</h2><div>Palet: <b>${pallets.length}</b> | Produktów: <b>${Object.keys(prod).length}</b> | Sztuk razem: <b>${total}</b> | Poniżej minimum: <b>${low.length}</b></div>`;
+    if (low.length) html += '<h2>Niski stan</h2>' + tbl(['Produkt', 'Stan', 'Minimum', 'Brakuje'], low.map(l => [l.label, l.qty, l.min, l.min - l.qty]));
+    html += '<h2>Stan wg produktu</h2>' + tbl(['Produkt', 'Ilość (szt.)', 'Palet', 'Minimum'], Object.keys(prod).sort().map(l => [l, prod[l].qty, prod[l].pal.size, (minLevels[pk(l)] || {}).min || '—']));
+    html += '<h2>Palety</h2>' + tbl(['Paleta', 'Nazwa', 'Lokalizacja', 'Zawartość'], [...pallets].sort((a, b) => String(a.code).localeCompare(String(b.code))).map(p => [p.code, p.name || '', getLocationLabel(p).replace('📍 ', ''), (p.items || []).map(i => `${`${i.size || ''} ${i.name || ''}`.trim()}: ${i.qty}`).join('; ')]));
+  }
+  document.getElementById('printArea').innerHTML = html;
+  setTimeout(() => window.print(), 80);
+}
+
 function addLog(action, text) {
   const logId = logsDb.push().key;
   logsDb.child(logId).set({ id: logId, action, text: `[${currentUserName}] ${text}`, time: new Date().toISOString() });
