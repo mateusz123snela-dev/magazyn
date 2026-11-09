@@ -581,6 +581,36 @@ h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
   #printArea tr { break-inside: avoid; }
   @page { margin: 14mm; }
 }
+#quickIssue { display: none; position: fixed; inset: 0; z-index: 700; background: var(--bg); overflow: auto; padding: 18px 22px 40px; }
+#quickIssue.show { display: block; }
+.qi-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.qi-steps { display: flex; gap: 8px; flex-wrap: wrap; }
+.qi-step { padding: 10px 18px; border-radius: 999px; background: #fff; border: 1px solid var(--panel-border); font-weight: 700; color: var(--muted); font-size: 15px; }
+.qi-step.on { background: var(--primary); color: #fff; border-color: var(--primary); }
+.qi-step.done { background: rgba(22, 163, 106, 0.12); color: var(--success); border-color: transparent; }
+.qi-title { font-size: 26px; font-weight: 800; margin: 0 0 14px; }
+.qi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+.qi-tile { min-height: 96px; padding: 16px; border-radius: 18px; border: 2px solid var(--panel-border); background: #fff; font: inherit; font-size: 19px; font-weight: 800; text-align: left; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; gap: 6px; color: var(--text); }
+.qi-tile small { font-size: 14px; font-weight: 600; color: var(--muted); }
+.qi-tile:hover, .qi-tile:active { border-color: var(--primary); background: var(--primary-light); }
+.qi-tile.low small { color: var(--danger); }
+.qi-summary { background: #fff; border: 1px solid var(--panel-border); border-radius: 16px; padding: 14px 18px; margin-bottom: 16px; font-size: 18px; font-weight: 700; }
+.qi-display { font-size: 56px; font-weight: 800; text-align: center; background: #fff; border: 2px solid var(--primary); border-radius: 18px; padding: 12px; margin: 0 auto 14px; max-width: 420px; }
+.qi-keys { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; max-width: 420px; margin: 0 auto 16px; }
+.qi-keys button { min-height: 68px; font-size: 26px; font-weight: 800; border-radius: 16px; border: 1px solid var(--panel-border); background: #fff; cursor: pointer; font-family: inherit; color: var(--text); }
+.qi-chips { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 16px; }
+.qi-chips button { min-height: 64px; padding: 0 24px; font-size: 20px; font-weight: 800; border-radius: 16px; border: 2px solid var(--primary); background: var(--primary-light); color: var(--primary); cursor: pointer; font-family: inherit; }
+.qi-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+.qi-actions button { min-height: 68px; padding: 0 32px; font-size: 20px; font-weight: 800; border-radius: 16px; }
+.qi-done { text-align: center; padding: 30px 10px; }
+.qi-done .big { font-size: 72px; }
+.qi-done h2 { font-size: 28px; margin: 8px 0 6px; }
+.qi-input { width: 100%; max-width: 420px; font-size: 22px; padding: 16px; border-radius: 14px; border: 2px solid var(--primary); font-family: inherit; }
+.qi-launch { background: linear-gradient(135deg, #16A36A, #0E7A4E) !important; font-size: 16px; font-weight: 800; padding: 14px 26px; border-radius: 14px; box-shadow: 0 6px 18px rgba(22, 163, 106, 0.4) !important; }
+.qi-launch:hover { filter: brightness(1.08); }
+.qi-fab { display: none; position: fixed; right: 20px; bottom: 20px; z-index: 300; align-items: center; gap: 8px; padding: 16px 26px; border: 0; border-radius: 999px; background: linear-gradient(135deg, #16A36A, #0E7A4E); color: #fff; font-family: inherit; font-weight: 800; font-size: 17px; cursor: pointer; box-shadow: 0 10px 28px rgba(14, 122, 78, 0.45); }
+.qi-fab:hover { filter: brightness(1.08); }
+@media print { .qi-fab { display: none !important; } }
 </style>
 </head>
 <body>
@@ -750,6 +780,7 @@ h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
 
     <div class="toolbar">
       <div class="search"><span>🔍</span><input id="search" placeholder="Szukaj palety, lokalizacji, rozmiaru lub nazwy..." oninput="debouncedRender()"></div>
+      <button class="primary qi-launch" onclick="openQuickIssue()">⚡ Szybkie wydanie</button>
       <button class="secondary" id="btnStocktake" onclick="openStocktake()">📋 Inwentaryzacja</button>
       <button class="secondary" id="btnReport" onclick="printReport('stock')">🖨️ Raport</button>
       <button class="secondary" onclick="exportData()">💾 Eksport JSON</button>
@@ -1198,6 +1229,11 @@ h1 { font-size: 28px; font-weight: 800; letter-spacing: -0.5px; }
   <div class="modal-foot"><button class="secondary" onclick="closeModal('stocktakeModal')">Anuluj</button><button class="primary" onclick="applyStocktake()">Zatwierdź korekty</button></div>
  </div>
 </div>
+<button id="qiFab" class="qi-fab" onclick="openQuickIssue()">⚡ Szybkie wydanie</button>
+<div id="quickIssue">
+  <div class="qi-head"><div class="qi-steps" id="qiSteps"></div><button class="secondary" onclick="closeQuickIssue()" style="min-height:52px; font-size:16px; padding:0 22px;">✕ Zamknij</button></div>
+  <div id="qiBody"></div>
+</div>
 <div id="printArea"></div>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
@@ -1249,6 +1285,9 @@ function resetAppState() {
   if (userPresenceRef) userPresenceRef.remove();
   if (sessionMonitorRef) sessionMonitorRef.off();
   unbindUsersListener();
+  closeQuickIssue();
+  const fabEl = document.getElementById('qiFab');
+  if (fabEl) fabEl.style.display = 'none';
 
   pallets = [];
   logs = [];
@@ -2042,6 +2081,8 @@ function applyRoleUI() {
   document.getElementById('userNameDisplay').textContent = currentUserName;
   const stBtn = document.getElementById('btnStocktake');
   if (stBtn) stBtn.style.display = currentRole === 'pracownik' ? 'none' : '';
+  const fab = document.getElementById('qiFab');
+  if (fab) fab.style.display = 'flex';
   const rpBtn = document.getElementById('btnReport');
   if (rpBtn) rpBtn.style.display = currentRole === 'pracownik' ? 'none' : '';
   document.querySelectorAll('.admin-nav-item').forEach(e => e.remove());
@@ -3407,6 +3448,136 @@ function printReport(kind) {
   }
   document.getElementById('printArea').innerHTML = html;
   setTimeout(() => window.print(), 80);
+}
+
+// ---------- szybkie wydanie: produkt → ilość → maszyna
+// stałe listy maszyn (tylko dla wskazanego oddziału)
+const FIXED_MACHINES = { rosnowo: ['C2', 'C3', 'C4', 'K1', 'K2', 'K3', 'WBT'] };
+const itemLabel = (i) => `${i.size || ''} ${i.name || ''}`.trim();
+const qi = { step: 'product', products: [], label: '', max: 0, qty: '', machines: [], custom: false, last: null, busy: false, filter: '' };
+
+function openQuickIssue() {
+  const map = {};
+  pallets.forEach(p => (p.items || []).forEach(i => { const l = itemLabel(i), q = Number(i.qty) || 0; if (l && q > 0) map[l] = (map[l] || 0) + q; }));
+  qi.products = Object.keys(map).sort((a, b) => a.localeCompare(b, 'pl')).map(l => ({ label: l, qty: map[l], low: ((minLevels[pk(l)] || {}).min || 0) > map[l] }));
+  qi.step = 'product'; qi.filter = ''; qi.custom = false; qi.last = null; qi.busy = false;
+  qi.machines = [...(FIXED_MACHINES[getActiveBranch()] || [])];
+  movesRef().orderByKey().limitToLast(500).once('value', (snap) => {
+    const cnt = {}, names = {};
+    Object.values(snap.val() || {}).forEach(m => {
+      if (m.type !== 'out' || m.reason !== 'Wydanie na maszynę' || !m.note) return;
+      const k = m.note.trim().toLowerCase(); cnt[k] = (cnt[k] || 0) + 1; names[k] = names[k] || m.note.trim();
+    });
+    const top = Object.keys(cnt).sort((a, b) => cnt[b] - cnt[a]).slice(0, 8).map(k => names[k]);
+    top.forEach(n => { if (!qi.machines.some(x => x.toLowerCase() === n.toLowerCase())) qi.machines.push(n); });
+    if (qi.step === 'machine') qiRender();
+  });
+  document.getElementById('quickIssue').classList.add('show');
+  qiRender();
+}
+function closeQuickIssue() { const el = document.getElementById('quickIssue'); if (el) el.classList.remove('show'); }
+
+function qiRender() {
+  const order = ['product', 'qty', 'machine'], idx = order.indexOf(qi.step);
+  const names = ['1 · Produkt', '2 · Ilość', '3 · Maszyna'];
+  document.getElementById('qiSteps').innerHTML = names.map((n, i) => `<div class="qi-step ${qi.step === 'done' || qi.step === 'undone' || i < idx ? 'done' : (i === idx ? 'on' : '')}">${n}</div>`).join('');
+  const body = document.getElementById('qiBody');
+  const sum = `<div class="qi-summary">📤 ${esc(qi.label)}${qi.step === 'machine' ? ` · <span style="color:var(--primary)">${Number(qi.qty)} szt.</span>` : ` · stan: ${qi.max} szt.`}</div>`;
+  if (qi.step === 'product') {
+    body.innerHTML = `<h2 class="qi-title">Co wydajesz?</h2><input id="qiSearch" class="qi-input" style="margin-bottom:16px;" placeholder="🔍 Szukaj produktu…" value="${esc(qi.filter)}" oninput="qiFilter(this.value)"><div class="qi-grid" id="qiTiles"></div>`;
+    qiTiles();
+  } else if (qi.step === 'qty') {
+    body.innerHTML = `${sum}<h2 class="qi-title">Ile sztuk?</h2>
+      <div class="qi-chips">${[400, 800, 1200, 1600, 4000].map(n => `<button onclick="qiSetQty(${n})">${n}</button>`).join('')}</div>
+      <div class="qi-display">${qi.qty || '0'}</div>
+      <div class="qi-keys">${['1','2','3','4','5','6','7','8','9','C','0','⌫'].map(k => `<button onclick="qiKey('${k}')">${k}</button>`).join('')}</div>
+      <div class="qi-actions"><button class="secondary" onclick="qiBack('product')">← Wstecz</button><button class="primary" onclick="qiNext()">Dalej →</button></div>`;
+  } else if (qi.step === 'machine') {
+    body.innerHTML = `${sum}<h2 class="qi-title">Na którą maszynę?</h2><div class="qi-grid">${qi.machines.map((m, i) => `<button class="qi-tile" onclick="qiMachineTap(${i})">${esc(m)}</button>`).join('')}<button class="qi-tile" onclick="qiCustom()">➕ Inna maszyna<small>wpisz nazwę</small></button></div>
+      ${qi.custom ? `<div style="margin-top:18px;"><input id="qiCustomName" class="qi-input" placeholder="np. Maszyna 5" maxlength="60"><div class="qi-actions"><button class="primary" onclick="qiCustomGo()">✅ Wydaj</button></div></div>` : ''}
+      <div class="qi-actions"><button class="secondary" onclick="qiBack('qty')">← Wstecz</button></div>`;
+    if (qi.custom) setTimeout(() => { const e = document.getElementById('qiCustomName'); if (e) e.focus(); }, 30);
+  } else if (qi.step === 'done') {
+    const l = qi.last;
+    body.innerHTML = `<div class="qi-done"><div class="big">✅</div><h2>Wydano ${l.qty} szt.</h2><div style="font-size:18px; margin-bottom:22px;">${esc(l.label)} → <strong>${esc(l.machine)}</strong><br><span style="color:var(--muted); font-size:14px;">z palet: ${esc(l.parts.map(p => `${p.code} (${p.qty})`).join(', '))}</span></div>
+      <div class="qi-actions"><button class="secondary" onclick="qiUndo()">↩️ Cofnij</button><button class="primary" onclick="openQuickIssue()">⚡ Kolejne wydanie</button></div></div>`;
+  } else {
+    body.innerHTML = `<div class="qi-done"><div class="big">↩️</div><h2>Wydanie cofnięte</h2><div class="qi-actions"><button class="primary" onclick="openQuickIssue()">⚡ Nowe wydanie</button><button class="secondary" onclick="closeQuickIssue()">Zamknij</button></div></div>`;
+  }
+}
+function qiTiles() {
+  const f = qi.filter.trim().toLowerCase();
+  const list = qi.products.filter(p => !f || p.label.toLowerCase().includes(f));
+  document.getElementById('qiTiles').innerHTML = list.map(p => `<button class="qi-tile ${p.low ? 'low' : ''}" onclick="qiPick(${qi.products.indexOf(p)})">${esc(p.label)}<small>stan: ${p.qty} szt.${p.low ? ' · niski stan' : ''}</small></button>`).join('') || '<div style="color:var(--muted); padding:20px;">Brak produktów na stanie</div>';
+}
+function qiFilter(v) { qi.filter = v; qiTiles(); }
+function qiPick(i) { const p = qi.products[i]; qi.label = p.label; qi.max = p.qty; qi.qty = ''; qi.step = 'qty'; qiRender(); }
+function qiBack(step) { qi.step = step; qi.custom = false; qiRender(); }
+function qiSetQty(n) { if (n > qi.max) return showToast('Za mało na stanie', `Na stanie jest tylko ${qi.max} szt.`, 'danger'); qi.qty = String(n); qi.step = 'machine'; qiRender(); }
+function qiKey(k) { qi.qty = k === 'C' ? '' : k === '⌫' ? qi.qty.slice(0, -1) : (qi.qty + k).replace(/^0+/, '').slice(0, 6); qiRender(); }
+function qiNext() {
+  const n = Number(qi.qty);
+  if (!n) return showToast('Ilość', 'Wpisz ilość większą od zera.', 'danger');
+  if (n > qi.max) return showToast('Za mało na stanie', `Na stanie jest tylko ${qi.max} szt.`, 'danger');
+  qi.step = 'machine'; qiRender();
+}
+function qiMachineTap(i) { qiExecute(qi.machines[i]); }
+function qiCustom() { qi.custom = true; qiRender(); }
+function qiCustomGo() {
+  const name = document.getElementById('qiCustomName').value.trim();
+  if (!name) return showToast('Maszyna', 'Wpisz nazwę maszyny.', 'danger');
+  if (!qi.machines.some(x => x.toLowerCase() === name.toLowerCase())) qi.machines.unshift(name);
+  qiExecute(name);
+}
+function qiExecute(machine) {
+  if (qi.busy) return;
+  const qty = Number(qi.qty), label = qi.label;
+  let left = qty; const copies = {}, parts = [];
+  const pals = pallets.filter(p => (p.items || []).some(i => itemLabel(i) === label && (Number(i.qty) || 0) > 0))
+    .sort((a, b) => String(a.code).localeCompare(String(b.code), 'pl', { numeric: true }));
+  for (const p of pals) {
+    if (left <= 0) break;
+    const c = copies[p.id] = JSON.parse(JSON.stringify(p));
+    c.items.forEach(it => {
+      if (left <= 0 || itemLabel(it) !== label) return;
+      const have = Number(it.qty) || 0, take = Math.min(have, left);
+      if (take <= 0) return;
+      it.qty = have - take; left -= take;
+      parts.push({ palletId: p.id, code: p.code, size: it.size || '', name: it.name || '', qty: take });
+    });
+    c.items = c.items.filter(i => (Number(i.qty) || 0) > 0);
+  }
+  if (left > 0) return showCustomAlert('Za mało na stanie', 'Stan zmienił się w międzyczasie. Zacznij wydanie od nowa.', '⚠️');
+  qi.busy = true;
+  db.update(copies, (err) => {
+    qi.busy = false;
+    if (err) return showToast('Błąd', 'Nie udało się zapisać wydania.', 'danger');
+    qi.last = { label, qty, machine, parts };
+    parts.forEach(pt => logMove({ type: 'out', label, qty: -pt.qty, pallet: pt.code, reason: 'Wydanie na maszynę', note: machine }));
+    addLog('edit', `odjął(ęła) ${qty} szt. (${label}) z palet ${parts.map(p => `${p.code} (${p.qty})`).join(', ')} — powód: Wydanie na maszynę (${machine})`);
+    qi.step = 'done'; qiRender();
+  });
+}
+function qiUndo() {
+  const l = qi.last;
+  if (!l || qi.busy) return;
+  const upd = {};
+  for (const pt of l.parts) {
+    const cur = upd[pt.palletId] || JSON.parse(JSON.stringify(pallets.find(x => x.id === pt.palletId) || null));
+    if (!cur) return showCustomAlert('Błąd', 'Nie można cofnąć: paleta została usunięta.', '⚠️');
+    cur.items = cur.items || [];
+    const same = cur.items.find(i => itemLabel(i) === l.label);
+    if (same) same.qty = (Number(same.qty) || 0) + pt.qty; else cur.items.push({ size: pt.size, name: pt.name, qty: pt.qty });
+    upd[pt.palletId] = cur;
+  }
+  qi.busy = true;
+  db.update(upd, (err) => {
+    qi.busy = false;
+    if (err) return showToast('Błąd', 'Nie udało się cofnąć wydania.', 'danger');
+    l.parts.forEach(pt => logMove({ type: 'in', label: l.label, qty: pt.qty, pallet: pt.code, reason: 'Korekta', note: `cofnięcie wydania (${l.machine})` }));
+    addLog('edit', `dodał(a) ${l.qty} szt. (${l.label}) na palety ${l.parts.map(p => p.code).join(', ')} — powód: cofnięcie wydania na ${l.machine}`);
+    qi.last = null; qi.step = 'undone'; qiRender();
+  });
 }
 
 function addLog(action, text) {
