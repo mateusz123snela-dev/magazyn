@@ -1199,8 +1199,9 @@ body { background: radial-gradient(1100px 380px at 50% -140px, rgba(47, 91, 234,
   <div class="modal-body">
    <div class="field" style="margin-bottom:14px;"><label>Imię / Nazwisko *</label><input id="newUserName" placeholder="np. Jan Kowalski"></div>
    <div class="field" style="margin-bottom:14px;"><label>Login *</label><input id="newUserLogin" placeholder="np. jan"></div>
-   <div class="field" style="margin-bottom:14px;"><label>Kod PIN (4 cyfry) *</label><input id="newUserPin" type="text" maxlength="4" placeholder="np. 1234"></div>
-   <div class="field" style="margin-bottom:14px;"><label>Hasło <span id="passHint" style="font-size:10px; color:var(--muted);">(opcjonalnie)</span> *</label><input id="newUserPass" type="password" placeholder="••••"></div>
+   
+   <div class="field" style="margin-bottom:14px;"><label>Hasło <span id="passHint" style="font-size:10px; color:var(--muted);">(opcjonalnie)</span> *</label><input id="newUserPass" type="password" placeholder="Hasło"></div>
+<div class="field" style="margin-bottom:14px;"><label>Kod PIN (4 cyfry) *</label><input id="newUserPin" type="text" maxlength="4" placeholder="np. 1234"></div>
    <div class="field" style="margin-bottom:14px;">
      <label>Oddział *</label>
      <select id="newUserBranch">
@@ -1812,6 +1813,8 @@ function loginWithPin() {
   });
 }
 
+
+
 function switchBranch(branchKey) {
   if (currentRole !== 'admin') return;
   activeAdminBranch = branchKey.toLowerCase();
@@ -1918,6 +1921,8 @@ function loginWithDb() {
   });
 }
 
+
+
 function processFoundUser(foundUser) {
   const errorEl = document.getElementById('authError');
   errorEl.style.display = 'none';
@@ -1954,55 +1959,22 @@ function processFoundUser(foundUser) {
 }
 
 function saveInlineForcedPassword() {
-  const errorEl = document.getElementById('authError');
   const oldPass = document.getElementById('forceOldPass').value.trim();
   const newPass = document.getElementById('forceNewPass').value.trim();
   const confirmPass = document.getElementById('forceConfirmPass').value.trim();
-
-  if (!oldPass || !newPass || !confirmPass) {
-    errorEl.textContent = 'Wszystkie pola są wymagane!';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (newPass !== confirmPass) {
-    errorEl.textContent = 'Hasła się różnią!';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if (newPass.length < 4) {
-    errorEl.textContent = 'Hasło musi mieć min. 4 znaki!';
-    errorEl.style.display = 'block';
-    return;
-  }
-
-  usersDb.child(currentUserLogin).once('value', (snap) => {
-    const user = snap.val();
-    if (!user || user.pass !== oldPass) {
-      errorEl.textContent = 'Stare hasło jest nieprawidłowe!';
-      errorEl.style.display = 'block';
-      return;
-    }
-
-    usersDb.child(currentUserLogin).update({ pass: newPass, mustChangePassword: false }, (err) => {
-      if (!err) {
-        errorEl.style.display = 'none';
-        user.pass = newPass; 
-        user.mustChangePassword = false;
-        
-        document.getElementById('authTabGroup').style.display = 'flex';
-        document.getElementById('forcePasswordFields').style.display = 'none';
-        document.getElementById('authTitle').textContent = 'Magazyn Tulejek';
-        document.getElementById('authSubtitle').textContent = 'Zaloguj się do panelu magazynowego';
-
-        showToast('Sukces', 'Hasło zostało zmienione!', 'success');
-        completeLogin(user);
-      } else {
-        errorEl.textContent = 'Błąd podczas zapisu w bazie danych.';
-        errorEl.style.display = 'block';
-      }
-    });
+  if (!pendingUserObj) return;
+  if (oldPass !== pendingUserObj.pass) return showCustomAlert('Błąd', 'Stare hasło jest nieprawidłowe!', '⚠️');
+  if (!newPass || newPass !== confirmPass) return showCustomAlert('Błąd', 'Hasła muszą być takie same i niepuste!', '⚠️');
+  if (newPass.length < 4) return showCustomAlert('Błąd', 'Hasło musi mieć min. 4 znaki!', '⚠️');
+  usersDb.child(pendingUserObj.login).update({ pass: newPass, mustChangePassword: false }, (err) => {
+    if (err) return showCustomAlert('Błąd', 'Nie udało się zapisać hasła.', '⚠️');
+    const u = Object.assign({}, pendingUserObj, { pass: newPass, mustChangePassword: false });
+    pendingUserObj = null;
+    completeLogin(u);
   });
 }
+
+
 
 function completeLogin(foundUser) {
   const userKey = (foundUser.login || 'admin').toLowerCase();
@@ -2092,6 +2064,8 @@ function saveUserPasswordChange() {
     });
   });
 }
+
+
 
 function startSessionMonitoring() {
   if (sessionMonitorRef) sessionMonitorRef.off();
@@ -2427,6 +2401,8 @@ function saveUserAccount() {
     }
   });
 }
+
+
 
 function deleteUser(loginKey) {
   if (loginKey.toLowerCase() === 'admin') return showCustomAlert('Błąd', 'Nie można usunąć głównego administratora!', '⚠️');
@@ -2992,7 +2968,7 @@ function getLowStock() {
   const tot = {};
   pallets.forEach(p => (p.items || []).forEach(i => { const k = pk(`${i.size || ''} ${i.name || ''}`); tot[k] = (tot[k] || 0) + (Number(i.qty) || 0); }));
   return Object.entries(minLevels || {})
-    .filter(([k, v]) => v && v.min > 0 && (tot[k] || 0) < v.min)
+    .filter(([k, v]) => v && v.min > 0 && (tot[k] || 0) > 0 && (tot[k] || 0) < v.min)
     .map(([k, v]) => ({ label: v.label || k, qty: tot[k] || 0, min: v.min }));
 }
 
